@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>刷题训练台</title>
+<link rel="stylesheet" href="./style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>⌗</text></svg>">
+</head>
+<body>
+<div id="app" class="shell" hidden>
+  <aside class="rail">
+    <div class="rail__brand">
+      <span class="rail__mark">⌗</span>
+      <span class="rail__name">刷题训练台</span>
+    </div>
+    <nav class="rail__views" id="viewNav"></nav>
+    <div class="rail__scale">
+      <div class="rail__scaleHead"><span>知识刻度</span><span class="rail__scaleHint">已刷 / 题量</span></div>
+      <ol class="scale" id="scale"></ol>
+    </div>
+    <div class="rail__foot" id="railFoot"></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="search">
+        <span class="search__icon">⌕</span>
+        <input id="search" type="search" placeholder="搜索题号、标题、标签、思路…  （按 / 聚焦）" autocomplete="off">
+        <kbd class="search__kbd">/</kbd>
+      </div>
+      <div class="topbar__stats" id="topStats"></div>
+    </header>
+    <div class="view" id="view"></div>
+  </main>
+
+  <div class="drawer" id="drawer" hidden>
+    <div class="drawer__scrim" data-close></div>
+    <section class="drawer__panel" role="dialog" aria-modal="true" aria-label="题目详情">
+      <div class="drawer__body" id="drawerBody"></div>
+    </section>
+  </div>
+</div>
+
+<div class="boot" id="boot">
+  <div class="boot__bar"><i></i></div>
+  <p id="bootText">正在装载题库…</p>
+</div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

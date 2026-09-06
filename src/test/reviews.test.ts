@@ -63,6 +63,17 @@ test("一条解法里的标签不重复", () => {
   }
 });
 
+/** 手写 JSON 容易把 pitfall 之类的字段写进解法对象里，加载器不读它，内容就静默丢了。 */
+test("解法对象里没有多余字段", () => {
+  const allowed = new Set(["tags", "name", "idea", "time", "space"]);
+  for (const r of reviews) {
+    for (const sol of r.solutions) {
+      const extra = Object.keys(sol).filter((k) => !allowed.has(k));
+      assert.deepEqual(extra, [], `${r.slug}「${sol.name}」写进了不会被读取的字段：${extra.join("、")}`);
+    }
+  }
+});
+
 test("解法不提出处，也不写日期 —— 这些都是噪音", () => {
   for (const r of reviews) {
     for (const sol of r.solutions) {

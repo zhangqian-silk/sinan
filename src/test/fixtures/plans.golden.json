@@ -24,12 +24,12 @@
     ]
   },
   "topic:dp-interval": {
-    "poolSize": 18,
-    "covered": 16,
+    "poolSize": 17,
+    "covered": 15,
     "sections": [
       {
         "key": "dp-interval",
-        "pool": 18,
+        "pool": 17,
         "steps": [
           "generate-parentheses",
           "longest-palindromic-subsequence",
@@ -61,17 +61,18 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 13,
-    "covered": 12,
+    "poolSize": 14,
+    "covered": 13,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 13,
+        "pool": 14,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
           "koko-eating-bananas",
           "capacity-to-ship-packages-within-d-days",
+          "maximum-length-of-repeated-subarray",
           "kth-smallest-element-in-a-sorted-matrix",
           "split-array-largest-sum",
           "find-k-th-smallest-pair-distance",
@@ -262,8 +263,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 231,
-    "covered": 100,
+    "poolSize": 224,
+    "covered": 97,
     "sections": [
       {
         "key": "hash-count",
@@ -276,7 +277,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 44,
+        "pool": 43,
         "steps": [
           "move-zeroes",
           "3sum",
@@ -285,11 +286,11 @@
       },
       {
         "key": "sliding-window",
-        "pool": 12,
+        "pool": 10,
         "steps": [
           "maximum-average-subarray-i",
-          "remove-element",
-          "remove-duplicates-from-sorted-array-ii"
+          "remove-duplicates-from-sorted-array-ii",
+          "longest-subarray-of-1s-after-deleting-one-element"
         ]
       },
       {
@@ -303,7 +304,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 33,
+        "pool": 32,
         "steps": [
           "palindrome-linked-list",
           "remove-nth-node-from-end-of-list",
@@ -321,11 +322,11 @@
       },
       {
         "key": "bs-array",
-        "pool": 16,
+        "pool": 15,
         "steps": [
           "convert-sorted-array-to-binary-search-tree",
-          "two-sum-ii-input-array-is-sorted",
-          "minimum-size-subarray-sum"
+          "number-of-recent-calls",
+          "two-sum-ii-input-array-is-sorted"
         ]
       },
       {
@@ -348,18 +349,18 @@
       },
       {
         "key": "dp-linear",
-        "pool": 14,
+        "pool": 12,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",
-          "longest-subarray-of-1s-after-deleting-one-element"
+          "sum-of-subarray-minimums"
         ]
       }
     ]
   },
   "route:interview": {
-    "poolSize": 234,
-    "covered": 125,
+    "poolSize": 227,
+    "covered": 118,
     "sections": [
       {
         "key": "hash-count",
@@ -373,17 +374,17 @@
       },
       {
         "key": "sliding-window",
-        "pool": 16,
+        "pool": 12,
         "steps": [
           "maximum-average-subarray-i",
-          "remove-element",
           "remove-duplicates-from-sorted-array-ii",
-          "longest-subarray-of-1s-after-deleting-one-element"
+          "longest-subarray-of-1s-after-deleting-one-element",
+          "4sum"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 41,
+        "pool": 40,
         "steps": [
           "move-zeroes",
           "3sum",
@@ -413,7 +414,7 @@
       },
       {
         "key": "heap",
-        "pool": 14,
+        "pool": 12,
         "steps": [
           "sort-colors",
           "partition-list",
@@ -443,7 +444,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 12,
+        "pool": 13,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
@@ -463,12 +464,12 @@
       },
       {
         "key": "dp-linear",
-        "pool": 16,
+        "pool": 15,
         "steps": [
           "is-subsequence",
+          "maximum-length-of-repeated-subarray",
           "longest-palindromic-subsequence",
-          "increasing-triplet-subsequence",
-          "maximum-subarray"
+          "increasing-triplet-subsequence"
         ]
       },
       {
@@ -476,7 +477,7 @@
         "pool": 6,
         "steps": [
           "online-stock-span",
-          "string-compression",
+          "range-sum-query-mutable",
           "binary-search-tree-iterator",
           "flatten-nested-list-iterator"
         ]
@@ -484,17 +485,17 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 55,
-    "covered": 30,
+    "poolSize": 54,
+    "covered": 29,
     "sections": [
       {
         "key": "dp",
-        "pool": 29,
+        "pool": 28,
         "steps": [
-          "maximum-sum-circular-subarray",
           "generate-parentheses",
+          "maximum-length-of-repeated-subarray",
           "longest-palindromic-subsequence",
-          "maximum-subarray",
+          "increasing-triplet-subsequence",
           "longest-palindromic-substring",
           "palindrome-partitioning",
           "minimum-insertion-steps-to-make-a-string-palindrome",
@@ -519,20 +520,20 @@
         "pool": 7,
         "steps": [
           "maximum-binary-tree",
+          "range-sum-query-mutable",
           "luogu:P1020",
-          "minimum-cost-tree-from-leaf-values",
-          "shortest-subarray-with-sum-at-least-k"
+          "minimum-cost-tree-from-leaf-values"
         ]
       }
     ]
   },
   "route:weakness": {
-    "poolSize": 262,
-    "covered": 86,
+    "poolSize": 252,
+    "covered": 88,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 51,
+        "pool": 50,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -545,12 +546,12 @@
         "steps": [
           "balanced-binary-tree",
           "binary-tree-level-order-traversal",
-          "sum-root-to-leaf-numbers"
+          "binary-tree-zigzag-level-order-traversal"
         ]
       },
       {
         "key": "stack-queue",
-        "pool": 39,
+        "pool": 37,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -576,17 +577,8 @@
         ]
       },
       {
-        "key": "bs-array",
-        "pool": 23,
-        "steps": [
-          "convert-sorted-array-to-binary-search-tree",
-          "minimum-size-subarray-sum",
-          "count-complete-tree-nodes"
-        ]
-      },
-      {
         "key": "sorting",
-        "pool": 21,
+        "pool": 20,
         "steps": [
           "merge-sorted-array",
           "3sum-closest",
@@ -594,12 +586,21 @@
         ]
       },
       {
-        "key": "dp-linear",
+        "key": "linked-list",
+        "pool": 17,
+        "steps": [
+          "reverse-linked-list",
+          "remove-duplicates-from-sorted-list-ii",
+          "odd-even-linked-list"
+        ]
+      },
+      {
+        "key": "bs-array",
         "pool": 19,
         "steps": [
-          "is-subsequence",
-          "maximum-sum-circular-subarray",
-          "longest-subarray-of-1s-after-deleting-one-element"
+          "convert-sorted-array-to-binary-search-tree",
+          "two-sum-ii-input-array-is-sorted",
+          "minimum-size-subarray-sum"
         ]
       }
     ]

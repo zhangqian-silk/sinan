@@ -151,10 +151,19 @@ export function cmdShow(store: Store, args: Args): void {
     out("", r.rule(`解法  ${p.review.solutions.length} 种`));
     p.review.solutions.forEach((sol, i) => {
       const cat = store.nodeById.get(sol.tags[0])?.cat ?? "";
-      const names = sol.tags.map((t) => store.nodeById.get(t)?.name ?? t).join(" · ");
+      // 标签写全路径：一行里既有二级也有三级，只印叶子名看不出它在树的哪一层
+      const paths = sol.tags.map((t) => {
+        const chain = store.pathNames(t);
+        const leaf = chain.pop() ?? t;
+        return chain.length ? `${r.paint(`${chain.join(" › ")} › `, "gray")}${leaf}` : leaf;
+      }).join(r.paint("  ·  ", "gray"));
+      const cost = [
+        sol.time ? `${r.paint("时间", "gray")} ${sol.time}` : "",
+        sol.space ? `${r.paint("空间", "gray")} ${sol.space}` : "",
+      ].filter(Boolean).join(r.paint(" · ", "gray"));
       out(`  ${r.paint(`${i + 1}.`, "gray")} ${r.paint(sol.name, r.CAT_COLOR[cat] ?? "steel")}`
-        + `  ${r.paint(names, "gray")}`
-        + (sol.complexity ? `  ${r.paint(sol.complexity, "gray")}` : ""));
+        + (cost ? `   ${cost}` : ""));
+      for (const line of r.wrap(`${r.paint("标签", "gray")} ${paths}`, width)) out(`     ${line}`);
       for (const line of r.wrap(sol.idea, width)) out(`     ${line}`);
     });
     if (p.review.pitfall) {
@@ -166,9 +175,10 @@ export function cmdShow(store: Store, args: Args): void {
 
   out("", r.rule(`解法标签  ${p.tags.length} 个，跨 ${p.catSpan} 个大类`));
   for (const t of p.tags) {
-    const catName = store.catById.get(t.cat)?.name ?? t.cat;
+    const chain = store.pathNames(t.id).slice(0, -1);
+    if (!chain.length) chain.push(store.catById.get(t.cat)?.name ?? t.cat);
     out(`  ${r.pad(r.paint(t.name, r.CAT_COLOR[t.cat] ?? "steel"), 22)}`
-      + `${r.pad(r.paint(catName, "gray"), 16)}`
+      + `${r.pad(r.paint(chain.join(" › "), "gray"), 24)}`
       + `${r.paint(`可信度 ${t.w}`, "gray")}  `
       + `${r.paint(`来源：${t.src.join("、")}`, "gray")}`);
   }

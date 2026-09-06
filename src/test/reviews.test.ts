@@ -41,6 +41,8 @@ test("每种解法都讲清楚了它在这道题上是什么样子", () => {
     for (const sol of r.solutions) {
       assert.ok(sol.name.length >= 2, `${r.slug} 的解法没名字`);
       assert.ok(sol.idea.length >= 25, `${r.slug} 的「${sol.name}」讲得太短：${sol.idea}`);
+      assert.ok(sol.time, `${r.slug} 的「${sol.name}」没写时间复杂度`);
+      assert.ok(sol.space, `${r.slug} 的「${sol.name}」没写空间复杂度`);
     }
   }
 });

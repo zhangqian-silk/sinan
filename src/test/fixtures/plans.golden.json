@@ -285,8 +285,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 263,
-    "covered": 120,
+    "poolSize": 261,
+    "covered": 116,
     "sections": [
       {
         "key": "hash-count",
@@ -299,11 +299,11 @@
       },
       {
         "key": "two-pointers",
-        "pool": 49,
+        "pool": 48,
         "steps": [
           "move-zeroes",
-          "next-permutation",
-          "3sum"
+          "3sum",
+          "kth-largest-element-in-an-array"
         ]
       },
       {
@@ -326,7 +326,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 40,
+        "pool": 39,
         "steps": [
           "palindrome-linked-list",
           "daily-temperatures",
@@ -381,8 +381,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 293,
-    "covered": 137,
+    "poolSize": 290,
+    "covered": 134,
     "sections": [
       {
         "key": "hash-count",
@@ -406,11 +406,11 @@
       },
       {
         "key": "two-pointers",
-        "pool": 47,
+        "pool": 46,
         "steps": [
-          "valid-palindrome",
-          "container-with-most-water",
+          "move-zeroes",
           "3sum",
+          "kth-largest-element-in-an-array",
           "reorder-list"
         ]
       },
@@ -436,7 +436,7 @@
       },
       {
         "key": "heap",
-        "pool": 20,
+        "pool": 19,
         "steps": [
           "remove-duplicates-from-sorted-array",
           "remove-element",
@@ -496,9 +496,9 @@
       },
       {
         "key": "ds-design",
-        "pool": 7,
+        "pool": 6,
         "steps": [
-          "kth-largest-element-in-an-array",
+          "online-stock-span",
           "string-compression",
           "binary-search-tree-iterator",
           "kth-smallest-element-in-a-bst"
@@ -554,12 +554,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 322,
-    "covered": 94,
+    "poolSize": 320,
+    "covered": 92,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 58,
+        "pool": 57,
         "steps": [
           "linked-list-cycle",
           "reverse-words-in-a-string",
@@ -577,7 +577,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 51,
+        "pool": 50,
         "steps": [
           "palindrome-linked-list",
           "daily-temperatures",

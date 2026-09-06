@@ -859,6 +859,21 @@ async function renderDrawer(slug) {
       syncHint('题面原文与面试高频（CodeTop 频次与排名）')));
   }
 
+  // 解法排在最前面：每条讲清楚这个技巧的核心思想落到本题是什么样子
+  if (p.review?.solutions?.length) {
+    host.append(h('div.dBlock', {},
+      h('div.dBlock__head', {}, h('h3', {}, '解法'),
+        h('span', {}, `${p.review.solutions.length} 种，第一条最好上手`)),
+      p.review.solutions.map((sol, i) => h('div.solRow', {},
+        h('div.solRow__top', {},
+          h('span.solRow__n', {}, String(i + 1)),
+          h('span.solRow__name', {}, sol.name),
+          h('span.solRow__tags', {}, (sol.tags || []).join(' · ')),
+          sol.complexity ? h('span.apNote', {}, sol.complexity) : null),
+        h('p.solRow__idea', {}, sol.idea))),
+      p.review.pitfall ? h('p.solPit', {}, p.review.pitfall) : null));
+  }
+
   const fp = p.approachFull || [];
   if (fp.length) {
     const why = p.approachWhy || {};

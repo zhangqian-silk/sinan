@@ -171,6 +171,7 @@ function apiProblem(st: Store, q: Query): unknown {
     solutionSampled: p.solutionSampled ?? 0,
     codeBlocks: p.codeBlocks ?? 0,
     approachWhy: p.approachWhy ?? {},
+    review: p.review ?? null,
     content: st.content(p.slug) ?? "",
     similar: sims,
     files,

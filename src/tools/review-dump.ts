@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { distDir, rawDir, readJsonl } from "../build/io.js";
 import * as planner from "../planner.js";
 import { htmlToText } from "../render.js";
-import { Store } from "../store.js";
+import { openStore } from "../host-node.js";
 import { loadReviews } from "../build/reviews.js";
 
 interface Detail { _key: string; content?: string }
@@ -23,7 +23,7 @@ interface Detail { _key: string; content?: string }
 function main(): void {
   const argv = process.argv.slice(2);
   // 跟着 SINAN_DATA_ROOT 走，否则会悄悄读到随包基线（没有频次，主线排不出来）
-  const store = new Store({ dataDir: distDir(), progressFile: "/dev/null" });
+  const store = openStore({ dataDir: distDir(), progressFile: "/dev/null" });
   const done = loadReviews();
   const keys: string[] = [];
 

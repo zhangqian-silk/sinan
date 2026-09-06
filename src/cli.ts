@@ -13,7 +13,8 @@ import { out, PROG } from "./out.js";
 import { DEFAULT_PACE } from "./planner.js";
 import { BASELINE_DIR, resolveDataDir, SINAN_HOME } from "./paths.js";
 import * as r from "./render.js";
-import { Store } from "./store.js";
+import { openStore } from "./host-node.js";
+import type { Store } from "./store.js";
 
 const COMMON: OptSpec[] = [
   { flag: "--no-color", type: "flag", help: "关掉颜色" },
@@ -181,7 +182,7 @@ const COMMANDS: Entry[] = [
       out("", r.heading("当前配置", "命令行参数 > 环境变量 > ~/.sinan/config.json > 约定位置"), "");
       let store: Store | null;
       try {
-        store = new Store({
+        store = openStore({
           dataDir: args["dataDir"] as string | undefined,
           solutions: (args["solutions"] as string[]) ?? [],
         });
@@ -245,7 +246,7 @@ export function main(argv: readonly string[]): void {
       entry.standalone(args);
       return;
     }
-    const store = new Store({
+    const store = openStore({
       dataDir: args["dataDir"] as string | undefined,
       solutions: (args["solutions"] as string[]) ?? [],
     });

@@ -12,7 +12,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { DIFF_RANK, sortProblems, Store } from "../store.js";
+import { openStore } from "../host-node.js";
+import { DIFF_RANK, sortProblems } from "../store.js";
 import { MINI_DIR, miniStore } from "./helpers.js";
 
 const store = miniStore();
@@ -121,16 +122,16 @@ test("按题号排序：力扣在前、洛谷在后，数字段按数值比", ()
 test("打卡往返：写进去、读出来、再取消", () => {
   const home = mkdtempSync(join(tmpdir(), "sinan-progress-"));
   const progressFile = join(home, "progress.json");
-  const st = new Store({ dataDir: MINI_DIR, solutions: [], progressFile });
+  const st = openStore({ dataDir: MINI_DIR, solutions: [], progressFile });
   const p = st.problems[0];
   assert.equal(st.isDone(p), false);
   assert.equal(st.toggleCheckin(p, "测试"), true);
   assert.equal(st.isDone(p), true);
 
-  const reopened = new Store({ dataDir: MINI_DIR, solutions: [], progressFile });
+  const reopened = openStore({ dataDir: MINI_DIR, solutions: [], progressFile });
   assert.equal(reopened.isChecked(p), true, "重新打开读不到打卡记录");
   assert.equal(reopened.toggleCheckin(p), false);
-  assert.equal(new Store({ dataDir: MINI_DIR, solutions: [], progressFile }).isDone(p), false);
+  assert.equal(openStore({ dataDir: MINI_DIR, solutions: [], progressFile }).isDone(p), false);
 });
 
 test("approachStats 汇总的题数与逐条查询一致", () => {

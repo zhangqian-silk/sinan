@@ -46,7 +46,19 @@ const $ = (s) => document.querySelector(s);
 const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); return n; };
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '—');
 
+/**
+ * 后端。本地 `sinan serve` 下是 null（走真实 HTTP），
+ * GitHub Pages 上由 static-boot.js 注入一个在浏览器里跑同一套 store/planner 的实现。
+ */
+let backend = null;
+
 async function api(path, params) {
+  // 静态站（GitHub Pages）没有后端，boot 脚本会挂一个同形的本地实现上来
+  if (backend) {
+    const data = backend.call(path, params);
+    if (data && data.error) throw new Error(data.error);
+    return data;
+  }
   const url = new URL(path, location.origin);
   for (const [k, v] of Object.entries(params || {})) {
     if (v === '' || v === null || v === undefined || v === false) continue;
@@ -971,10 +983,13 @@ function closeDrawer() {
 }
 
 async function toggleCheckin(slug, keepDrawer) {
-  await fetch('/api/checkin', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ slug }),
-  });
+  if (backend) backend.checkin(slug);
+  else {
+    await fetch('/api/checkin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug }),
+    });
+  }
   cache.meta = await api('/api/meta');
   cache.lists = null;
   cache.approaches = null;
@@ -1088,6 +1103,11 @@ function wire() {
 (async function start() {
   const bootText = $('#bootText');
   try {
+    // 静态站：先等 boot 脚本把题库在浏览器里装好，之后 api() 就走本地路由
+    if (globalThis.__SINAN_BOOT__) {
+      bootText.textContent = '正在下载题库…';
+      backend = await globalThis.__SINAN_BOOT__;
+    }
     bootText.textContent = '正在读取题库与标签体系…';
     cache.meta = await api('/api/meta');
   } catch (e) {

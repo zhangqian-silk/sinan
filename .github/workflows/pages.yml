@@ -1,0 +1,57 @@
+# 把静态站发到 GitHub Pages。
+#
+# 站点数据只用仓库里入库的随包基线（baseline/baseline.json）—— 里面有分类体系、
+# 标签、人工判定的解法和平台链接，但没有题面原文。所以这条流水线不需要任何密钥，
+# 也不会把平台内容发到公网上。
+#
+# 首次启用要去仓库 Settings → Pages → Source 选 "GitHub Actions"。
+name: Pages
+
+on:
+  push:
+    branches: ["master", "main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同时只跑一个部署，新的推送把排队中的顶掉
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: 打静态站
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run site
+      - name: 确认发出去的东西里没有题面原文
+        run: |
+          set -euo pipefail
+          if grep -rlF "<p>" site/baseline.json; then
+            echo "基线数据里混进了题面 HTML，中止部署" && exit 1
+          fi
+          test -f site/index.html && test -f site/baseline.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    name: 部署
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -18,6 +18,12 @@ export const PKG_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 /** 前端静态资源随包分发，不跟着数据走。 */
 export const WEB_DIR = join(PKG_ROOT, "web");
 
+/**
+ * 随包分发的精简基线数据。装完什么都不做，靠它就能看分类体系、解题思路、
+ * 题目清单和平台链接。用户跑过 sinan sync 之后，~/.sinan 里的完整产物优先。
+ */
+export const BASELINE_DIR = join(PKG_ROOT, "baseline");
+
 export const SINAN_HOME = process.env["SINAN_HOME"]
   ? resolve(process.env["SINAN_HOME"])
   : join(homedir(), ".sinan");
@@ -63,8 +69,10 @@ export function resolveDataDir(explicit?: string): string {
   candidates.push(join(PKG_ROOT, "data", "dist"));
 
   for (const dir of candidates) {
-    if (existsSync(join(dir, "problems.json"))) return dir;
+    if (existsSync(join(dir, "problems.json")) || existsSync(join(dir, "baseline.json"))) return dir;
   }
+  // 兜底：随包的精简基线，保证「装完什么都不做」也是可用状态
+  if (existsSync(join(BASELINE_DIR, "baseline.json"))) return BASELINE_DIR;
   return candidates[0];
 }
 

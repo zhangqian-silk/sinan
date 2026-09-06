@@ -7,6 +7,7 @@ import * as planner from "../planner.js";
 import * as r from "../render.js";
 import type { Store } from "../store.js";
 import { pyFloat, sortBy } from "../util.js";
+import { baselineFooter, MISSING, needSync } from "./hint.js";
 
 export function cmdHome(store: Store, _args: Args): void {
   const free = store.problems.filter((p) => !p.paid);
@@ -22,7 +23,9 @@ export function cmdHome(store: Store, _args: Args): void {
   out("", r.heading("刷题训练台", `数据 ${store.meta.builtAt} · `
     + `${store.meta.sources.map((s) => s.name).join(" + ")}`), "");
   out(`  已刷      ${r.bar(done, total)} ${done}/${total} 免费题 (${pct(done, total)})`);
-  out(`  高频命中  ${r.bar(hotDone, hotTotal, 18, "orange")} ${hotDone}/${hotTotal} CodeTop (${pct(hotDone, hotTotal)})`);
+  if (!store.baseline) {
+    out(`  高频命中  ${r.bar(hotDone, hotTotal, 18, "orange")} ${hotDone}/${hotTotal} CodeTop (${pct(hotDone, hotTotal)})`);
+  }
   out(`  覆盖标签  ${r.bar(tagsTouched, store.subById.size, 18, "teal")} `
     + `${tagsTouched}/${store.subById.size} 个子标签`);
   out("");
@@ -53,6 +56,12 @@ export function cmdHome(store: Store, _args: Args): void {
     out("");
   }
 
+  if (store.baseline) {
+    out(...baselineFooter());
+    out("");
+    out(r.paint("  {PROG} topics | {PROG} learn <专题> | {PROG} plan <专题> | {PROG} list --tag <标签>", "gray"), "");
+    return;
+  }
   out(r.rule("特殊题单  {PROG} lists 看全部"));
   for (const lst of store.curated.slice(0, 6)) {
     const topic = store.topics().get(lst.id)!;
@@ -108,6 +117,12 @@ const KIND_CN: Record<string, string> = {
 };
 
 export function cmdLists(store: Store, _args: Args): void {
+  if (store.baseline) {
+    out("", r.heading("特殊题单", "力扣官方学习计划 / CodeTop 公司榜"), "");
+    out(needSync(MISSING.lists));
+    out(r.paint("  题单是平台自己挑选与编排的内容，不随包分发；抓下来之后这里会列出全部。", "gray"), "");
+    return;
+  }
   out("", r.heading("特殊题单", `${store.curated.length} 份 · `
     + `${PROG} plan <题单id> 生成按知识点递进的计划`));
   const groups = new Map<string, typeof store.curated>();
@@ -188,14 +203,20 @@ export function cmdApproaches(store: Store, args: Args): void {
 export function cmdStats(store: Store, _args: Args): void {
   const stats = store.meta.stats;
   out("", r.heading("题库统计", `构建于 ${store.meta.builtAt}`), "");
-  out(`  题目总数 ${stats.total}    免费 ${stats.free}    有题面 ${stats.withContent}`);
+  if (store.baseline) {
+    out(`  题目总数 ${stats.total}    随包的精简题库（无题面 / 无高频 / 无题单）`);
+  } else {
+    out(`  题目总数 ${stats.total}    免费 ${stats.free}    有题面 ${stats.withContent}`);
+  }
   out(`  平均解法标签 ${stats.avgTags} 个/题    一题多解（跨 3 大类）${stats.multiApproach} 题`);
   out(`  平均 ${stats.avgApproaches ?? 0} 种解法思路/题（{PROG} approaches 看词表）`);
   out(`  证据来源  ${stats.approachFromCode ?? 0} 题读题解代码判定，`
     + `${stats.approachFromStatement ?? 0} 题读题面与数据范围推断，`
     + `其中 ${stats.approachCrossChecked ?? 0} 题两者互相印证`);
-  out(`            抓到题解代码的题 ${stats.withCode ?? 0} 道，`
-    + `只能靠题解文字的 ${(stats.withApproach ?? 0) - (stats.approachFromCode ?? 0)} 道`);
+  if (!store.baseline) {
+    out(`            抓到题解代码的题 ${stats.withCode ?? 0} 道，`
+      + `只能靠题解文字的 ${(stats.withApproach ?? 0) - (stats.approachFromCode ?? 0)} 道`);
+  }
   out("");
   out(r.rule("题目来源  互斥，加起来等于总题量"));
   for (const s of store.meta.sources) {
@@ -234,5 +255,9 @@ export function cmdStats(store: Store, _args: Args): void {
   }
   out(r.table(["子标签", "大类", "题量", "进度", ""], rows,
     ["left", "left", "right", "right", "left"]));
+  if (store.baseline) {
+    out("");
+    out(...baselineFooter());
+  }
   out("");
 }

@@ -18,6 +18,7 @@ import {
 import { basename, dirname, extname, join } from "node:path";
 
 import { CliError } from "./errors.js";
+import { expand, type Packed } from "./baseline.js";
 import { ensureHome, PROGRESS_FILE, resolveDataDir, resolveSolutionDirs } from "./paths.js";
 import type {
   ApproachRef,
@@ -142,6 +143,8 @@ export class Store {
   readonly dist: string;
   readonly solutionDirs: string[];
   readonly progressFile: string;
+  /** 用的是随包的精简基线（没有题面 / 高频 / 题单），而不是用户自己抓的完整产物 */
+  readonly baseline: boolean;
   readonly meta: Meta;
   readonly cats: Category[];
   readonly problems: Problem[];
@@ -155,20 +158,35 @@ export class Store {
   readonly approachById = new Map<string, { id: string; name: string; domain: string; w: number }>();
 
   private progress: Progress;
+  /** 基线模式下相似度随主文件一起读进来了，不再单独有文件 */
+  private packedSimilar: Record<string, SimilarEntry[]> | null = null;
 
   constructor(options: StoreOptions = {}) {
     this.dist = resolveDataDir(options.dataDir);
     this.solutionDirs = resolveSolutionDirs(options.solutions ?? []);
     this.progressFile = options.progressFile ?? PROGRESS_FILE;
-    if (!existsSync(join(this.dist, "problems.json"))) {
+    const full = existsSync(join(this.dist, "problems.json"));
+    const packed = !full && existsSync(join(this.dist, "baseline.json"));
+    if (!full && !packed) {
       throw new CliError(
         `还没有题库数据（找过 ${this.dist}）。\n` +
           "先跑：{PROG} sync   或用 --data-dir / SINAN_DATA 指到已有的构建产物");
     }
-    this.meta = this.load<Meta>("meta.json");
-    this.cats = sortBy(this.load<Category[]>("taxonomy.json"), (c) => [c.order]);
-    this.problems = this.load<Problem[]>("problems.json");
-    this.curated = this.load<CuratedList[]>("curated.json", []);
+    this.baseline = packed;
+    if (packed) {
+      const raw = readFileSync(join(this.dist, "baseline.json"), "utf-8");
+      const data = expand(JSON.parse(raw) as Packed);
+      this.meta = data.meta;
+      this.cats = sortBy(data.cats, (c) => [c.order]);
+      this.problems = data.problems;
+      this.curated = [];
+      this.packedSimilar = data.similar;
+    } else {
+      this.meta = this.load<Meta>("meta.json");
+      this.cats = sortBy(this.load<Category[]>("taxonomy.json"), (c) => [c.order]);
+      this.problems = this.load<Problem[]>("problems.json");
+      this.curated = this.load<CuratedList[]>("curated.json", []);
+    }
 
     for (const p of this.problems) {
       this.bySlug.set(p.slug, p);
@@ -201,7 +219,7 @@ export class Store {
 
   /** 相似度图，只有需要时才加载（文件不小）。 */
   readonly similar: () => Record<string, SimilarEntry[]> = lazy(() =>
-    this.load<Record<string, SimilarEntry[]>>("similar.json", {}));
+    this.packedSimilar ?? this.load<Record<string, SimilarEntry[]>>("similar.json", {}));
 
   private readonly contentIndex: () => Record<string, [number, number]> = lazy(() =>
     this.load<Record<string, [number, number]>>("content_index.json", {}));

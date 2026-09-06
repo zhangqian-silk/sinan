@@ -28,6 +28,7 @@
     "bin",
     "dist",
     "web",
+    "baseline",
     "README.md",
     "LICENSE",
     "!dist/test"
@@ -43,6 +44,7 @@
     "test": "npm run build && node --test dist/test/*.test.js",
     "check:links": "npm run build && node dist/tools/check-links.js",
     "fixture": "npm run build && node dist/tools/make-fixture.js",
+    "baseline": "npm run build && node dist/tools/pack.js \"$SINAN_DIST\" baseline",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

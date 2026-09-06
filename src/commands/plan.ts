@@ -8,12 +8,28 @@ import * as planner from "../planner.js";
 import * as r from "../render.js";
 import type { Store, Topic } from "../store.js";
 import { fixed, splitLines } from "../util.js";
+import { MISSING, needSync } from "./hint.js";
 import { resolveProblem } from "./query.js";
+
+/** 这条主线要靠面试频次才排得出来，基线数据里没有。 */
+function needsFreq(route: planner.Route): boolean {
+  return route.hotOnly || route.dynamic === "weak";
+}
 
 export function cmdRoutes(store: Store, _args: Args): void {
   out("", r.heading("学习计划", "少数几条跨专题的成体系路线 · {PROG} plan <id> 展开"), "");
   const rows: string[][] = [];
+  let blocked = 0;
   for (const route of planner.ROUTES) {
+    if (store.baseline && needsFreq(route)) {
+      blocked += 1;
+      rows.push([
+        r.paint(route.id, "gray"), r.paint(route.name, "gray"),
+        r.paint("需要同步", "gray"), "—", "—", "—", "", "",
+        r.paint(r.trunc(route.tagline, 24), "gray"),
+      ]);
+      continue;
+    }
     const plan = planner.planRoute(store, route);
     const steps = plan.steps;
     const done = steps.filter((s) => store.isDone(s.p)).length;
@@ -33,8 +49,14 @@ export function cmdRoutes(store: Store, _args: Args): void {
   out(r.table(["id", "名称", "题量", "跨专题", "易/中/难", "时长", "进度", "", "一句话"], rows,
     ["left", "left", "right", "right", "left", "right", "left", "right", "left"]));
   out("");
+  if (blocked) {
+    out(needSync(`「面试冲刺」「补弱项」要按${MISSING.freq}排题，`));
+    out("");
+  }
   out(r.paint("  这四条是「学习计划」。想练单个知识点或题单用 {PROG} plan <专题>，", "gray"));
-  out(r.paint("  可选的专题有 13 个大类 / 65 个子标签 / 28 份题单，用 {PROG} topics、{PROG} lists 查。", "gray"), "");
+  out(r.paint(`  可选的专题有 ${store.cats.length} 个大类 / ${store.subById.size} 个子标签`
+    + `${store.curated.length ? ` / ${store.curated.length} 份题单` : ""}，用 {PROG} topics`
+    + `${store.curated.length ? "、{PROG} lists" : ""} 查。`, "gray"), "");
 }
 
 const KIND_LABEL: Record<string, string> = { cat: "大类", tag: "子标签", list: "题单" };
@@ -43,6 +65,11 @@ export function cmdPlan(store: Store, args: Args): void {
   const key = args["topic"] as string;
   const route = planner.ROUTE_BY_ID.get(key);
   if (route) {
+    if (store.baseline && needsFreq(route)) {
+      throw new CliError(`「${route.name}」要按${MISSING.freq}排题，随包的精简题库里没有。\n`
+        + `先跑 ${PROG} sync 抓一次，或者换一条不依赖频次的主线：`
+        + `${PROG} plan starter / ${PROG} plan advanced`);
+    }
     const plan = planner.planRoute(store, route, Boolean(args["paid"]));
     renderPlan(store, plan, args, { kindCn: "主线路线", tagline: route.tagline, isRoute: true });
     return;

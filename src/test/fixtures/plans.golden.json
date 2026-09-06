@@ -36,7 +36,7 @@
           "non-overlapping-intervals",
           "longest-palindromic-subsequence",
           "valid-parenthesis-string",
-          "longest-palindromic-substring",
+          "palindromic-substrings",
           "minimum-insertion-steps-to-make-a-string-palindrome",
           "best-time-to-buy-and-sell-stock-iii",
           "profitable-schemes",
@@ -85,18 +85,17 @@
   },
   "topic:tree": {
     "poolSize": 52,
-    "covered": 33,
+    "covered": 31,
     "sections": [
       {
         "key": "tree-traversal",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "balanced-binary-tree",
           "same-tree",
           "binary-tree-level-order-traversal",
           "binary-tree-zigzag-level-order-traversal",
           "binary-tree-level-order-traversal-ii",
-          "largest-rectangle-in-histogram",
           "basic-calculator-iv",
           "merge-k-sorted-lists"
         ]
@@ -117,12 +116,12 @@
       },
       {
         "key": "tree-build",
-        "pool": 6,
+        "pool": 7,
         "steps": [
           "populating-next-right-pointers-in-each-node-ii",
-          "recover-binary-search-tree",
           "construct-binary-tree-from-preorder-and-inorder-traversal",
-          "construct-binary-tree-from-inorder-and-postorder-traversal"
+          "construct-binary-tree-from-inorder-and-postorder-traversal",
+          "serialize-and-deserialize-binary-tree"
         ]
       },
       {
@@ -138,8 +137,8 @@
     ]
   },
   "topic:lc:leetcode-75": {
-    "poolSize": 52,
-    "covered": 45,
+    "poolSize": 51,
+    "covered": 44,
     "sections": [
       {
         "key": "official:数组 / 字符串",
@@ -248,13 +247,6 @@
         ]
       },
       {
-        "key": "official:堆 / 优先队列",
-        "pool": 1,
-        "steps": [
-          "kth-largest-element-in-an-array"
-        ]
-      },
-      {
         "key": "official:二分查找",
         "pool": 1,
         "steps": [
@@ -285,8 +277,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 261,
-    "covered": 116,
+    "poolSize": 258,
+    "covered": 118,
     "sections": [
       {
         "key": "hash-count",
@@ -299,11 +291,11 @@
       },
       {
         "key": "two-pointers",
-        "pool": 48,
+        "pool": 47,
         "steps": [
           "move-zeroes",
           "3sum",
-          "kth-largest-element-in-an-array"
+          "reorder-list"
         ]
       },
       {
@@ -317,7 +309,7 @@
       },
       {
         "key": "linked-list",
-        "pool": 18,
+        "pool": 17,
         "steps": [
           "intersection-of-two-linked-lists",
           "reverse-linked-list",
@@ -326,11 +318,11 @@
       },
       {
         "key": "stack-queue",
-        "pool": 39,
+        "pool": 38,
         "steps": [
           "palindrome-linked-list",
           "daily-temperatures",
-          "reorder-list"
+          "remove-nth-node-from-end-of-list"
         ]
       },
       {
@@ -381,8 +373,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 290,
-    "covered": 134,
+    "poolSize": 289,
+    "covered": 133,
     "sections": [
       {
         "key": "hash-count",
@@ -406,12 +398,12 @@
       },
       {
         "key": "two-pointers",
-        "pool": 46,
+        "pool": 45,
         "steps": [
           "move-zeroes",
           "3sum",
-          "kth-largest-element-in-an-array",
-          "reorder-list"
+          "reorder-list",
+          "longest-palindromic-substring"
         ]
       },
       {
@@ -486,17 +478,17 @@
       },
       {
         "key": "dp-linear",
-        "pool": 38,
+        "pool": 37,
         "steps": [
           "is-subsequence",
           "fibonacci-number",
           "longest-palindromic-subsequence",
-          "longest-palindromic-substring"
+          "maximum-subarray"
         ]
       },
       {
         "key": "ds-design",
-        "pool": 6,
+        "pool": 7,
         "steps": [
           "online-stock-span",
           "string-compression",
@@ -554,12 +546,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 320,
-    "covered": 92,
+    "poolSize": 317,
+    "covered": 91,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 57,
+        "pool": 56,
         "steps": [
           "linked-list-cycle",
           "reverse-words-in-a-string",
@@ -577,7 +569,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 50,
+        "pool": 49,
         "steps": [
           "palindrome-linked-list",
           "daily-temperatures",
@@ -613,7 +605,7 @@
       },
       {
         "key": "sorting",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "merge-sorted-array",
           "3sum",

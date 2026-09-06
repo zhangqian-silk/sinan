@@ -863,7 +863,7 @@ async function renderDrawer(slug) {
   if (p.review?.solutions?.length) {
     host.append(h('div.dBlock', {},
       h('div.dBlock__head', {}, h('h3', {}, '解法'),
-        h('span', {}, `${p.review.solutions.length} 种，第一条最好上手`)),
+        h('span', {}, `${p.review.solutions.length} 种`)),
       p.review.solutions.map((sol, i) => h('div.solRow', {},
         h('div.solRow__top', {},
           h('span.solRow__n', {}, String(i + 1)),

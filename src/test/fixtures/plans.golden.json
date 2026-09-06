@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 205,
-    "covered": 114,
+    "poolSize": 204,
+    "covered": 113,
     "sections": [
       {
         "key": "hash-count",
@@ -319,11 +319,11 @@
       },
       {
         "key": "bs-array",
-        "pool": 26,
+        "pool": 25,
         "steps": [
           "minimum-number-of-days-to-make-m-bouquets",
           "two-sum-ii-input-array-is-sorted",
-          "capacity-to-ship-packages-within-d-days"
+          "heaters"
         ]
       },
       {

@@ -60,12 +60,12 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 20,
+    "poolSize": 21,
     "covered": 16,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 20,
+        "pool": 21,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 204,
-    "covered": 113,
+    "poolSize": 202,
+    "covered": 112,
     "sections": [
       {
         "key": "hash-count",
@@ -319,7 +319,7 @@
       },
       {
         "key": "bs-array",
-        "pool": 25,
+        "pool": 24,
         "steps": [
           "minimum-number-of-days-to-make-m-bouquets",
           "two-sum-ii-input-array-is-sorted",
@@ -337,7 +337,7 @@
       },
       {
         "key": "backtracking",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "binary-tree-paths",
           "luogu:P1025",
@@ -356,7 +356,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 186,
+    "poolSize": 187,
     "covered": 109,
     "sections": [
       {
@@ -441,7 +441,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -520,7 +520,7 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 223,
+    "poolSize": 224,
     "covered": 93,
     "sections": [
       {
@@ -560,21 +560,21 @@
         ]
       },
       {
+        "key": "bs-answer",
+        "pool": 21,
+        "steps": [
+          "sqrtx",
+          "longest-common-prefix",
+          "divide-two-integers"
+        ]
+      },
+      {
         "key": "hash-count",
         "pool": 23,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
           "3sum"
-        ]
-      },
-      {
-        "key": "bs-answer",
-        "pool": 20,
-        "steps": [
-          "sqrtx",
-          "longest-common-prefix",
-          "divide-two-integers"
         ]
       },
       {

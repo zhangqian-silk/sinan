@@ -479,7 +479,7 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 44,
+    "poolSize": 45,
     "covered": 31,
     "sections": [
       {
@@ -498,7 +498,7 @@
       },
       {
         "key": "graph",
-        "pool": 12,
+        "pool": 11,
         "steps": [
           "keys-and-rooms",
           "minimum-number-of-days-to-make-m-bouquets",
@@ -508,17 +508,17 @@
           "minimize-the-maximum-edge-weight-of-graph",
           "course-schedule-iv",
           "path-with-minimum-effort",
-          "find-the-shortest-superstring",
           "swim-in-rising-water",
           "minimum-degree-of-a-connected-trio-in-a-graph"
         ]
       },
       {
         "key": "advanced-ds",
-        "pool": 5,
+        "pool": 7,
         "steps": [
           "luogu:P1020",
           "minimum-cost-tree-from-leaf-values",
+          "largest-rectangle-in-histogram",
           "longest-duplicate-substring"
         ]
       }

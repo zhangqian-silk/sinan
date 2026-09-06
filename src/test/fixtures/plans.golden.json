@@ -1,11 +1,11 @@
 {
   "topic:monotonic": {
-    "poolSize": 32,
-    "covered": 25,
+    "poolSize": 31,
+    "covered": 24,
     "sections": [
       {
         "key": "monotonic",
-        "pool": 32,
+        "pool": 31,
         "steps": [
           "next-greater-element-i",
           "final-prices-with-a-special-discount-in-a-shop",
@@ -17,8 +17,8 @@
           "sliding-window-maximum",
           "maximal-rectangle",
           "largest-rectangle-in-histogram",
-          "the-skyline-problem",
-          "shortest-subarray-with-sum-at-least-k"
+          "shortest-subarray-with-sum-at-least-k",
+          "sliding-window-median"
         ]
       }
     ]
@@ -61,12 +61,12 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 14,
-    "covered": 13,
+    "poolSize": 15,
+    "covered": 14,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 14,
+        "pool": 15,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
@@ -265,8 +265,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 209,
-    "covered": 94,
+    "poolSize": 207,
+    "covered": 96,
     "sections": [
       {
         "key": "hash-count",
@@ -279,11 +279,11 @@
       },
       {
         "key": "two-pointers",
-        "pool": 40,
+        "pool": 41,
         "steps": [
           "move-zeroes",
-          "3sum",
-          "3sum-closest"
+          "compare-version-numbers",
+          "3sum"
         ]
       },
       {
@@ -306,7 +306,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 33,
+        "pool": 31,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -351,7 +351,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",
@@ -361,12 +361,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 202,
+    "poolSize": 197,
     "covered": 112,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 21,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -386,12 +386,12 @@
       },
       {
         "key": "two-pointers",
-        "pool": 36,
+        "pool": 35,
         "steps": [
           "move-zeroes",
+          "compare-version-numbers",
           "3sum",
-          "reorder-list",
-          "longest-palindromic-substring"
+          "reorder-list"
         ]
       },
       {
@@ -406,7 +406,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 32,
+        "pool": 31,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -416,7 +416,7 @@
       },
       {
         "key": "heap",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "sort-colors",
           "kth-smallest-element-in-a-sorted-matrix",
@@ -446,7 +446,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 12,
+        "pool": 13,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
@@ -456,22 +456,22 @@
       },
       {
         "key": "graph-basic",
-        "pool": 5,
+        "pool": 4,
         "steps": [
           "keys-and-rooms",
           "number-of-provinces",
-          "surrounded-regions",
-          "course-schedule-iv"
+          "course-schedule-iv",
+          "minimum-number-of-days-to-eat-n-oranges"
         ]
       },
       {
         "key": "dp-linear",
-        "pool": 12,
+        "pool": 11,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
           "longest-palindromic-subsequence",
-          "increasing-triplet-subsequence"
+          "longest-palindromic-substring"
         ]
       },
       {
@@ -486,7 +486,7 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 53,
+    "poolSize": 52,
     "covered": 29,
     "sections": [
       {
@@ -509,16 +509,16 @@
         "steps": [
           "keys-and-rooms",
           "number-of-provinces",
-          "surrounded-regions",
           "minimize-the-maximum-edge-weight-of-graph",
           "course-schedule-iv",
+          "path-with-minimum-effort",
           "find-the-shortest-superstring",
           "odd-even-jump"
         ]
       },
       {
         "key": "advanced-ds",
-        "pool": 7,
+        "pool": 6,
         "steps": [
           "maximum-binary-tree",
           "range-sum-query-mutable",
@@ -529,12 +529,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 233,
-    "covered": 94,
+    "poolSize": 227,
+    "covered": 91,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 47,
+        "pool": 46,
         "steps": [
           "move-zeroes",
           "longest-substring-without-repeating-characters",
@@ -551,15 +551,6 @@
         ]
       },
       {
-        "key": "stack-queue",
-        "pool": 36,
-        "steps": [
-          "palindrome-linked-list",
-          "next-greater-element-ii",
-          "reorder-list"
-        ]
-      },
-      {
         "key": "monotonic",
         "pool": 31,
         "steps": [
@@ -569,8 +560,17 @@
         ]
       },
       {
+        "key": "stack-queue",
+        "pool": 33,
+        "steps": [
+          "palindrome-linked-list",
+          "next-greater-element-ii",
+          "asteroid-collision"
+        ]
+      },
+      {
         "key": "hash-count",
-        "pool": 26,
+        "pool": 25,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -597,7 +597,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 15,
+        "pool": 14,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",

@@ -9,16 +9,17 @@
         "steps": [
           "next-greater-element-i",
           "daily-temperatures",
+          "maximum-sum-circular-subarray",
           "asteroid-collision",
           "next-greater-element-iii",
           "remove-k-digits",
-          "construct-binary-tree-from-preorder-and-inorder-traversal",
           "sliding-window-maximum",
           "maximal-rectangle",
           "largest-rectangle-in-histogram",
           "basic-calculator-iv",
           "shortest-subarray-with-sum-at-least-k",
-          "sliding-window-median"
+          "sliding-window-median",
+          "dinner-plate-stacks"
         ]
       }
     ]
@@ -85,16 +86,18 @@
   },
   "topic:tree": {
     "poolSize": 52,
-    "covered": 31,
+    "covered": 32,
     "sections": [
       {
         "key": "tree-traversal",
-        "pool": 29,
+        "pool": 30,
         "steps": [
           "balanced-binary-tree",
+          "symmetric-tree",
           "same-tree",
           "binary-tree-level-order-traversal",
           "binary-tree-zigzag-level-order-traversal",
+          "sum-root-to-leaf-numbers",
           "binary-tree-level-order-traversal-ii",
           "basic-calculator-iv",
           "merge-k-sorted-lists"
@@ -126,9 +129,8 @@
       },
       {
         "key": "tree-path",
-        "pool": 7,
+        "pool": 6,
         "steps": [
-          "path-sum",
           "lowest-common-ancestor-of-a-binary-tree",
           "path-sum-iii",
           "binary-tree-maximum-path-sum"
@@ -278,12 +280,12 @@
     ]
   },
   "route:starter": {
-    "poolSize": 254,
-    "covered": 112,
+    "poolSize": 243,
+    "covered": 104,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 32,
+        "pool": 30,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -292,7 +294,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 47,
+        "pool": 46,
         "steps": [
           "move-zeroes",
           "3sum",
@@ -301,11 +303,11 @@
       },
       {
         "key": "sliding-window",
-        "pool": 15,
+        "pool": 12,
         "steps": [
           "maximum-average-subarray-i",
           "remove-element",
-          "3sum-closest"
+          "remove-duplicates-from-sorted-array-ii"
         ]
       },
       {
@@ -337,16 +339,16 @@
       },
       {
         "key": "bs-array",
-        "pool": 18,
+        "pool": 16,
         "steps": [
           "convert-sorted-array-to-binary-search-tree",
-          "koko-eating-bananas",
-          "two-sum-ii-input-array-is-sorted"
+          "two-sum-ii-input-array-is-sorted",
+          "minimum-size-subarray-sum"
         ]
       },
       {
         "key": "prefix-sum",
-        "pool": 11,
+        "pool": 9,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -364,7 +366,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 22,
+        "pool": 21,
         "steps": [
           "fibonacci-number",
           "maximum-sum-circular-subarray",
@@ -374,32 +376,32 @@
     ]
   },
   "route:interview": {
-    "poolSize": 284,
+    "poolSize": 279,
     "covered": 134,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 31,
+        "pool": 30,
         "steps": [
           "two-sum",
           "linked-list-cycle",
           "longest-substring-without-repeating-characters",
-          "binary-tree-right-side-view"
+          "construct-binary-tree-from-preorder-and-inorder-traversal"
         ]
       },
       {
         "key": "sliding-window",
-        "pool": 22,
+        "pool": 19,
         "steps": [
           "maximum-average-subarray-i",
           "remove-element",
-          "3sum-closest",
-          "remove-duplicates-from-sorted-array-ii"
+          "remove-duplicates-from-sorted-array-ii",
+          "4sum"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 45,
+        "pool": 44,
         "steps": [
           "move-zeroes",
           "3sum",
@@ -443,18 +445,18 @@
         "steps": [
           "same-tree",
           "binary-tree-level-order-traversal",
-          "binary-tree-zigzag-level-order-traversal",
-          "sum-root-to-leaf-numbers"
+          "sum-root-to-leaf-numbers",
+          "lowest-common-ancestor-of-a-binary-tree"
         ]
       },
       {
         "key": "tree-path",
-        "pool": 8,
+        "pool": 7,
         "steps": [
           "path-sum",
-          "lowest-common-ancestor-of-a-binary-tree",
           "lowest-common-ancestor-of-a-binary-search-tree",
-          "longest-zigzag-path-in-a-binary-tree"
+          "path-sum-iii",
+          "path-sum-ii"
         ]
       },
       {
@@ -489,12 +491,12 @@
       },
       {
         "key": "ds-design",
-        "pool": 7,
+        "pool": 8,
         "steps": [
           "online-stock-span",
           "string-compression",
           "binary-search-tree-iterator",
-          "kth-smallest-element-in-a-bst"
+          "flatten-nested-list-iterator"
         ]
       }
     ]
@@ -547,12 +549,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 313,
-    "covered": 85,
+    "poolSize": 310,
+    "covered": 84,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 56,
+        "pool": 55,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -570,7 +572,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 46,
+        "pool": 47,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -579,7 +581,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 39,
+        "pool": 38,
         "steps": [
           "fibonacci-number",
           "maximum-sum-circular-subarray",
@@ -597,11 +599,11 @@
       },
       {
         "key": "hash-count",
-        "pool": 35,
+        "pool": 34,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
-          "remove-duplicates-from-sorted-array-ii"
+          "3sum"
         ]
       },
       {
@@ -615,11 +617,11 @@
       },
       {
         "key": "sorting",
-        "pool": 26,
+        "pool": 25,
         "steps": [
           "merge-sorted-array",
-          "3sum",
-          "3sum-closest"
+          "3sum-closest",
+          "longest-valid-parentheses"
         ]
       }
     ]

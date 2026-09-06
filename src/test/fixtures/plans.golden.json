@@ -60,13 +60,14 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 18,
+    "poolSize": 20,
     "covered": 16,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 18,
+        "pool": 20,
         "steps": [
+          "sqrtx",
           "longest-common-prefix",
           "divide-two-integers",
           "koko-eating-bananas",
@@ -76,7 +77,6 @@
           "longest-duplicate-substring",
           "split-array-largest-sum",
           "nth-magical-number",
-          "find-k-th-smallest-pair-distance",
           "swim-in-rising-water"
         ]
       }
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 207,
-    "covered": 115,
+    "poolSize": 205,
+    "covered": 114,
     "sections": [
       {
         "key": "hash-count",
@@ -274,7 +274,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 41,
+        "pool": 42,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -319,16 +319,16 @@
       },
       {
         "key": "bs-array",
-        "pool": 28,
+        "pool": 26,
         "steps": [
-          "minimum-capacity-box",
           "minimum-number-of-days-to-make-m-bouquets",
-          "two-sum-ii-input-array-is-sorted"
+          "two-sum-ii-input-array-is-sorted",
+          "capacity-to-ship-packages-within-d-days"
         ]
       },
       {
         "key": "prefix-sum",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -356,8 +356,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 183,
-    "covered": 107,
+    "poolSize": 186,
+    "covered": 109,
     "sections": [
       {
         "key": "hash-count",
@@ -381,7 +381,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 40,
+        "pool": 41,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -441,12 +441,12 @@
       },
       {
         "key": "bs-answer",
-        "pool": 15,
+        "pool": 17,
         "steps": [
+          "sqrtx",
           "longest-common-prefix",
           "divide-two-integers",
-          "koko-eating-bananas",
-          "find-the-duplicate-number"
+          "koko-eating-bananas"
         ]
       },
       {
@@ -479,8 +479,8 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 45,
-    "covered": 31,
+    "poolSize": 46,
+    "covered": 29,
     "sections": [
       {
         "key": "dp",
@@ -498,19 +498,14 @@
       },
       {
         "key": "graph",
-        "pool": 12,
+        "pool": 13,
         "steps": [
           "keys-and-rooms",
-          "luogu:P1006",
           "number-of-provinces",
-          "luogu:P1027",
-          "minimize-the-maximum-edge-weight-of-graph",
           "course-schedule-iv",
-          "minimize-maximum-component-cost",
           "path-with-minimum-effort",
           "find-the-shortest-superstring",
-          "swim-in-rising-water",
-          "minimum-degree-of-a-connected-trio-in-a-graph"
+          "swim-in-rising-water"
         ]
       },
       {
@@ -525,12 +520,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 219,
-    "covered": 91,
+    "poolSize": 223,
+    "covered": 93,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 49,
+        "pool": 50,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -575,11 +570,20 @@
       },
       {
         "key": "bs-answer",
-        "pool": 18,
+        "pool": 20,
         "steps": [
+          "sqrtx",
           "longest-common-prefix",
-          "divide-two-integers",
-          "koko-eating-bananas"
+          "divide-two-integers"
+        ]
+      },
+      {
+        "key": "sorting",
+        "pool": 16,
+        "steps": [
+          "merge-sorted-array",
+          "determine-if-two-strings-are-close",
+          "3sum-closest"
         ]
       },
       {
@@ -589,15 +593,6 @@
           "generate-parentheses",
           "longest-palindromic-subsequence",
           "predict-the-winner"
-        ]
-      },
-      {
-        "key": "sorting",
-        "pool": 15,
-        "steps": [
-          "merge-sorted-array",
-          "determine-if-two-strings-are-close",
-          "3sum-closest"
         ]
       }
     ]

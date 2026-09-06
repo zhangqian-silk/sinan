@@ -33,6 +33,12 @@ npm test           # 编译后跑全部测试
 SINAN_DATA_ROOT=~/.sinan/data npm test
 ```
 
+## 评一批题
+
+人工判定写在 `reviews/*.jsonl`，一批一个文件；有判定的题，标签整体以人工为准。
+格式、判定规则和重建步骤都在 [`.codex/skills/problem-review/SKILL.md`](.codex/skills/problem-review/SKILL.md)，
+评题前照着它做。
+
 ## 改了 planner 之后
 
 `planner.test.ts` 里有一份快照，固化了每个专题选出的代表题。改动打分或阈值会让它失败 ——

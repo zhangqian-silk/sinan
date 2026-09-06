@@ -1,0 +1,3 @@
+interface:
+  display_name: "人工判定"
+  short_description: "逐题分析解法、定标签，写进 reviews/*.jsonl"

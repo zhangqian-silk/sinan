@@ -107,7 +107,7 @@ export async function fetchMany<T extends Cached>(
         const i = cursor;
         cursor += 1;
         if (i >= todo.length) return;
-        const key = todo[i]!;
+        const key = todo[i];
         let rec: T | null;
         try {
           rec = await worker(key);

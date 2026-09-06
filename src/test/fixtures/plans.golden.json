@@ -1,0 +1,640 @@
+{
+  "topic:monotonic": {
+    "poolSize": 35,
+    "covered": 28,
+    "sections": [
+      {
+        "key": "monotonic",
+        "pool": 35,
+        "steps": [
+          "next-greater-element-i",
+          "daily-temperatures",
+          "maximum-sum-circular-subarray",
+          "asteroid-collision",
+          "remove-k-digits",
+          "construct-binary-tree-from-preorder-and-inorder-traversal",
+          "trapping-rain-water",
+          "sliding-window-maximum",
+          "maximal-rectangle",
+          "largest-rectangle-in-histogram",
+          "shortest-subarray-with-sum-at-least-k",
+          "sliding-window-median"
+        ]
+      }
+    ]
+  },
+  "topic:dp-interval": {
+    "poolSize": 28,
+    "covered": 20,
+    "sections": [
+      {
+        "key": "dp-interval",
+        "pool": 28,
+        "steps": [
+          "fibonacci-number",
+          "generate-parentheses",
+          "non-overlapping-intervals",
+          "longest-palindromic-subsequence",
+          "valid-parenthesis-string",
+          "longest-palindromic-substring",
+          "minimum-insertion-steps-to-make-a-string-palindrome",
+          "best-time-to-buy-and-sell-stock-iii",
+          "profitable-schemes",
+          "count-different-palindromic-subsequences",
+          "shortest-path-visiting-all-nodes"
+        ]
+      }
+    ]
+  },
+  "topic:iterator": {
+    "poolSize": 6,
+    "covered": 5,
+    "sections": [
+      {
+        "key": "iterator",
+        "pool": 6,
+        "steps": [
+          "iterator-for-combination",
+          "rle-iterator",
+          "binary-search-tree-iterator",
+          "flatten-nested-list-iterator"
+        ]
+      }
+    ]
+  },
+  "topic:bs-answer": {
+    "poolSize": 38,
+    "covered": 33,
+    "sections": [
+      {
+        "key": "bs-answer",
+        "pool": 38,
+        "steps": [
+          "minimum-capacity-box",
+          "koko-eating-bananas",
+          "capacity-to-ship-packages-within-d-days",
+          "magnetic-force-between-two-balls",
+          "kth-smallest-element-in-a-sorted-matrix",
+          "kth-smallest-number-in-multiplication-table",
+          "split-array-largest-sum",
+          "qie-fen-shu-zu",
+          "minimum-number-of-days-to-disconnect-island",
+          "maximize-the-minimum-powered-city",
+          "minimum-number-of-days-to-eat-n-oranges",
+          "maximum-subarray-xor-with-bounded-range"
+        ]
+      }
+    ]
+  },
+  "topic:tree": {
+    "poolSize": 53,
+    "covered": 36,
+    "sections": [
+      {
+        "key": "tree-traversal",
+        "pool": 30,
+        "steps": [
+          "balanced-binary-tree",
+          "maximum-depth-of-binary-tree",
+          "binary-tree-level-order-traversal",
+          "binary-tree-zigzag-level-order-traversal",
+          "binary-tree-level-order-traversal-ii",
+          "largest-rectangle-in-histogram",
+          "basic-calculator-iv",
+          "merge-k-sorted-lists"
+        ]
+      },
+      {
+        "key": "bst",
+        "pool": 9,
+        "steps": [
+          "convert-sorted-array-to-binary-search-tree",
+          "unique-binary-search-trees",
+          "delete-node-in-a-bst",
+          "unique-binary-search-trees-ii",
+          "validate-binary-search-tree",
+          "binary-search-tree-iterator",
+          "convert-sorted-list-to-binary-search-tree",
+          "kth-smallest-element-in-a-bst"
+        ]
+      },
+      {
+        "key": "tree-build",
+        "pool": 6,
+        "steps": [
+          "populating-next-right-pointers-in-each-node-ii",
+          "recover-binary-search-tree",
+          "construct-binary-tree-from-preorder-and-inorder-traversal",
+          "construct-binary-tree-from-inorder-and-postorder-traversal"
+        ]
+      },
+      {
+        "key": "tree-path",
+        "pool": 8,
+        "steps": [
+          "path-sum",
+          "lowest-common-ancestor-of-a-binary-tree",
+          "lowest-common-ancestor-of-a-binary-search-tree",
+          "longest-zigzag-path-in-a-binary-tree",
+          "path-sum-iii",
+          "path-sum-ii",
+          "binary-tree-maximum-path-sum"
+        ]
+      }
+    ]
+  },
+  "topic:lc:leetcode-75": {
+    "poolSize": 52,
+    "covered": 45,
+    "sections": [
+      {
+        "key": "official:数组 / 字符串",
+        "pool": 9,
+        "steps": [
+          "greatest-common-divisor-of-strings",
+          "kids-with-the-greatest-number-of-candies",
+          "can-place-flowers",
+          "merge-strings-alternately",
+          "reverse-vowels-of-a-string",
+          "product-of-array-except-self",
+          "increasing-triplet-subsequence",
+          "string-compression"
+        ]
+      },
+      {
+        "key": "official:双指针",
+        "pool": 4,
+        "steps": [
+          "move-zeroes",
+          "is-subsequence",
+          "max-number-of-k-sum-pairs"
+        ]
+      },
+      {
+        "key": "official:滑动窗口",
+        "pool": 4,
+        "steps": [
+          "maximum-average-subarray-i",
+          "max-consecutive-ones-iii"
+        ]
+      },
+      {
+        "key": "official:前缀和",
+        "pool": 2,
+        "steps": [
+          "find-pivot-index"
+        ]
+      },
+      {
+        "key": "official:哈希表 / 哈希集合",
+        "pool": 4,
+        "steps": [
+          "unique-number-of-occurrences",
+          "find-the-difference-of-two-arrays",
+          "determine-if-two-strings-are-close",
+          "equal-row-and-column-pairs"
+        ]
+      },
+      {
+        "key": "official:栈",
+        "pool": 3,
+        "steps": [
+          "asteroid-collision",
+          "removing-stars-from-a-string",
+          "decode-string"
+        ]
+      },
+      {
+        "key": "official:队列",
+        "pool": 2,
+        "steps": [
+          "number-of-recent-calls"
+        ]
+      },
+      {
+        "key": "official:链表",
+        "pool": 4,
+        "steps": [
+          "reverse-linked-list",
+          "odd-even-linked-list",
+          "maximum-twin-sum-of-a-linked-list"
+        ]
+      },
+      {
+        "key": "official:二叉树 - 深度优先搜索",
+        "pool": 6,
+        "steps": [
+          "maximum-depth-of-binary-tree",
+          "lowest-common-ancestor-of-a-binary-tree",
+          "longest-zigzag-path-in-a-binary-tree",
+          "path-sum-iii"
+        ]
+      },
+      {
+        "key": "official:二叉树 - 广度优先搜索",
+        "pool": 2,
+        "steps": [
+          "binary-tree-right-side-view"
+        ]
+      },
+      {
+        "key": "official:二叉搜索树",
+        "pool": 2,
+        "steps": [
+          "search-in-a-binary-search-tree"
+        ]
+      },
+      {
+        "key": "official:图 - 深度优先搜索",
+        "pool": 4,
+        "steps": [
+          "keys-and-rooms",
+          "number-of-provinces",
+          "evaluate-division"
+        ]
+      },
+      {
+        "key": "official:堆 / 优先队列",
+        "pool": 1,
+        "steps": [
+          "kth-largest-element-in-an-array"
+        ]
+      },
+      {
+        "key": "official:二分查找",
+        "pool": 1,
+        "steps": [
+          "koko-eating-bananas"
+        ]
+      },
+      {
+        "key": "official:动态规划 - 一维",
+        "pool": 1,
+        "steps": [
+          "domino-and-tromino-tiling"
+        ]
+      },
+      {
+        "key": "official:区间集合",
+        "pool": 1,
+        "steps": [
+          "non-overlapping-intervals"
+        ]
+      },
+      {
+        "key": "official:单调栈",
+        "pool": 2,
+        "steps": [
+          "online-stock-span"
+        ]
+      }
+    ]
+  },
+  "route:starter": {
+    "poolSize": 259,
+    "covered": 118,
+    "sections": [
+      {
+        "key": "hash-count",
+        "pool": 31,
+        "steps": [
+          "linked-list-cycle",
+          "remove-duplicates-from-sorted-array-ii",
+          "binary-tree-right-side-view"
+        ]
+      },
+      {
+        "key": "two-pointers",
+        "pool": 47,
+        "steps": [
+          "merge-sorted-array",
+          "move-zeroes",
+          "next-permutation"
+        ]
+      },
+      {
+        "key": "sliding-window",
+        "pool": 15,
+        "steps": [
+          "maximum-average-subarray-i",
+          "reverse-vowels-of-a-string",
+          "remove-element"
+        ]
+      },
+      {
+        "key": "linked-list",
+        "pool": 18,
+        "steps": [
+          "intersection-of-two-linked-lists",
+          "reverse-linked-list",
+          "remove-duplicates-from-sorted-list-ii"
+        ]
+      },
+      {
+        "key": "stack-queue",
+        "pool": 41,
+        "steps": [
+          "palindrome-linked-list",
+          "daily-temperatures",
+          "reorder-list"
+        ]
+      },
+      {
+        "key": "tree-traversal",
+        "pool": 48,
+        "steps": [
+          "balanced-binary-tree",
+          "same-tree",
+          "binary-tree-level-order-traversal"
+        ]
+      },
+      {
+        "key": "bs-array",
+        "pool": 17,
+        "steps": [
+          "convert-sorted-array-to-binary-search-tree",
+          "koko-eating-bananas",
+          "two-sum-ii-input-array-is-sorted"
+        ]
+      },
+      {
+        "key": "prefix-sum",
+        "pool": 9,
+        "steps": [
+          "find-the-highest-altitude",
+          "find-pivot-index",
+          "product-of-array-except-self"
+        ]
+      },
+      {
+        "key": "backtracking",
+        "pool": 10,
+        "steps": [
+          "binary-tree-paths",
+          "3sum",
+          "generate-parentheses"
+        ]
+      },
+      {
+        "key": "dp-linear",
+        "pool": 23,
+        "steps": [
+          "is-subsequence",
+          "fibonacci-number",
+          "longest-palindromic-subsequence"
+        ]
+      }
+    ]
+  },
+  "route:interview": {
+    "poolSize": 291,
+    "covered": 141,
+    "sections": [
+      {
+        "key": "hash-count",
+        "pool": 30,
+        "steps": [
+          "linked-list-cycle",
+          "remove-duplicates-from-sorted-array-ii",
+          "lowest-common-ancestor-of-a-binary-tree",
+          "binary-tree-right-side-view"
+        ]
+      },
+      {
+        "key": "sliding-window",
+        "pool": 23,
+        "steps": [
+          "maximum-average-subarray-i",
+          "reverse-words-in-a-string",
+          "3sum-closest",
+          "max-consecutive-ones-iii"
+        ]
+      },
+      {
+        "key": "two-pointers",
+        "pool": 46,
+        "steps": [
+          "valid-palindrome",
+          "merge-sorted-array",
+          "container-with-most-water",
+          "reorder-list"
+        ]
+      },
+      {
+        "key": "linked-list",
+        "pool": 16,
+        "steps": [
+          "intersection-of-two-linked-lists",
+          "reverse-linked-list",
+          "remove-duplicates-from-sorted-list-ii",
+          "odd-even-linked-list"
+        ]
+      },
+      {
+        "key": "monotonic",
+        "pool": 35,
+        "steps": [
+          "daily-temperatures",
+          "asteroid-collision",
+          "remove-k-digits",
+          "sliding-window-maximum"
+        ]
+      },
+      {
+        "key": "heap",
+        "pool": 20,
+        "steps": [
+          "remove-duplicates-from-sorted-array",
+          "remove-element",
+          "sort-colors",
+          "partition-list"
+        ]
+      },
+      {
+        "key": "tree-traversal",
+        "pool": 48,
+        "steps": [
+          "same-tree",
+          "binary-tree-level-order-traversal",
+          "binary-tree-zigzag-level-order-traversal",
+          "restore-ip-addresses"
+        ]
+      },
+      {
+        "key": "tree-path",
+        "pool": 7,
+        "steps": [
+          "path-sum",
+          "binary-tree-paths",
+          "lowest-common-ancestor-of-a-binary-search-tree",
+          "path-sum-iii"
+        ]
+      },
+      {
+        "key": "bs-answer",
+        "pool": 10,
+        "steps": [
+          "koko-eating-bananas",
+          "capacity-to-ship-packages-within-d-days",
+          "magnetic-force-between-two-balls",
+          "kth-smallest-element-in-a-sorted-matrix"
+        ]
+      },
+      {
+        "key": "graph-basic",
+        "pool": 9,
+        "steps": [
+          "keys-and-rooms",
+          "number-of-provinces",
+          "surrounded-regions",
+          "evaluate-division"
+        ]
+      },
+      {
+        "key": "dp-linear",
+        "pool": 39,
+        "steps": [
+          "is-subsequence",
+          "fibonacci-number",
+          "longest-palindromic-subsequence",
+          "longest-palindromic-substring"
+        ]
+      },
+      {
+        "key": "ds-design",
+        "pool": 8,
+        "steps": [
+          "generate-parentheses",
+          "kth-largest-element-in-an-array",
+          "online-stock-span",
+          "string-compression"
+        ]
+      }
+    ]
+  },
+  "route:advanced": {
+    "poolSize": 68,
+    "covered": 34,
+    "sections": [
+      {
+        "key": "dp",
+        "pool": 41,
+        "steps": [
+          "generate-parentheses",
+          "non-overlapping-intervals",
+          "longest-palindromic-subsequence",
+          "valid-parenthesis-string",
+          "maximum-subarray",
+          "longest-palindromic-substring",
+          "palindrome-partitioning",
+          "trapping-rain-water",
+          "best-time-to-buy-and-sell-stock-iii"
+        ]
+      },
+      {
+        "key": "graph",
+        "pool": 19,
+        "steps": [
+          "keys-and-rooms",
+          "number-of-provinces",
+          "surrounded-regions",
+          "evaluate-division",
+          "number-of-ways-to-paint-n-3-grid",
+          "shortest-path-visiting-all-nodes",
+          "odd-even-jump"
+        ]
+      },
+      {
+        "key": "advanced-ds",
+        "pool": 8,
+        "steps": [
+          "maximum-binary-tree",
+          "luogu:P1020",
+          "minimum-cost-tree-from-leaf-values",
+          "sliding-window-maximum",
+          "largest-rectangle-in-histogram",
+          "shortest-subarray-with-sum-at-least-k",
+          "sliding-window-median"
+        ]
+      }
+    ]
+  },
+  "route:weakness": {
+    "poolSize": 320,
+    "covered": 99,
+    "sections": [
+      {
+        "key": "two-pointers",
+        "pool": 55,
+        "steps": [
+          "merge-sorted-array",
+          "linked-list-cycle",
+          "next-permutation"
+        ]
+      },
+      {
+        "key": "tree-traversal",
+        "pool": 53,
+        "steps": [
+          "balanced-binary-tree",
+          "binary-tree-level-order-traversal",
+          "sum-root-to-leaf-numbers"
+        ]
+      },
+      {
+        "key": "stack-queue",
+        "pool": 52,
+        "steps": [
+          "palindrome-linked-list",
+          "daily-temperatures",
+          "reorder-list"
+        ]
+      },
+      {
+        "key": "dp-linear",
+        "pool": 40,
+        "steps": [
+          "is-subsequence",
+          "fibonacci-number",
+          "longest-palindromic-subsequence"
+        ]
+      },
+      {
+        "key": "monotonic",
+        "pool": 34,
+        "steps": [
+          "next-greater-element-i",
+          "asteroid-collision",
+          "remove-k-digits"
+        ]
+      },
+      {
+        "key": "hash-count",
+        "pool": 33,
+        "steps": [
+          "intersection-of-two-linked-lists",
+          "remove-duplicates-from-sorted-array-ii",
+          "lowest-common-ancestor-of-a-binary-tree"
+        ]
+      },
+      {
+        "key": "sorting",
+        "pool": 27,
+        "steps": [
+          "remove-duplicates-from-sorted-array",
+          "3sum-closest",
+          "kth-largest-element-in-an-array"
+        ]
+      },
+      {
+        "key": "dp-interval",
+        "pool": 26,
+        "steps": [
+          "generate-parentheses",
+          "valid-parenthesis-string",
+          "longest-palindromic-substring"
+        ]
+      }
+    ]
+  }
+}

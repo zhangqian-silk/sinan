@@ -65,7 +65,7 @@ export function parse(
   const rest: string[] = [];
   let seenSeparator = false;
   for (let i = 0; i < argv.length; i += 1) {
-    const token = argv[i]!;
+    const token = argv[i];
     if (token === "--") { seenSeparator = true; rest.push(...argv.slice(i + 1)); break; }
     if (!command && !token.startsWith("-") && byName.has(token)) { command = token; continue; }
     rest.push(token);
@@ -90,7 +90,7 @@ export function parse(
 
   const positional: string[] = [];
   for (let i = 0; i < rest.length; i += 1) {
-    let token = rest[i]!;
+    let token = rest[i];
     if (!token.startsWith("-") || token === "-") { positional.push(token); continue; }
 
     let inline: string | null = null;
@@ -135,7 +135,7 @@ export function parse(
   const posSpecs = spec.pos ?? [];
   let cursor = 0;
   for (let k = 0; k < posSpecs.length; k += 1) {
-    const ps = posSpecs[k]!;
+    const ps = posSpecs[k];
     const nargs = ps.nargs ?? "1";
     if (nargs === "*" || nargs === "+") {
       const taken = positional.slice(cursor);

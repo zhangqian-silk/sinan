@@ -2,6 +2,5 @@ node_modules/
 dist/
 data/
 *.tsbuildinfo
-__pycache__/
-*.pyc
+*.tgz
 .DS_Store

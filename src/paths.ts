@@ -38,7 +38,7 @@ export function loadConfig(): Config {
   if (existsSync(CONFIG_FILE)) {
     try {
       const parsed: unknown = JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
-      if (parsed && typeof parsed === "object") cachedConfig = parsed as Config;
+      if (parsed && typeof parsed === "object") cachedConfig = parsed;
     } catch {
       // 配置文件写坏了不该让整个 CLI 起不来，忽略即可
     }
@@ -56,7 +56,7 @@ function fromHere(base: string, p: string): string {
 export function resolveDataDir(explicit?: string): string {
   const candidates: string[] = [];
   if (explicit) candidates.push(resolve(explicit));
-  if (process.env["SINAN_DATA"]) candidates.push(resolve(process.env["SINAN_DATA"]!));
+  if (process.env["SINAN_DATA"]) candidates.push(resolve(process.env["SINAN_DATA"]));
   const cfg = loadConfig();
   if (cfg.dataDir) candidates.push(fromHere(SINAN_HOME, cfg.dataDir));
   candidates.push(join(SINAN_HOME, "data", "dist"));
@@ -65,7 +65,7 @@ export function resolveDataDir(explicit?: string): string {
   for (const dir of candidates) {
     if (existsSync(join(dir, "problems.json"))) return dir;
   }
-  return candidates[0]!;
+  return candidates[0];
 }
 
 /** 本地题解目录：文件名以题号开头的就算这道题刷过了。 */
@@ -77,7 +77,7 @@ export function resolveSolutionDirs(explicit: string[] = []): string[] {
   };
   for (const p of explicit) push(p);
   if (!out.length && process.env["SINAN_SOLUTIONS"]) {
-    for (const p of process.env["SINAN_SOLUTIONS"]!.split(delimiter)) {
+    for (const p of process.env["SINAN_SOLUTIONS"].split(delimiter)) {
       if (p.trim()) push(p.trim());
     }
   }

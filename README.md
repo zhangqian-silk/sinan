@@ -90,7 +90,7 @@ sinan where                 数据、题解、打卡记录分别在哪
 npm i -g sinan     # 或者不装，直接 npx sinan
 ```
 
-只需要 Node 18+，零运行时依赖 —— HTTP 服务、参数解析、抓取、打标构建全部走 Node
+只需要 Node 20+，零运行时依赖 —— HTTP 服务、参数解析、抓取、打标构建全部走 Node
 内置能力，不装任何第三方包。
 
 ## 数据放在哪
@@ -135,14 +135,19 @@ src/
     build.ts        打标 + 相似度 + 题单 → dist/*.json
     fetch/          六个抓取器，断点续传
     rules/          规则表：175 条标签映射 / 96 种思路 / 48 条代码探针 / 57 条问法规则
+  test/             五层测试；fixtures/mini 是入库的 285 题迷你夹具
+  tools/            开发用小工具：切夹具、体检 OI-Wiki 链接
 web/                前端，无框架无构建
 ```
 
 ```bash
 npm run build       # 编译
-npm test            # 单元测试；有抓取数据时会连带跑 82 条打标自检用例
+npm run lint        # tsc 管不到的那部分
+npm test            # 全部测试；有抓取数据时会连带跑 82 条打标自检用例
 npm run check:links # 体检教学卡片里的 86 个 OI-Wiki 链接（要联网）
 ```
+
+改打标规则、改 planner、换夹具的流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ### 关于打标规则里的正则
 

@@ -4,8 +4,12 @@
  * 抓取有断点续传，中断了直接重跑即可。
  */
 
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
 import { build } from "./build.js";
-import { distDir } from "./io.js";
+import { distDir, rawDir } from "./io.js";
+import { CliError } from "../errors.js";
 import * as codetop from "./fetch/codetop.js";
 import * as curated from "./fetch/curated.js";
 import * as leetcode from "./fetch/leetcode.js";
@@ -27,6 +31,11 @@ const STEPS: Step[] = [
 ];
 
 export async function sync(options: { skipFetch?: boolean } = {}): Promise<void> {
+  if (options.skipFetch && !existsSync(join(rawDir(), "leetcode_list.json"))) {
+    throw new CliError(
+      `${rawDir()} 里没有抓取数据，--skip-fetch 无从构建。\n`
+      + "第一次请跑不带 --skip-fetch 的 {PROG} sync（要十几分钟），之后再增量重建。");
+  }
   const steps = options.skipFetch ? STEPS.slice(-1) : STEPS;
   for (const [i, step] of steps.entries()) {
     process.stdout.write(`\n=== [${i + 1}/${steps.length}] ${step.label}\n`);

@@ -21,6 +21,16 @@ export function loadJson<T>(path: string): T {
   return JSON.parse(readFileSync(path, "utf-8")) as T;
 }
 
+/** 外部 JSON 里的标量转字符串。对象和 null 一律当空，免得拼出 `[object Object]`。 */
+export function asText(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") {
+    return String(value);
+  }
+  return "";
+}
+
 /** 逐行 JSON。上次抓取中断留下的半行直接跳过。 */
 export function readJsonl<T>(path: string): T[] {
   if (!existsSync(path)) return [];

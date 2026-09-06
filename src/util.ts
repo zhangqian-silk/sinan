@@ -51,7 +51,7 @@ export function isWide(cp: number): boolean {
   let hi = WIDE_RANGES.length - 1;
   while (lo <= hi) {
     const mid = (lo + hi) >> 1;
-    const range = WIDE_RANGES[mid]!;
+    const range = WIDE_RANGES[mid];
     if (cp < range[0]) hi = mid - 1;
     else if (cp > range[1]) lo = mid + 1;
     else return true;
@@ -88,7 +88,7 @@ export function width(text: string): number {
       }
       continue;
     }
-    total += charWidth(chars[i]!);
+    total += charWidth(chars[i]);
     i += 1;
   }
   return total;
@@ -227,6 +227,8 @@ export function pyFloat(x: number): string {
  */
 export function splitLines(text: string): string[] {
   if (!text) return [];
+  // Python 的 splitlines 认这一串控制字符，照搬过来
+  // eslint-disable-next-line no-control-regex
   const parts = text.split(/\r\n|[\n\r\v\f\u001c\u001d\u001e\u0085\u2028\u2029]/);
   if (parts.length && parts[parts.length - 1] === "") parts.pop();
   return parts;
@@ -269,8 +271,8 @@ export function unescapeHtml(text: string): string {
 function cmpKey(a: SortKey, b: SortKey): number {
   const n = Math.min(a.length, b.length);
   for (let i = 0; i < n; i += 1) {
-    const x = a[i]!;
-    const y = b[i]!;
+    const x = a[i];
+    const y = b[i];
     if (x === y) continue;
     if (typeof x === "string" || typeof y === "string") {
       return String(x) < String(y) ? -1 : 1;

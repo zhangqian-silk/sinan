@@ -131,12 +131,12 @@ export function parseLimits(hintText: string): Limits {
     }
     if (descending) continue;
     const operands: string[] = [];
-    for (let k = 0; k < chain.length; k += 2) operands.push(chain[k]!);
+    for (let k = 0; k < chain.length; k += 2) operands.push(chain[k]);
     operands.forEach((tok, i) => {
       if (toNumber(tok) !== null) return;
       let upper: number | null = null;
       for (let k = 2 * i + 2; k < chain.length; k += 2) {
-        const v = toNumber(chain[k]!);
+        const v = toNumber(chain[k]);
         if (v !== null) { upper = v; break; }
       }
       if (upper === null) return;
@@ -188,14 +188,14 @@ export function analyze(title: string, content: string): Record<string, Reading>
     const reason = tpl.replaceAll("{n}", String(lim.size));
     for (const aid of boost) {
       if (out[aid]) {
-        out[aid]!.s = Math.min(out[aid]!.s + 0.2, 1.0);
-        out[aid]!.why.push(reason);
+        out[aid].s = Math.min(out[aid].s + 0.2, 1.0);
+        out[aid].why.push(reason);
       }
     }
     for (const aid of veto) {
       if (out[aid]) {
-        out[aid]!.s *= 0.35;
-        out[aid]!.why.push(`但 ${reason}`);
+        out[aid].s *= 0.35;
+        out[aid].why.push(`但 ${reason}`);
       }
     }
   }
@@ -214,7 +214,7 @@ export function analyze(title: string, content: string): Record<string, Reading>
   // 值域大、规模小，只作为「已经怀疑二分答案」时的加成，单独不足以立论
   if (lim.value !== null && lim.size !== null && lim.value >= 10 ** 6
     && lim.size <= 10 ** 5 && out["binary-search-answer"]) {
-    const cur = out["binary-search-answer"]!;
+    const cur = out["binary-search-answer"];
     cur.s = Math.min(cur.s + 0.15, 1.0);
     cur.why.push(`值域到 ${lim.value} 但规模只有 ${lim.size} —— 在答案上二分比在数据上枚举便宜`);
   }

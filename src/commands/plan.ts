@@ -6,23 +6,17 @@ import * as notes from "../notes/index.js";
 import { out, PROG } from "../out.js";
 import * as planner from "../planner.js";
 import * as r from "../render.js";
-import { DIFF_RANK, type Store, type Topic } from "../store.js";
-import type { Difficulty } from "../types.js";
+import type { Store, Topic } from "../store.js";
 import { fixed, splitLines } from "../util.js";
 import { MISSING, needSync } from "./hint.js";
 import { resolveProblem } from "./query.js";
-
-/** 这条主线要靠面试频次才排得出来，基线数据里没有。 */
-function needsFreq(route: planner.Route): boolean {
-  return route.hotOnly || route.dynamic === "weak";
-}
 
 export function cmdRoutes(store: Store, _args: Args): void {
   out("", r.heading("学习计划", "少数几条跨专题的成体系路线 · {PROG} plan <id> 展开"), "");
   const rows: string[][] = [];
   let blocked = 0;
   for (const route of planner.ROUTES) {
-    if (store.baseline && needsFreq(route)) {
+    if (store.baseline && planner.needsFreq(route)) {
       blocked += 1;
       rows.push([
         r.paint(route.id, "gray"), r.paint(route.name, "gray"),
@@ -66,7 +60,7 @@ export function cmdPlan(store: Store, args: Args): void {
   const key = args["topic"] as string;
   const route = planner.ROUTE_BY_ID.get(key);
   if (route) {
-    if (store.baseline && needsFreq(route)) {
+    if (store.baseline && planner.needsFreq(route)) {
       throw new CliError(`「${route.name}」要按${MISSING.freq}排题，随包的精简题库里没有。\n`
         + `先跑 ${PROG} sync 抓一次，或者换一条不依赖频次的主线：`
         + `${PROG} plan starter / ${PROG} plan advanced`);
@@ -326,7 +320,7 @@ export function cmdLearn(store: Store, args: Args): void {
  */
 function renderLearnProblems(store: Store, topic: Topic, limit: number): void {
   const plan = planner.planTopic(store, topic, { mode: "minimal" });
-  const picks = pickAcross(plan, limit);
+  const picks = planner.representativeSample(plan, limit);
   if (!picks.length) return;
 
   const total = plan.steps.length;
@@ -345,68 +339,6 @@ function renderLearnProblems(store: Store, topic: Topic, limit: number): void {
   });
 }
 
-/**
- * 从计划里取样：按难度分档配额，档内优先换一个还没露过面的子标签。
- *
- * 两个都想要 —— 难度上要看得见这个专题最后能难到哪去（只取计划前几道的话全是
- * 入门题），广度上大类里的每个知识点都该有机会露面。所以先定「易/中/难各几道」，
- * 再在每档里挑还没出现过的子标签，最后按难度排成一条坡道。
- */
-function pickAcross(plan: planner.Plan, limit: number): [planner.Step, string][] {
-  const sections = plan.sections.filter((s) => s.steps.length);
-  if (!sections.length || limit <= 0) return [];
-  const multi = sections.length > 1;
-  const all: [planner.Step, string][] = sections.flatMap(
-    (sec) => sec.steps.map((s): [planner.Step, string] => [s, multi ? sec.name : ""]));
-  if (all.length <= limit) return byDifficulty(all);
-
-  const tiers: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
-  const buckets = new Map(tiers.map((d) => [d, all.filter(([s]) => s.p.difficulty === d)]));
-  const quota = new Map(tiers.map((d, i) => [d, quotaFor(limit)[i]]));
-  // 某一档不够（比如入门专题没有困难题），名额顺延给别档
-  let short = 0;
-  for (const d of tiers) {
-    const gap = quota.get(d)! - buckets.get(d)!.length;
-    if (gap > 0) { quota.set(d, buckets.get(d)!.length); short += gap; }
-  }
-  for (const d of ["MEDIUM", "HARD", "EASY"] as Difficulty[]) {
-    while (short > 0 && quota.get(d)! < buckets.get(d)!.length) {
-      quota.set(d, quota.get(d)! + 1);
-      short -= 1;
-    }
-  }
-
-  const picks: [planner.Step, string][] = [];
-  const usedSections = new Set<string>();
-  for (const d of tiers) {
-    const pool = buckets.get(d)!;
-    const want = quota.get(d)!;
-    const taken = new Set<planner.Step>();
-    for (const pass of [0, 1]) {
-      for (const cand of pool) {
-        if (taken.size >= want) break;
-        if (taken.has(cand[0])) continue;
-        if (pass === 0 && usedSections.has(cand[1])) continue;   // 先换个知识点
-        taken.add(cand[0]);
-        usedSections.add(cand[1]);
-        picks.push(cand);
-      }
-    }
-  }
-  return byDifficulty(picks);
-}
-
-/** 易 / 中 / 难各几道。除不尽时先给中等，再给困难 —— 和 depth 节奏一致。 */
-function quotaFor(limit: number): [number, number, number] {
-  const base = Math.floor(limit / 3);
-  const rest = limit - base * 3;
-  return [base, base + (rest > 0 ? 1 : 0), base + (rest > 1 ? 1 : 0)];
-}
-
-function byDifficulty(picks: [planner.Step, string][]): [planner.Step, string][] {
-  return [...picks].sort(([a], [b]) => DIFF_RANK[a.p.difficulty] - DIFF_RANK[b.p.difficulty]);
-}
-
 /** 讲解目录：13 个大类 + 65 个子标签，每条一句话核心思路。 */
 function learnIndex(store: Store): void {
   const width = Math.max(r.termWidth() - 6, 50);
@@ -421,7 +353,7 @@ function learnIndex(store: Store): void {
     out("");
     out(`${r.paint("▌", color)}${r.paint(cat.name, "bold")}  `
       + `${r.paint(cat.id, "gray")}  ${r.paint(`${members.length} 题`, "gray")}`);
-    const catIdea = gist(notes.noteFor(cat.id)?.idea ?? cat.desc, 999);
+    const catIdea = notes.gist(cat.id, cat.desc);
     for (const line of r.wrap(catIdea, width - 2)) out(`  ${r.paint(line, "gray")}`);
     const rows: string[][] = [];
     for (const sub of cat.subs) {
@@ -430,7 +362,7 @@ function learnIndex(store: Store): void {
         `  ${r.paint(sub.name, color)}`,
         r.paint(sub.id, "gray"),
         `${count} 题`,
-        gist(notes.noteFor(sub.id)?.idea ?? sub.desc, ideaWidth),
+        r.trunc(notes.gist(sub.id, sub.desc), ideaWidth),
       ]);
     }
     out(r.table(["  子标签", "id", "题量", "核心思路"], rows,
@@ -440,21 +372,12 @@ function learnIndex(store: Store): void {
   out(r.paint("  想按顺序练：{PROG} routes 看主线；想按知识点练：{PROG} plan <id>", "gray"), "");
 }
 
-/** 取核心思想的第一句，用在目录这类一行一条的地方。 */
-function gist(text: string, limit: number): string {
-  const flat = r.stripEmph(text || "").replaceAll("`", "").replace(/\s+/g, " ").trim();
-  const cut = flat.search(/[。；]/);
-  const head = cut > 0 ? flat.slice(0, cut + 1) : flat;
-  return r.trunc(head, limit);
-}
-
 export function cmdNext(store: Store, args: Args): void {
   const picks = planner.nextSteps(store, args["n"] as number);
   if (!picks.length) {
     throw new CliError(`没有可推荐的题，先跑 ${PROG} sync 看看数据是否完整`);
   }
-  const byWeak = planner.weakTopics(store, 1).length > 0;
-  out("", r.heading("下一步", byWeak
+  out("", r.heading("下一步", planner.hasFreqSignal(store)
     ? "按「高频题里还没刷的数量」找最该补的专题，各取一道代表题"
     : "随包基线没有面试频次，改从入门主线取：按先修顺序，各取一道还没刷的代表题"), "");
   picks.forEach(([topicName, step], i) => {

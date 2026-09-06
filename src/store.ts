@@ -187,6 +187,9 @@ export class Store {
       this.problems = this.load<Problem[]>("problems.json");
       this.curated = this.load<CuratedList[]>("curated.json", []);
     }
+    // 网页那边要靠这个字段决定「高频/题面/题单」这些栏目怎么显示，
+    // 完整产物的 meta.json 里没有它，统一在这里落成布尔值，省得两边各判各的
+    this.meta.baseline = packed;
 
     for (const p of this.problems) {
       this.bySlug.set(p.slug, p);

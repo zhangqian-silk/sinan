@@ -8,7 +8,9 @@
 import type { Store } from "./store.js";
 import { DIFF_CN } from "./store.js";
 import type { Problem } from "./types.js";
-import { type Align, pad, pyRound, splitLines, trunc, width, wrap } from "./util.js";
+import {
+  type Align, pad, pyRound, splitLines, trunc, unescapeHtml, width, wrap,
+} from "./util.js";
 
 // 纯文本排版（宽度、对齐、折行）放在 util，帮助文本那边也要用；这里转出去，
 // 调用侧照旧写 r.pad / r.trunc / r.wrap。
@@ -149,29 +151,6 @@ export function hotCell(p: Problem): string {
 }
 
 // --- 题面 HTML -> 终端纯文本 -------------------------------------------------
-
-const ENTITIES: Record<string, string> = {
-  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0",
-  ldquo: "\u201c", rdquo: "\u201d", lsquo: "\u2018", rsquo: "\u2019",
-  hellip: "…", mdash: "—", ndash: "–", minus: "−", times: "×", divide: "÷",
-  le: "≤", ge: "≥", ne: "≠", plusmn: "±", deg: "°", infin: "∞", empty: "∅",
-  rarr: "→", larr: "←", uarr: "↑", darr: "↓", harr: "↔",
-  Sigma: "Σ", sigma: "σ", alpha: "α", beta: "β", pi: "π", mu: "μ",
-  sum: "∑", radic: "√", isin: "∈", notin: "∉", sube: "⊆", cap: "∩", cup: "∪",
-  middot: "·", bull: "•", copy: "©", reg: "®", trade: "™", euro: "€", pound: "£",
-  frac12: "½", frac14: "¼", frac34: "¾", sup2: "²", sup3: "³",
-};
-
-function unescapeHtml(text: string): string {
-  return text.replace(/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g, (whole, body: string) => {
-    if (body.startsWith("#")) {
-      const isHex = body[1] === "x" || body[1] === "X";
-      const code = parseInt(isHex ? body.slice(2) : body.slice(1), isHex ? 16 : 10);
-      return Number.isFinite(code) && code >= 0 && code <= 0x10ffff ? String.fromCodePoint(code) : whole;
-    }
-    return ENTITIES[body] ?? whole;
-  });
-}
 
 /** 把题面 HTML 压成终端能看的纯文本。 */
 export function htmlToText(html: string, limitCols = 92): string {

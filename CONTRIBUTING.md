@@ -7,7 +7,7 @@ npm run lint       # tsc 管不到的那部分
 npm test           # 编译后跑全部测试
 ```
 
-需要 Node 20+。运行时零依赖，`devDependencies` 只有 TypeScript 和 ESLint。
+需要 Node 22+。运行时零依赖，`devDependencies` 只有 TypeScript 和 ESLint。
 
 ## 测试是怎么分层的
 

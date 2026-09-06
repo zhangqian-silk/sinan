@@ -33,7 +33,7 @@
     "!dist/test"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -54,7 +54,7 @@
     "cli"
   ],
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.0",
     "@types/node": "^22.10.2",
     "eslint": "^9.39.5",
     "typescript": "^5.7.2",

@@ -3,15 +3,23 @@
  *
  * 这批记录是手写的，最容易出的问题是标签打错字（打上一个树上没有的 id，构建会炸）、
  * 同一道题评了两遍、以及只写了标签没写解法。这三条不需要题库数据就能查。
+ *
+ * 还有一类不会报错但会静默丢失的：slug 打错。构建时找不到对应题目就跳过，
+ * 判定白写了也没人知道，所以拿随包基线（全量 6430 题）兜一道。
  */
 
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "node:test";
 
+import { expand, type Packed } from "../baseline.js";
 import { loadReviews, tagsOf } from "../build/reviews.js";
 import { NODE_BY_ID } from "../build/taxonomy.js";
+import { BASELINE_DIR } from "../paths.js";
 
 const reviews = [...loadReviews().values()];
+const BASELINE = join(BASELINE_DIR, "baseline.json");
 
 test("每条判定的标签都在树上", () => {
   for (const r of reviews) {
@@ -62,5 +70,15 @@ test("解法不提出处，也不写日期 —— 这些都是噪音", () => {
         `${r.slug} 的「${sol.name}」提到了出处：${sol.idea}`);
       assert.ok(!/20\d\d-\d\d-\d\d/.test(sol.idea), `${r.slug} 的「${sol.name}」里混进了日期`);
     }
+  }
+});
+
+test("每条判定都对得上题库里的题", { skip: !existsSync(BASELINE) && "还没生成基线，跑 npm run baseline" }, () => {
+  const data = expand(JSON.parse(readFileSync(BASELINE, "utf-8")) as Packed);
+  const bySlug = new Map(data.problems.map((p) => [p.slug, p]));
+  for (const r of reviews) {
+    const p = bySlug.get(r.slug);
+    assert.ok(p, `${r.slug} 在题库里找不到，slug 打错了这条判定会被静默丢掉`);
+    assert.equal(String(p.id), String(r.id), `${r.slug} 记的题号是 ${r.id}，题库里是 ${String(p.id)}`);
   }
 });

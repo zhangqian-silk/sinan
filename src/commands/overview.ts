@@ -47,11 +47,14 @@ export function cmdHome(store: Store, _args: Args): void {
 
   const picks = planner.nextSteps(store, 3);
   if (picks.length) {
-    out(r.rule("下一步  取自最薄弱专题的代表题"));
+    out(r.rule(`下一步  ${planner.weakTopics(store, 1).length
+      ? "取自最薄弱专题的代表题" : "入门主线的头几步"}`));
     picks.forEach(([topicName, step], i) => {
       out(`  ${i + 1}. ${r.paint(topicName, "amber")}  `
-        + `${r.paint(`#${step.p.id}`, "gray")} ${step.p.title}  `
+        + `${r.paint(`#${step.p.id}`, "gray")} `
+        + `${r.hyperlink(step.p.title, step.p.url ?? "")}  `
         + `${r.diffTag(step.p)}  ${r.paint(step.reasons.slice(0, 2).join(" · "), "gray")}`);
+      out(`     ${r.paint(step.p.url, "gray")}`);
     });
     out("");
   }
@@ -59,6 +62,7 @@ export function cmdHome(store: Store, _args: Args): void {
   if (store.baseline) {
     out(...baselineFooter());
     out("");
+    out(r.paint("  先看体系：{PROG} learn（13 个大类 / 65 个子标签，每条都有核心思路与代表题）", "gray"));
     out(r.paint("  {PROG} topics | {PROG} learn <专题> | {PROG} plan <专题> | {PROG} list --tag <标签>", "gray"), "");
     return;
   }
@@ -71,7 +75,7 @@ export function cmdHome(store: Store, _args: Args): void {
       + `${r.pad(`${ldone}/${ltotal}`, 8, "right")}  ${r.paint(lst.id, "gray")}`);
   }
   out("");
-  out(r.paint("  {PROG} topics | {PROG} lists | {PROG} plan <专题> | {PROG} next | {PROG} list --hot", "gray"), "");
+  out(r.paint("  {PROG} learn | {PROG} topics | {PROG} lists | {PROG} plan <专题> | {PROG} next | {PROG} list --hot", "gray"), "");
 }
 
 export function cmdTopics(store: Store, args: Args): void {
@@ -81,6 +85,8 @@ export function cmdTopics(store: Store, args: Args): void {
     cats = cats.filter((c) => c.id === wanted || c.name === wanted);
     if (!cats.length) throw new CliError(`没有这个大类：${wanted}`);
   }
+  // 指定了大类就是「钻进去看」，这时候值得为每个子标签多花几行，把代表题也给出来
+  const drill = Boolean(wanted);
 
   out("", r.heading("标签体系", `${store.cats.length} 个大类 / ${store.subById.size} 个子标签 · `
     + "一题多解会打多个标签，各标签题量之和大于题库总数"));
@@ -93,6 +99,10 @@ export function cmdTopics(store: Store, args: Args): void {
     out(`${r.paint("▌", color)}${r.paint(cat.name, "bold")}  `
       + `${r.paint(`${cdone}/${ctotal}`, "gray")}  ${r.paint(cat.id, "gray")}`);
     out(`  ${r.paint(cat.desc, "gray")}`);
+    if (drill) {
+      renderSubBlocks(store, cat, color);
+      continue;
+    }
     const rows: string[][] = [];
     for (const sub of cat.subs) {
       const subMembers = store.problems.filter((p) => p.tagIds.includes(sub.id));
@@ -109,6 +119,31 @@ export function cmdTopics(store: Store, args: Args): void {
       ["left", "left", "right", "left", "left"]));
   }
   out("");
+  if (!drill) {
+    out(r.paint("  想看某个大类下每个子标签的代表题：{PROG} topics <大类 id>", "gray"), "");
+  }
+}
+
+/** 钻取某个大类：每个子标签给进度、说明、几道代表题和讲解入口。 */
+function renderSubBlocks(store: Store, cat: Store["cats"][number], color: string): void {
+  const topics = store.topics();
+  for (const sub of cat.subs) {
+    const subMembers = store.problems.filter((p) => p.tagIds.includes(sub.id));
+    const [sdone, stotal] = store.progressOf(subMembers);
+    out("");
+    out(`  ${r.paint(sub.name, color)}  ${r.paint(sub.id, "gray")}  `
+      + `${r.bar(sdone, stotal, 10, color)} ${r.paint(`${sdone}/${stotal}`, "gray")}`);
+    if (sub.desc) out(`    ${r.paint(r.trunc(sub.desc, r.termWidth() - 8), "gray")}`);
+    const topic = topics.get(sub.id);
+    const picks = topic ? planner.signatureProblems(store, topic, 3) : [];
+    if (picks.length) {
+      const cells = picks.map((p) => `${r.paint(`#${p.id}`, "gray")} `
+        + `${r.hyperlink(r.trunc(p.title, 18), p.url ?? "")} ${r.diffTag(p)}`);
+      out(`    ${r.paint("代表题", "gray")} ${cells.join(r.paint(" · ", "gray"))}`);
+    }
+    out(`    ${r.paint(`讲解 {PROG} learn ${sub.id}`, "steel")}`
+      + `    ${r.paint(`计划 {PROG} plan ${sub.id}`, "steel")}`);
+  }
 }
 
 const KIND_CN: Record<string, string> = {

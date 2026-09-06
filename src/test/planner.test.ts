@@ -112,6 +112,25 @@ test("每个专题：难度不回退、步骤都在池子里、理由和链接�
   }
 });
 
+test("门面题：先看跟这个标签贴不贴，再看经典度", () => {
+  for (const id of ["tree-traversal", "monotonic", "hash-count", "dp-knapsack"]) {
+    const topic = store.topics().get(id)!;
+    const pool = store.members(topic, { quality: true });
+    const picks = planner.signatureProblems(store, topic, 3);
+    assert.ok(picks.length > 0, `${id} 一道门面题都没有`);
+    for (const p of picks) assert.ok(p.url, `${p.slug} 没有平台链接`);
+
+    // 有足够多「以这个标签为主」的题时，门面题不许挑沾边的那种：
+    // 只按题号选的话，「二叉树遍历」会拿 #22 括号生成 当门面。
+    const mainOnes = pool.filter((p) => p.mainTag === id);
+    if (mainOnes.length >= picks.length) {
+      for (const p of picks) {
+        assert.equal(p.mainTag, id, `${id} 的门面题选了 ${p.slug}，它的主标签是 ${p.mainTag}`);
+      }
+    }
+  }
+});
+
 test("同一份数据跑两次，计划完全一样", () => {
   const topic = store.topics().get("monotonic")!;
   const a = planner.planTopic(store, topic, { mode: "minimal" }).steps.map((s) => s.p.slug);

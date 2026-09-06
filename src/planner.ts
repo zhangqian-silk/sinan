@@ -960,5 +960,63 @@ export function nextSteps(store: Store, count = 3): [string, Step][] {
     if (todo.length) picked.push([store.subById.get(tag)!.name, todo[0]]);
     if (picked.length >= count) break;
   }
+  if (picked.length) return picked;
+
+  // 「最薄弱」是按面试频次算的，随包基线里没有频次，weakTopics 会是空的。
+  // 但「刚装完、一道没刷」恰恰是最需要给出下一步的时刻，所以退回入门主线：
+  // 它的专题顺序本身就是先修关系，每个专题取一道最经典的没刷过的题。
+  const starter = ROUTE_BY_ID.get("starter");
+  if (!starter) return picked;
+  const lists = store.listMembership();
+  for (const sec of planRoute(store, starter).sections) {
+    const todo = sec.steps.filter((s) => !store.isDone(s.p));
+    if (!todo.length) continue;
+    // 节内步骤是按难度排的，直接取第一道会拿到「最简单的」而不是「最有代表性的」：
+    // 滑动窗口会推 #344 反转字符串，而不是 #3 无重复字符的最长子串。
+    const onTopic = todo.filter((s) => s.p.mainTag === sec.key);
+    picked.push([sec.name, sortBy(onTopic.length ? onTopic : todo,
+      (s) => [-importance(s.p, Boolean(lists.get(s.p.slug)), store.baseline)])[0]]);
+    if (picked.length >= count) break;
+  }
   return picked;
+}
+
+/**
+ * 专题的门面题：不算覆盖关系，只挑「提到这个知识点第一个想到的那几道」，
+ * 给目录页顺手举个例子。和 `planTopic` 的代表题是两回事 —— 那边要回答
+ * 「最少练几道能覆盖整个专题」，得付出贪心的代价，这边不必。
+ *
+ * 排序的第一优先级是**这道题跟这个标签有多贴**，不是经典度。只按经典度排的话，
+ * 「二叉树遍历」会拿题号最小的 #22 括号生成 当门面 —— 它确实被打了这个标签
+ * （题解里是递归展开），但拿它介绍二叉树遍历只会误导人。
+ */
+export function signatureProblems(store: Store, topic: Topic, count = 3): Problem[] {
+  const pool = store.members(topic, { quality: true });
+  const lists = store.listMembership();
+  return sortBy(pool, (p) => [
+    -affinity(p, topic),
+    -importance(p, Boolean(lists.get(p.slug)), store.baseline),
+    DIFF_RANK[p.difficulty],
+    p.slug,
+  ]).slice(0, count);
+}
+
+/**
+ * 这道题跟这个专题有多贴：主标签算满分，其余看标签权重。
+ *
+ * 权重按 20 分一档取整，不看原值 —— 打标可信度 62 和 70 的差别是信号条数的抖动，
+ * 不代表「70 那道更能当门面」。取整之后同档内交给经典度定序，
+ * 「二叉树遍历」的门面才会是 #94 中序遍历，而不是碰巧多拿几分的 #110 平衡二叉树。
+ */
+function affinity(p: Problem, topic: Topic): number {
+  const band = (w: number): number => Math.floor(Math.max(0, w) / 20);
+  if (topic.kind === "cat") {
+    const best = Math.max(0, ...p.tags.filter((t) => t.cat === topic.id).map((t) => t.w));
+    return (p.mainCat === topic.id ? 100 : 0) + band(best);
+  }
+  if (topic.kind === "tag") {
+    const hit = p.tags.find((t) => t.id === topic.id);
+    return (p.mainTag === topic.id ? 100 : 0) + band(hit?.w ?? 0);
+  }
+  return 0;   // 题单是人工编排的，谈不上「贴不贴」
 }

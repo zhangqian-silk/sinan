@@ -206,7 +206,10 @@ def build_similarity(items: list[dict], details: dict[str, dict]) -> dict[str, l
                 why.append("仅标签接近")
             scored.append((round(min(score, 1.0), 4), other, why))
 
-        scored.sort(key=lambda x: -x[0])
+        # 候选是从 set 里遍历出来的，分数并列时顺序本来跟着哈希种子走，
+        # Top-12 每次跑就会取到不同的邻居子集 —— 而相似度图是学习计划的上游，
+        # 一路影响到「谁能代表谁」。并列按 slug 定序，产物才可复现。
+        scored.sort(key=lambda x: (-x[0], x[1]))
         out[slug] = [{"slug": s, "score": sc, "why": why} for sc, s, why in scored[:12]]
     return out
 

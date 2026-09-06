@@ -236,6 +236,36 @@ export function splitLines(text: string): string[] {
 
 export type SortKey = ReadonlyArray<number | string | boolean>;
 
+// --- HTML 实体 -----------------------------------------------------------------
+
+const ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0",
+  ldquo: "\u201c", rdquo: "\u201d", lsquo: "\u2018", rsquo: "\u2019",
+  hellip: "…", mdash: "—", ndash: "–", minus: "−", times: "×", divide: "÷",
+  le: "≤", ge: "≥", ne: "≠", plusmn: "±", deg: "°", infin: "∞", empty: "∅",
+  rarr: "→", larr: "←", uarr: "↑", darr: "↓", harr: "↔",
+  Sigma: "Σ", sigma: "σ", alpha: "α", beta: "β", pi: "π", mu: "μ",
+  sum: "∑", radic: "√", isin: "∈", notin: "∉", sube: "⊆", cap: "∩", cup: "∪",
+  middot: "·", bull: "•", copy: "©", reg: "®", trade: "™", euro: "€", pound: "£",
+  frac12: "½", frac14: "¼", frac34: "¾", sup2: "²", sup3: "³",
+};
+
+/** 相当于 Python 的 `html.unescape`：认得出的实体还原，认不出的原样留着。 */
+export function unescapeHtml(text: string): string {
+  return text.replace(
+    /&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g,
+    (whole, body: string) => {
+      if (body.startsWith("#")) {
+        const isHex = body[1] === "x" || body[1] === "X";
+        const code = parseInt(isHex ? body.slice(2) : body.slice(1), isHex ? 16 : 10);
+        return Number.isFinite(code) && code >= 0 && code <= 0x10ffff
+          ? String.fromCodePoint(code) : whole;
+      }
+      return ENTITIES[body] ?? whole;
+    },
+  );
+}
+
 function cmpKey(a: SortKey, b: SortKey): number {
   const n = Math.min(a.length, b.length);
   for (let i = 0; i < n; i += 1) {

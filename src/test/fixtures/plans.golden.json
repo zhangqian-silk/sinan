@@ -261,7 +261,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 197,
+    "poolSize": 196,
     "covered": 102,
     "sections": [
       {
@@ -275,7 +275,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 43,
+        "pool": 42,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -480,7 +480,7 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 48,
+    "poolSize": 46,
     "covered": 28,
     "sections": [
       {
@@ -499,34 +499,34 @@
       },
       {
         "key": "graph",
-        "pool": 16,
+        "pool": 13,
         "steps": [
           "keys-and-rooms",
           "number-of-provinces",
           "course-schedule-iv",
           "path-with-minimum-effort",
-          "find-the-shortest-superstring"
+          "find-the-shortest-superstring",
+          "swim-in-rising-water"
         ]
       },
       {
         "key": "advanced-ds",
-        "pool": 4,
+        "pool": 5,
         "steps": [
           "luogu:P1020",
           "minimum-cost-tree-from-leaf-values",
-          "largest-rectangle-in-histogram",
           "longest-duplicate-substring"
         ]
       }
     ]
   },
   "route:weakness": {
-    "poolSize": 225,
+    "poolSize": 224,
     "covered": 98,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 51,
+        "pool": 50,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",

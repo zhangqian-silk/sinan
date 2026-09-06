@@ -9,6 +9,7 @@ import * as r from "../render.js";
 import { DIFF_CN, type Store } from "../store.js";
 import type { Problem } from "../types.js";
 import { fixed, pyFloat, pyRound, splitLines } from "../util.js";
+import { MISSING, needSync } from "./hint.js";
 
 interface RowsSpec {
   showLists?: boolean;
@@ -23,8 +24,11 @@ export function problemRows(
 ): { headers: string[]; rows: string[][]; aligns: ("left" | "right")[] } {
   const { showLists = false, showApproach = false, showUrl = false } = spec;
   const col = showApproach ? "题解思路" : "解法标签";
-  const headers = ["", "题号", "标题", "难度", col, "高频", "通过率"];
-  const aligns: ("left" | "right")[] = ["left", "right", "left", "left", "left", "right", "right"];
+  // 基线数据里没有高频和通过率，整列都是「—」「0%」，不如不显示
+  const rich = !store.baseline;
+  const headers = ["", "题号", "标题", "难度", col];
+  const aligns: ("left" | "right")[] = ["left", "right", "left", "left", "left"];
+  if (rich) { headers.push("高频", "通过率"); aligns.push("right", "right"); }
   if (showLists) { headers.push("题单"); aligns.push("left"); }
   if (showUrl) { headers.push("平台链接"); aligns.push("left"); }
 
@@ -37,9 +41,10 @@ export function problemRows(
       r.hyperlink(r.trunc(p.title, limit), p.url ?? ""),
       r.diffTag(p),
       showApproach ? r.approachChips(p) : r.tagChips(p),
-      r.hotCell(p),
-      `${fixed(p.acRate * 100, 0)}%`,
     ];
+    if (rich) {
+      row.push(r.hotCell(p), `${fixed(p.acRate * 100, 0)}%`);
+    }
     if (showLists) {
       const names = store.listNamesOf(p);
       row.push(r.paint(names.length ? r.trunc(names.join("、"), 26) : "—", "gray"));
@@ -113,8 +118,10 @@ export function cmdShow(store: Store, args: Args): void {
   const p = resolveProblem(store, key);
   if (!p) throw new CliError(`没找到题目：${key}`);
 
-  out("", r.heading(`#${p.id}  ${r.hyperlink(p.title, p.url ?? "")}`,
-    `${DIFF_CN[p.difficulty]} · 通过率 ${fixed(p.acRate * 100, 0)}% · ${p.sourceName}`));
+  const head = store.baseline
+    ? `${DIFF_CN[p.difficulty]} · ${p.sourceName}`
+    : `${DIFF_CN[p.difficulty]} · 通过率 ${fixed(p.acRate * 100, 0)}% · ${p.sourceName}`;
+  out("", r.heading(`#${p.id}  ${r.hyperlink(p.title, p.url ?? "")}`, head));
   const meta: string[] = [];
   if (p.freq) meta.push(r.paint(`CodeTop 第 ${p.freqRank} 名 · 被面 ${p.freq} 次`, "orange"));
   if (p.paid) meta.push(r.paint("会员题", "gray"));
@@ -220,6 +227,10 @@ export function cmdShow(store: Store, args: Args): void {
     }
   } else if (files.length) {
     out("", r.paint(`  本地题解：${files.map((f) => f.path).join("、")}（加 --code 打印源码）`, "gray"));
+  }
+  if (store.baseline) {
+    out("");
+    out(needSync(`${MISSING.content}与${MISSING.freq}`));
   }
   out("");
 }

@@ -182,12 +182,29 @@ export class Plan {
 
 // --- 打分 ---------------------------------------------------------------------
 
-/** 这道题有多值得练。只看面试频次和题单背书，不看题解数量。 */
-export function importance(p: Problem, inLists: boolean): number {
+/**
+ * 这道题有多值得练。只看面试频次和题单背书，不看题解数量。
+ *
+ * `noFreqSignal` 是给随包基线数据用的：那份数据里没有 CodeTop 频次，也没有题单，
+ * 如果照常算，所有题的权重都会是 1.0 —— 低于 CANON_FLOOR，于是「冷门题只有能覆盖
+ * 一大片时才配当代表」这条门槛对**所有**题都成立，易/中两档几乎选不出人来，
+ * 贪心会一路奔向困难档（实测 27 道里 22 道困难）。这时改用「题号越靠前越经典」
+ * 当代理信号：不依赖任何平台运营数据，但足以把经典题和长尾周赛题区分开。
+ */
+export function importance(p: Problem, inLists: boolean, noFreqSignal = false): number {
   let w = 1.0;
-  w += (1.6 * Math.log1p(p.freq)) / Math.log1p(1200);
+  if (noFreqSignal) {
+    w += 1.6 * classicScore(p.id);
+  } else {
+    w += (1.6 * Math.log1p(p.freq)) / Math.log1p(1200);
+  }
   if (inLists) w += 0.8;
   return w;
+}
+
+/** 题号越小越老、越经典。非数字题号（LCR 080、P1216）给一个偏低的定值。 */
+function classicScore(id: string): number {
+  return /^[0-9]+$/.test(id) ? 1 / (1 + Number(id) / 600) : 0.15;
 }
 
 /**
@@ -338,7 +355,9 @@ export function selectRepresentatives(
   const bySlug = new Map(pool.map((p) => [p.slug, p]));
   const membership = store.listMembership();
   const weight = new Map<string, number>();
-  for (const p of pool) weight.set(p.slug, importance(p, Boolean(membership.get(p.slug)?.length)));
+  for (const p of pool) {
+    weight.set(p.slug, importance(p, Boolean(membership.get(p.slug)?.length), store.baseline));
+  }
   let totalWeight = 0;
   for (const w of weight.values()) totalWeight += w;
 
@@ -544,7 +563,7 @@ function progressionKey(store: Store, p: Problem): SortKey {
   return [
     DIFF_RANK[p.difficulty],
     complexity,
-    -importance(p, Boolean(store.listMembership().get(p.slug))),
+    -importance(p, Boolean(store.listMembership().get(p.slug)), store.baseline),
   ];
 }
 

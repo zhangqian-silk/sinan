@@ -1,6 +1,5 @@
 /** 刷题训练台 CLI：命令名取自 argv[1]，见 bin/sinan.js。 */
 
-import { existsSync } from "node:fs";
 import { dirname } from "node:path";
 
 import { parse, renderHelp, type Args, type CommandSpec, type OptSpec } from "./args.js";
@@ -12,7 +11,7 @@ import { cmdList, cmdShow } from "./commands/query.js";
 import { CliError } from "./errors.js";
 import { out, PROG } from "./out.js";
 import { DEFAULT_PACE } from "./planner.js";
-import { resolveDataDir, SINAN_HOME } from "./paths.js";
+import { BASELINE_DIR, resolveDataDir, SINAN_HOME } from "./paths.js";
 import * as r from "./render.js";
 import { Store } from "./store.js";
 
@@ -175,9 +174,6 @@ const COMMANDS: Entry[] = [
     standalone: (args) => {
       const dataDir = resolveDataDir(args["dataDir"] as string | undefined);
       out("", r.heading("当前配置", "命令行参数 > 环境变量 > ~/.sinan/config.json > 约定位置"), "");
-      out(`  ${r.pad("题库数据", 12)}${dataDir}${existsSync(dataDir) ? "" : r.paint("  （还没有，跑 {PROG} sync）", "gray")}`);
-      out(`  ${r.pad("打卡记录", 12)}${SINAN_HOME}/progress.json`);
-      out(`  ${r.pad("配置文件", 12)}${SINAN_HOME}/config.json`);
       let store: Store | null;
       try {
         store = new Store({
@@ -188,6 +184,16 @@ const COMMANDS: Entry[] = [
         // 数据还没抓，其余路径照样要能打印出来
         store = null;
       }
+      const kind = store?.baseline
+        ? "  随包的精简题库"
+        : (store ? "  本地抓取的完整题库" : "  （还没有，跑 {PROG} sync）");
+      out(`  ${r.pad("题库数据", 12)}${dataDir}${r.paint(kind, "gray")}`);
+      if (store?.baseline) {
+        out(`  ${r.pad("", 12)}${r.paint(`跑 {PROG} sync 之后会改用 ${SINAN_HOME}/data/dist`, "gray")}`);
+      }
+      out(`  ${r.pad("随包基线", 12)}${BASELINE_DIR}`);
+      out(`  ${r.pad("打卡记录", 12)}${SINAN_HOME}/progress.json`);
+      out(`  ${r.pad("配置文件", 12)}${SINAN_HOME}/config.json`);
       const dirs = store?.solutionDirs ?? [];
       out(`  ${r.pad("本地题解", 12)}${dirs.length ? dirs.join("\n              ") : r.paint("（未配置，用 --solutions 或 SINAN_SOLUTIONS 指定）", "gray")}`);
       if (store && dirs.length) {

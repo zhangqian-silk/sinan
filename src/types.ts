@@ -121,6 +121,8 @@ export interface SourceMeta {
 
 export interface Meta {
   builtAt: string;
+  /** 是不是随包分发的精简基线（没有题面 / 高频 / 题单） */
+  baseline?: boolean;
   sources: SourceMeta[];
   overlays?: SourceMeta[];
   stats: {

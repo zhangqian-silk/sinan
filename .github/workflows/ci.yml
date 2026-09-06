@@ -46,9 +46,17 @@ jobs:
           cd "$WORK"
           npm init -y > /dev/null
           npm install --no-audit --no-fund "./$TGZ"
-          # 没有题库数据时应当给出可读提示并以 1 退出
-          if ./node_modules/.bin/sinan stats; then
-            echo "没有数据却退出成功，不符合预期" && exit 1
+          export SINAN_HOME="$WORK/home"
+          # 装完什么都不做就该能用：分类体系、解题思路、题目和链接
+          ./node_modules/.bin/sinan topics | grep -q "13 个大类"
+          ./node_modules/.bin/sinan learn monotonic | grep -q "单调栈"
+          ./node_modules/.bin/sinan list --tag monotonic | grep -q "leetcode.cn" \
+            || ./node_modules/.bin/sinan list --tag monotonic --links | grep -q "leetcode.cn"
+          ./node_modules/.bin/sinan plan monotonic | grep -q "学习计划"
+          ./node_modules/.bin/sinan stats | grep -q "随包的精简题库"
+          # 分发物里绝不能有题面原文
+          if grep -rl "<p>" node_modules/sinan/baseline 2>/dev/null; then
+            echo "基线数据里混进了题面 HTML" && exit 1
           fi
-          ./node_modules/.bin/sinan --help | head -3
+          test ! -d node_modules/sinan/data
           echo "运行时依赖：$(npm ls --omit=dev --parseable | wc -l) 个包（含自身）"

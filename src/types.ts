@@ -1,4 +1,4 @@
-/** 构建产物（data/dist/*.json）的形状。由 scripts/build.py 产出。 */
+/** 构建产物（data/dist/*.json）的形状。由 src/build/build.ts 产出。 */
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 
@@ -46,6 +46,8 @@ export interface Problem {
   seriesKey?: string;
   source: string;
   sourceName: string;
+  /** 非力扣题源的站点首页，meta 里的「题目来源」一栏要用 */
+  sourceHome?: string;
   url: string;
   approach?: ApproachRef[];
   approachIds?: string[];

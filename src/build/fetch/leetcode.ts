@@ -136,7 +136,7 @@ export async function run(options: { workers?: number; noDetail?: boolean } = {}
 
   const slugs = problems.map((p) => p.titleSlug);
   const records = await fetchMany(slugs, fetchDetail, detailPath(), { workers, label: "detail" });
-  const failed = records.filter((r) => r._error).map((r) => r._key!);
+  const failed = records.filter((r) => r._error).map((r) => r._key);
   process.stdout.write(`[detail] 完成 ${records.length} 条，失败 ${failed.length}\n`);
   if (failed.length) process.stdout.write(`[detail] 失败样例: ${failed.slice(0, 10).join(", ")}\n`);
 }

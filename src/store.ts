@@ -35,7 +35,7 @@ import type {
 import { Counter, sortBy, type SortKey } from "./util.js";
 
 /** 题解文件名以题号开头就能被识别。 */
-const ID_PREFIX = /^(\d{1,4})[.\s_\-]/;
+const ID_PREFIX = /^(\d{1,4})[.\s_-]/;
 const LANG_BY_SUFFIX: Record<string, string> = {
   ".py": "Python", ".go": "Go", ".java": "Java", ".cpp": "C++", ".c": "C",
   ".js": "JS", ".ts": "TS", ".rs": "Rust", ".kt": "Kotlin",
@@ -115,6 +115,8 @@ export interface MemberOptions {
 export interface StoreOptions {
   dataDir?: string;
   solutions?: string[];
+  /** 打卡记录的位置。测试要能指到一个空文件，否则会读到跑测试那个人的真实进度。 */
+  progressFile?: string;
 }
 
 export interface ApproachStat {
@@ -139,6 +141,7 @@ function lazy<T>(make: () => T): () => T {
 export class Store {
   readonly dist: string;
   readonly solutionDirs: string[];
+  readonly progressFile: string;
   readonly meta: Meta;
   readonly cats: Category[];
   readonly problems: Problem[];
@@ -156,6 +159,7 @@ export class Store {
   constructor(options: StoreOptions = {}) {
     this.dist = resolveDataDir(options.dataDir);
     this.solutionDirs = resolveSolutionDirs(options.solutions ?? []);
+    this.progressFile = options.progressFile ?? PROGRESS_FILE;
     if (!existsSync(join(this.dist, "problems.json"))) {
       throw new CliError(
         `还没有题库数据（找过 ${this.dist}）。\n` +
@@ -226,7 +230,7 @@ export class Store {
     for (const dir of this.solutionDirs) {
       for (const name of PROGRESS_LEGACY_NAMES) candidates.push(join(dirname(dir), name));
     }
-    candidates.push(PROGRESS_FILE);
+    candidates.push(this.progressFile);
     for (const path of candidates) {
       if (!existsSync(path)) continue;
       try {
@@ -241,9 +245,9 @@ export class Store {
   }
 
   saveProgress(): void {
-    ensureHome();
-    mkdirSync(dirname(PROGRESS_FILE), { recursive: true });
-    writeFileSync(PROGRESS_FILE, `${JSON.stringify(this.progress, null, 2)}\n`, "utf-8");
+    if (this.progressFile === PROGRESS_FILE) ensureHome();
+    mkdirSync(dirname(this.progressFile), { recursive: true });
+    writeFileSync(this.progressFile, `${JSON.stringify(this.progress, null, 2)}\n`, "utf-8");
   }
 
   /** 扫描本地题解目录，按题号归档。 */
@@ -266,7 +270,7 @@ export class Store {
         }
         const match = ID_PREFIX.exec(name);
         if (!match) continue;
-        const qid = String(parseInt(match[1]!, 10));
+        const qid = String(parseInt(match[1], 10));
         const suffix = extname(name).toLowerCase();
         const lang = LANG_BY_SUFFIX[suffix] ?? suffix.replace(/^\./, "").toUpperCase();
         const bucket = found.get(qid) ?? [];
@@ -365,7 +369,7 @@ export class Store {
     for (const t of topics.values()) {
       if (t.id.toLowerCase().includes(low) || t.name.toLowerCase().includes(low)) hits.push(t);
     }
-    if (hits.length === 1) return hits[0]!;
+    if (hits.length === 1) return hits[0];
     for (const t of hits) if (t.name.toLowerCase() === low) return t;   // 完全同名优先
     return hits[0] ?? null;
   }

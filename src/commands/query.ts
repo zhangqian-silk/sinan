@@ -66,7 +66,7 @@ export function cmdList(store: Store, args: Args): void {
   const diffs = new Set<string>();
   for (const token of (args["diff"] as string[] | undefined) ?? []) {
     for (const [key, cn] of Object.entries(DIFF_CN)) {
-      if ([key.toLowerCase(), cn, key[0]!.toLowerCase()].includes(token)) diffs.add(key);
+      if ([key.toLowerCase(), cn, key[0].toLowerCase()].includes(token)) diffs.add(key);
     }
   }
   const query = ((args["query"] as string[] | undefined) ?? []).join(" ");

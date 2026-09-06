@@ -36,7 +36,7 @@ async function main(): Promise<void> {
       const i = cursor;
       cursor += 1;
       if (i >= urls.length) return;
-      results.push([urls[i]!, await probe(urls[i]!)]);
+      results.push([urls[i], await probe(urls[i])]);
     }
   }));
 

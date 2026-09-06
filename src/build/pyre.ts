@@ -41,7 +41,7 @@ export function translate(pattern: string): string {
   let out = "";
   let inClass = false;
   for (let i = 0; i < pattern.length; i += 1) {
-    const ch = pattern[i]!;
+    const ch = pattern[i];
     if (ch !== "\\") {
       if (ch === "[") inClass = true;
       else if (ch === "]") inClass = false;

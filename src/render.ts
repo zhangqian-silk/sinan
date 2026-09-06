@@ -68,7 +68,7 @@ export function hyperlink(label: string, url: string): string {
 }
 
 export function termWidth(): number {
-  const fromEnv = process.env["COLUMNS"] ? parseInt(process.env["COLUMNS"]!, 10) : NaN;
+  const fromEnv = process.env["COLUMNS"] ? parseInt(process.env["COLUMNS"], 10) : NaN;
   const cols = Number.isFinite(fromEnv) ? fromEnv : (process.stdout.columns ?? 80);
   return Math.max(60, Math.min(cols, 200));
 }
@@ -84,21 +84,23 @@ export function table(
   const al: Align[] = aligns ?? Array<Align>(cols).fill("left");
   const sizes = headers.map((h) => width(h));
   for (const row of rows) {
-    for (let i = 0; i < cols; i += 1) sizes[i] = Math.max(sizes[i]!, width(row[i] ?? ""));
+    for (let i = 0; i < cols; i += 1) sizes[i] = Math.max(sizes[i], width(row[i] ?? ""));
   }
   const head = headers
-    .map((h, i) => paint(pad(h, sizes[i]!, al[i] ?? "left"), "gray"))
+    .map((h, i) => paint(pad(h, sizes[i], al[i] ?? "left"), "gray"))
     .join(gap);
   const lines = [head];
   for (const row of rows) {
-    lines.push(row.slice(0, cols).map((cell, i) => pad(cell, sizes[i]!, al[i] ?? "left")).join(gap));
+    lines.push(row.slice(0, cols).map((cell, i) => pad(cell, sizes[i], al[i] ?? "left")).join(gap));
   }
   return lines.join("\n");
 }
 
 export function bar(done: number, total: number, size = 18, color = "amber"): string {
-  const ratio = total ? done / total : 0;
-  const filled = pyRound(ratio * size);
+  // 比例必须夹住：数据不自洽时（统计口径对不上、外部产物过期）done 可能大于 total，
+  // 而 `"░".repeat(负数)` 在 JS 里是抛异常，不像 Python 那样返回空串。
+  const ratio = total ? Math.min(Math.max(done / total, 0), 1) : 0;
+  const filled = Math.min(Math.max(pyRound(ratio * size), 0), size);
   return paint("█".repeat(filled), color) + paint("░".repeat(size - filled), "gray");
 }
 
@@ -117,7 +119,7 @@ export function heading(text: string, sub = ""): string {
 }
 
 export function diffTag(p: Problem): string {
-  return paint(DIFF_CN[p.difficulty], DIFF_COLOR[p.difficulty]!);
+  return paint(DIFF_CN[p.difficulty], DIFF_COLOR[p.difficulty]);
 }
 
 export function tagChips(p: Problem, limit = 3): string {
@@ -130,7 +132,7 @@ export function tagChips(p: Problem, limit = 3): string {
 export function approachChips(p: Problem, limit = 3): string {
   const fp = p.approach ?? [];
   if (!fp.length) return paint("—", "gray");
-  const guessed = fp[0]!.from === "tags";
+  const guessed = fp[0].from === "tags";
   const chips = fp.slice(0, limit)
     .map((a) => paint(a.name, guessed ? "gray" : (DOMAIN_COLOR[a.domain] ?? "steel")));
   const rest = fp.length - limit;

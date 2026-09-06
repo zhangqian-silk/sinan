@@ -22,7 +22,7 @@
 import { readdirSync } from "node:fs";
 import { basename, join } from "node:path";
 
-import { loadJson } from "./io.js";
+import { asText, loadJson } from "./io.js";
 import { py } from "./pyre.js";
 import { CN_SUB_ALIAS, CN_TAG_ALIAS, DIFF_ALIAS, LATIN_TAIL } from "./rules/extra.data.js";
 import type { Seed } from "./taxonomy.js";
@@ -31,7 +31,7 @@ const LATIN_TAIL_RE = py(LATIN_TAIL);
 
 /** 「动态规划 DP」「深度优先搜索 DFS」这类后缀，去掉尾部的英文再匹配一次。 */
 function lookup(table: Record<string, string>, name: string): string | null {
-  if (name in table) return table[name]!;
+  if (name in table) return table[name];
   const trimmed = name.replace(new RegExp(LATIN_TAIL_RE.source, "u"), "").trim();
   return trimmed ? (table[trimmed] ?? null) : null;
 }
@@ -79,8 +79,8 @@ export function loadExtraSources(rawDir: string): ExtraItem[] {
         const sub = lookup(CN_SUB_ALIAS, tagName);
         if (sub) subHits.push([sub, 70, `${tagName}（${name}标注）`]);
       }
-      const id = String(raw["id"]);
-      const diffKey = String(raw["difficulty"] ?? "MEDIUM").toUpperCase();
+      const id = asText(raw["id"]);
+      const diffKey = (asText(raw["difficulty"]) || "MEDIUM").toUpperCase();
       out.push({
         source,
         sourceName: name,

@@ -2,6 +2,16 @@
   "name": "sinan",
   "version": "0.1.0",
   "description": "司南 —— 本地刷题训练台：多标签解法打标 + 按真实题解思路递进的学习计划（LeetCode / CodeTop / 洛谷）",
+  "author": "SILK",
+  "license": "MIT",
+  "homepage": "https://github.com/zhangqian-silk/sinan#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhangqian-silk/sinan.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zhangqian-silk/sinan/issues"
+  },
   "type": "module",
   "bin": {
     "sinan": "bin/sinan.js"
@@ -23,14 +33,16 @@
     "!dist/test"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
     "check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
     "test": "npm run build && node --test dist/test/*.test.js",
     "check:links": "npm run build && node dist/tools/check-links.js",
+    "fixture": "npm run build && node dist/tools/make-fixture.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -41,9 +53,11 @@
     "study-plan",
     "cli"
   ],
-  "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.10.2",
-    "typescript": "^5.7.2"
+    "eslint": "^9.39.5",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.69.0"
   }
 }

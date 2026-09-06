@@ -170,8 +170,8 @@ export function buildSimilarity(
     const pg = grams.get(slug)!;
     const pav = apVec.get(slug)!;
     const pfp = fpBySlug.get(slug)!;
-    const pMainAp = pfp.length ? pfp[0]!.id : "";
-    const pGuessed = pfp.length > 0 && pfp[0]!.from === "tags";
+    const pMainAp = pfp.length ? pfp[0].id : "";
+    const pGuessed = pfp.length > 0 && pfp[0].from === "tags";
     const scored: [number, string, string[]][] = [];
 
     for (const other of cands) {
@@ -192,7 +192,7 @@ export function buildSimilarity(
       const union = new Set([...pg, ...og]).size;
       const titleSim = inter / Math.max(union, 1);
       const isOfficial = officialOf(slug).has(other) ? 1 : 0;
-      const qMainAp = qfp.length ? qfp[0]!.id : "";
+      const qMainAp = qfp.length ? qfp[0].id : "";
       // 主思路相同才加分，且泛化思路（递归、模拟、公式推导）几乎不给分
       let sameMain = 0;
       if (pMainAp && pMainAp === qMainAp) {
@@ -206,7 +206,7 @@ export function buildSimilarity(
       // 思路毫无重合、又没有官方背书 → 封顶到代表阈值以下，禁止互相替代
       if (apOv <= 0 && !isOfficial) score = Math.min(score, 0.2);
       // 指纹是从标签猜的（没抓到题解）→ 打折，别把猜测当事实
-      if (pGuessed || (qfp.length && qfp[0]!.from === "tags")) score *= 0.85;
+      if (pGuessed || (qfp.length && qfp[0].from === "tags")) score *= 0.85;
       if (score < 0.18) continue;
 
       const why: string[] = [];
@@ -268,7 +268,7 @@ interface Detail {
 function keyedJsonl<T>(path: string): Map<string, T> {
   const out = new Map<string, T>();
   for (const r of readJsonl<T & { _key?: string; _error?: unknown }>(path)) {
-    if (r._key && !r._error) out.set(r._key, r as T);
+    if (r._key && !r._error) out.set(r._key, r);
   }
   return out;
 }
@@ -377,8 +377,8 @@ export function build(): void {
       url: `https://leetcode.cn/problems/${slug}/`,
       approach: fp,
       approachIds,
-      mainApproach: fp.length ? fp[0]!.name : "",
-      approachFrom: fp.length ? fp[0]!.from : "none",
+      mainApproach: fp.length ? fp[0].name : "",
+      approachFrom: fp.length ? fp[0].from : "none",
       solutionSampled: articles.length,
       codeBlocks: (codes.get(slug)?.blocks ?? []).length,
       // 「凭什么这么判」要能当场翻出来，否则打标就是黑箱
@@ -428,8 +428,8 @@ export function build(): void {
       url: extra.url,
       approach: fp,
       approachIds: fp.map((a) => a.id),
-      mainApproach: fp.length ? fp[0]!.name : "",
-      approachFrom: fp.length ? fp[0]!.from : "none",
+      mainApproach: fp.length ? fp[0].name : "",
+      approachFrom: fp.length ? fp[0].from : "none",
       solutionSampled: 0,
       codeBlocks: 0,
       value: 0,
@@ -532,8 +532,8 @@ export function build(): void {
   };
   const sourceRows = [...new Set(items.map((p) => p.source))].map((src) => {
     const rows = items.filter((p) => p.source === src);
-    const [name, home] = SOURCE_HOME[src] ?? [rows[0]!.sourceName, ""];
-    return { id: src, name, count: rows.length, url: home || rows[0]!.sourceHome || "" };
+    const [name, home] = SOURCE_HOME[src] ?? [rows[0].sourceName, ""];
+    return { id: src, name, count: rows.length, url: home || rows[0].sourceHome || "" };
   });
   const overlayRows = [
     {

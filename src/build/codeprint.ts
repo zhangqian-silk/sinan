@@ -32,7 +32,7 @@ const NEAR_COMPILED = NEAR_PROBES.map(
 
 /** 相当于 Python 的 `re.escape`。 */
 function reEscape(text: string): string {
-  return text.replace(/[\\^$.*+?()[\]{}|/\-]/g, "\\$&");
+  return text.replace(/[\\^$.*+?()[\]{}|/-]/g, "\\$&");
 }
 
 function indentOf(line: string): number {
@@ -46,9 +46,9 @@ function indentOf(line: string): number {
  * 如果把它也当成递归，「最后一次递归」的位置就会算错，后序就判不出来了。
  */
 function bodyRange(lines: string[], start: number): { start: number; stop: number } {
-  const base = indentOf(lines[start]!);
+  const base = indentOf(lines[start]);
   for (let i = start + 1; i < lines.length; i += 1) {
-    const ln = lines[i]!;
+    const ln = lines[i];
     if (ln.trim() && indentOf(ln) <= base) return { start: start + 1, stop: i };
   }
   return { start: start + 1, stop: lines.length };
@@ -66,7 +66,7 @@ function findDefs(lines: string[]): [string, number][] {
   const out: [string, number][] = [];
   lines.forEach((ln, i) => {
     const m = DEF_RE.exec(ln);
-    if (m && (m[1] || m[2])) out.push([(m[1] || m[2])!, i]);
+    if (m && (m[1] || m[2])) out.push([(m[1] || m[2]), i]);
   });
   return out;
 }
@@ -92,12 +92,12 @@ export function traversalOrders(code: string): Set<string> {
     const body = bodyRange(lines, at);
     const calls: number[] = [];
     for (let i = body.start; i < body.stop; i += 1) {
-      if (rx.test(lines[i]!) && !DEF_RE.test(lines[i]!)) calls.push(i);
+      if (rx.test(lines[i]) && !DEF_RE.test(lines[i])) calls.push(i);
     }
     if (!calls.length) continue;
     // 一行里递归两次（`return max(dfs(l), dfs(r)) + 1`）本身就是合并子树答案
     for (const i of calls) {
-      if (countMatches(rx, lines[i]!) >= 2 && COMBINE_RE.test(lines[i]!)) out.add("tree-postorder");
+      if (countMatches(rx, lines[i]) >= 2 && COMBINE_RE.test(lines[i])) out.add("tree-postorder");
     }
     if (calls.length < 2) continue;
     const lo = Math.min(...calls);
@@ -106,7 +106,7 @@ export function traversalOrders(code: string): Set<string> {
     const spanStop = Math.min(body.stop, hi + 7);
     const visits: number[] = [];
     for (let i = spanStart; i < spanStop; i += 1) {
-      if (VISIT_RE.test(lines[i]!)) visits.push(i);
+      if (VISIT_RE.test(lines[i])) visits.push(i);
     }
     if (visits.some((v) => v < lo)) out.add("tree-preorder");
     if (visits.some((v) => v > lo && v < hi)) out.add("tree-inorder");
@@ -120,7 +120,7 @@ export function traversalOrders(code: string): Set<string> {
     }
     if (holders.size) {
       for (let i = hi + 1; i < Math.min(body.stop, hi + 7); i += 1) {
-        const ln = lines[i]!;
+        const ln = lines[i];
         const touched = [...holders].some((h) => py(`\\b${reEscape(h)}\\b`).test(ln));
         if (touched && COMBINE_RE.test(ln)) { out.add("tree-postorder"); break; }
       }
@@ -135,7 +135,7 @@ function nearHits(code: string): Set<string> {
   const out = new Set<string>();
   for (const [aid, trigger, need, win] of NEAR_COMPILED) {
     for (let i = 0; i < lines.length; i += 1) {
-      if (!trigger.test(lines[i]!)) continue;
+      if (!trigger.test(lines[i])) continue;
       if (need.test(lines.slice(i, i + win + 1).join("\n"))) { out.add(aid); break; }
     }
   }
@@ -186,7 +186,7 @@ function pythonStructureSignals(code: string): Set<string> {
       const rx = py(RAW.SELF_CALL_TPL.replace("%s", reEscape(name)));
       const body = bodyRange(lines, at);
       for (let i = body.start; i < body.stop; i += 1) {
-        if (rx.test(lines[i]!) && !DEF_RE.test(lines[i]!)) { out.add("tree-recursion"); break; }
+        if (rx.test(lines[i]) && !DEF_RE.test(lines[i])) { out.add("tree-recursion"); break; }
       }
       if (out.has("tree-recursion")) break;
     }
@@ -194,7 +194,7 @@ function pythonStructureSignals(code: string): Set<string> {
 
   // while 循环体里在弹队列 / 弹栈
   for (let i = 0; i < lines.length; i += 1) {
-    if (!WHILE_HEAD.test(lines[i]!)) continue;
+    if (!WHILE_HEAD.test(lines[i])) continue;
     const body = bodyRange(lines, i);
     const src = lines.slice(i, body.stop).join("\n");
     if (POPLEFT.test(src)) out.add(graphy ? "graph-bfs" : "tree-levelorder");

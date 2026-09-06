@@ -88,7 +88,7 @@ function renderNoteBrief(topicId: string): void {
     }
   }
   if (note?.refs?.length) {
-    const [title, url] = note.refs[0]!;
+    const [title, url] = note.refs[0];
     out(`  ${r.paint("OI-Wiki：", "gray")}${r.hyperlink(title, url)}`
       + `${r.paint(`（共 ${note.refs.length} 篇，${PROG} learn 里全给）`, "gray")}`);
   }

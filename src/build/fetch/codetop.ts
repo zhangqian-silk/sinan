@@ -2,7 +2,7 @@
 
 import { join } from "node:path";
 
-import { dumpJson, rawDir } from "../io.js";
+import { asText, dumpJson, rawDir } from "../io.js";
 import { httpJson, sleep } from "../http.js";
 
 const API = "https://codetop.cc/api/questions/";
@@ -31,7 +31,7 @@ export async function run(): Promise<void> {
       seen.add(slug);
       rows.push({
         slug,
-        id: String(lc.frontend_question_id ?? ""),
+        id: asText(lc.frontend_question_id),
         title: lc.title ?? "",
         freq: item.value ?? 0,
         level: lc.level,

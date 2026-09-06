@@ -98,7 +98,7 @@ export function tagProblem(
     if (hasWeak && hasStrong) kept = kept.filter(([s]) => s !== weak);
   }
   kept = kept.slice(0, MAX_TAGS);
-  const main = pinned && kept.some(([s]) => s === pinned) ? pinned : kept[0]![0];
+  const main = pinned && kept.some(([s]) => s === pinned) ? pinned : kept[0][0];
   return [main, kept.map(([s, v]) => ({ id: s, w: v.w, src: v.src }))];
 }
 

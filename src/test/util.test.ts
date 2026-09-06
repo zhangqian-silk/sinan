@@ -12,6 +12,19 @@ import { test } from "node:test";
 import {
   Counter, fixed, pad, pyFloat, pyRound, pyRoundTo, sortBy, splitLines, trunc, width, wrap,
 } from "../util.js";
+import { bar, setColor } from "../render.js";
+
+setColor(false);
+
+test("进度条把比例夹在 0 到 1 之间，数据不自洽也不能崩", () => {
+  assert.equal(bar(0, 10, 4), "░░░░");
+  assert.equal(bar(10, 10, 4), "████");
+  assert.equal(bar(5, 10, 4), "██░░");
+  assert.equal(bar(0, 0, 4), "░░░░");
+  // done 大于 total：JS 的 repeat(负数) 会抛异常，必须夹住
+  assert.equal(bar(999, 10, 4), "████");
+  assert.equal(bar(-5, 10, 4), "░░░░");
+});
 
 test("pyRound 四舍六入五成双，和 Python 的 round() 一致", () => {
   assert.equal(pyRound(12.5), 12);      // JS 的 Math.round 会给 13

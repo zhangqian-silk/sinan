@@ -178,13 +178,14 @@ const COMMANDS: Entry[] = [
       out(`  ${r.pad("题库数据", 12)}${dataDir}${existsSync(dataDir) ? "" : r.paint("  （还没有，跑 {PROG} sync）", "gray")}`);
       out(`  ${r.pad("打卡记录", 12)}${SINAN_HOME}/progress.json`);
       out(`  ${r.pad("配置文件", 12)}${SINAN_HOME}/config.json`);
-      let store: Store | null = null;
+      let store: Store | null;
       try {
         store = new Store({
           dataDir: args["dataDir"] as string | undefined,
           solutions: (args["solutions"] as string[]) ?? [],
         });
       } catch {
+        // 数据还没抓，其余路径照样要能打印出来
         store = null;
       }
       const dirs = store?.solutionDirs ?? [];
@@ -204,7 +205,9 @@ function runSync(args: Args): void {
   void import("./build/pipeline.js").then(({ sync }) => sync({
     skipFetch: Boolean(args["skipFetch"]),
   })).catch((err: unknown) => {
-    process.stderr.write(`\n抓取或构建失败：${err instanceof Error ? err.message : String(err)}\n`);
+    const message = err instanceof Error ? err.message : String(err);
+    const shown = message.replaceAll("{PROG}", PROG);
+    process.stderr.write(err instanceof CliError ? `\n${shown}\n` : `\n抓取或构建失败：${shown}\n`);
     process.exit(1);
   });
 }

@@ -220,7 +220,7 @@ export function coverageMap(pool: readonly Problem[], sim: Record<string, { slug
     // 指纹有真实证据（不是纯靠官方标签猜的）才算数。
     // 注意这里不能写 === "solutions"：证据来源现在是 code / code+statement 这种组合，
     // 写死单个值会把最硬的代码证据反而排除掉。
-    solid.set(p.slug, list.length > 0 && list[0]!.from !== "tags");
+    solid.set(p.slug, list.length > 0 && list[0].from !== "tags");
   }
 
   const buckets = new Map<string, string[]>();
@@ -394,14 +394,14 @@ export function selectRepresentatives(
     return gain;
   };
 
-  const profile = PACE[pace] ?? PACE[DEFAULT_PACE]!;
+  const profile = PACE[pace] ?? PACE[DEFAULT_PACE];
   // depth 档把总预算放大，让困难题是「加上去的深度层」，而不是挤掉中等题的覆盖
   maxSteps = Math.min(pool.length, Math.max(maxSteps, pyRound(maxSteps * profile.mult)));
 
   if (seedCanon) {
     const entry = pool.filter((p) => p.difficulty === "EASY" || p.difficulty === "MEDIUM");
     const candidates = entry.length ? entry : pool;
-    let best = candidates[0]!;
+    let best = candidates[0];
     let bestScore = -Infinity;
     for (const p of candidates) {
       const score = (weight.get(p.slug) ?? 0) * relevance(p, topicTag);
@@ -583,7 +583,7 @@ function makeSteps(
     const lists = store.listNamesOf(p);
     if (lists.length) why.push(lists.slice(0, 2).join("、"));
     if (fp.length >= 3) why.push(`题解里有 ${fp.length} 种思路`);
-    if (fp.length && fp[0]!.from === "tags") why.push("思路由标签推断");
+    if (fp.length && fp[0].from === "tags") why.push("思路由标签推断");
     if (!why.length) why.push("补充练习");
 
     steps.push({
@@ -938,7 +938,7 @@ export function nextSteps(store: Store, count = 3): [string, Step][] {
     if (!topic) continue;
     const plan = planTopic(store, topic, { mode: "minimal" });
     const todo = plan.steps.filter((s) => !store.isDone(s.p));
-    if (todo.length) picked.push([store.subById.get(tag)!.name, todo[0]!]);
+    if (todo.length) picked.push([store.subById.get(tag)!.name, todo[0]]);
     if (picked.length >= count) break;
   }
   return picked;

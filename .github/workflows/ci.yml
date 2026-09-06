@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20", "22", "24"]
+    name: Node ${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      # 没有抓取数据时，两条依赖真实题库的打标自检会自动跳过；
+      # planner / store / CLI 的回归跑在入库的迷你夹具上，不需要网络。
+      - run: node --test dist/test/*.test.js
+
+  package:
+    runs-on: ubuntu-latest
+    name: 打包能装能跑
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: 打包并在干净目录里安装
+        run: |
+          set -euo pipefail
+          TGZ="$(npm pack --silent | tail -1)"
+          WORK="$(mktemp -d)"
+          cp "$TGZ" "$WORK/"
+          cd "$WORK"
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund "./$TGZ"
+          # 没有题库数据时应当给出可读提示并以 1 退出
+          if ./node_modules/.bin/sinan stats; then
+            echo "没有数据却退出成功，不符合预期" && exit 1
+          fi
+          ./node_modules/.bin/sinan --help | head -3
+          echo "运行时依赖：$(npm ls --omit=dev --parseable | wc -l) 个包（含自身）"

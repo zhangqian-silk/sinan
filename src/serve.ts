@@ -8,7 +8,9 @@
  */
 
 import { createReadStream, existsSync, statSync } from "node:fs";
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import {
+  createServer, type IncomingMessage, type Server, type ServerResponse,
+} from "node:http";
 import { extname, join, normalize, resolve } from "node:path";
 
 import * as notes from "./notes/index.js";
@@ -184,6 +186,30 @@ function apiTopics(st: Store): unknown {
   };
 }
 
+/**
+ * 讲解总目录：13 个大类 + 65 个子标签，每条一句话核心思路。
+ * 和 `sinan learn`（不带参数）是同一份内容，措辞取自 notes.gist。
+ */
+function apiNotes(st: Store): unknown {
+  const cats = st.cats.map((c) => {
+    const members = st.problems.filter((p) => p.cats.includes(c.id));
+    const [done, total] = st.progressOf(members);
+    return {
+      id: c.id, name: c.name, desc: c.desc, gist: notes.gist(c.id, c.desc),
+      done, total, hasNote: notes.hasNote(c.id),
+      subs: c.subs.map((s) => {
+        const sm = st.problems.filter((p) => p.tagIds.includes(s.id));
+        const [sdone, stotal] = st.progressOf(sm);
+        return {
+          id: s.id, name: s.name, desc: s.desc, gist: notes.gist(s.id, s.desc),
+          done: sdone, total: stotal, hasNote: notes.hasNote(s.id),
+        };
+      }),
+    };
+  });
+  return { cats };
+}
+
 function apiNote(st: Store, q: Query): unknown {
   const key = one(q, "topic");
   const topic = st.findTopic(key);
@@ -192,6 +218,18 @@ function apiNote(st: Store, q: Query): unknown {
   if (topic) {
     data["name"] = topic.name;
     data["desc"] = topic.desc;
+    data["kind"] = topic.kind;
+    // 代表题：和 `sinan learn <专题>` 给的是同一批，取自同一套最小覆盖
+    if (topic.kind !== "route") {
+      const plan = planner.planTopic(st, topic, { mode: "minimal" });
+      const limit = parseInt(one(q, "n", String(planner.SAMPLE_SIZE)) || "0", 10)
+        || planner.SAMPLE_SIZE;
+      data["poolSize"] = plan.poolSize;
+      data["planSteps"] = plan.steps.length;
+      data["picks"] = planner.representativeSample(plan, limit).map(([step, section]) => ({
+        ...stepJson(st, step), section,
+      }));
+    }
   }
   return data;
 }
@@ -216,6 +254,13 @@ function apiApproaches(st: Store): unknown {
 function apiPlan(st: Store, q: Query): unknown {
   const route = planner.ROUTE_BY_ID.get(one(q, "route"));
   if (route) {
+    if (planner.needsFreq(route) && !planner.hasFreqSignal(st)) {
+      return {
+        error: `「${route.name}」要按面试高频（CodeTop 频次与排名）排题，随包的精简题库里没有。`
+          + "跑一次 sinan sync 抓下来，或者换一条不依赖频次的主线：入门筑基 / 进阶通关",
+        needsSync: true,
+      };
+    }
     const plan = planner.planRoute(st, route, one(q, "paid") === "1");
     const data = planJson(st, plan);
     data["route"] = { id: route.id, name: route.name, tagline: route.tagline, desc: route.desc };
@@ -245,7 +290,18 @@ function apiNext(st: Store, q: Query): unknown {
 
 /** 学习计划 = 少数几条主线。专题（106 个）只是练习素材，不是计划。 */
 function apiRoutes(st: Store): unknown {
+  const hasFreq = planner.hasFreqSignal(st);
   const out = planner.ROUTES.map((route) => {
+    // 「面试冲刺」「补弱项」要按面试频次排题，随包基线里没有 —— 与其排出一份
+    // 空计划让人以为坏了，不如明说要先同步
+    const needsSync = planner.needsFreq(route) && !hasFreq;
+    if (needsSync) {
+      return {
+        id: route.id, name: route.name, tagline: route.tagline, desc: route.desc,
+        steps: 0, sections: 0, done: 0, minutes: 0, mix: {}, sharp: 0,
+        pace: route.pace, dynamic: Boolean(route.dynamic), needsSync: true,
+      };
+    }
     const plan = planner.planRoute(st, route);
     const steps = plan.steps;
     return {
@@ -254,7 +310,7 @@ function apiRoutes(st: Store): unknown {
       sections: plan.sections.filter((s) => s.steps.length).length,
       done: steps.filter((s) => st.isDone(s.p)).length,
       minutes: plan.minutes, mix: plan.mix.toObject(), sharp: plan.sharp.size,
-      pace: route.pace, dynamic: Boolean(route.dynamic),
+      pace: route.pace, dynamic: Boolean(route.dynamic), needsSync: false,
     };
   });
   return { routes: out };
@@ -265,6 +321,7 @@ const API: Record<string, (st: Store, q: Query) => unknown> = {
   "/api/problems": apiProblems,
   "/api/problem": apiProblem,
   "/api/topics": (st) => apiTopics(st),
+  "/api/notes": (st) => apiNotes(st),
   "/api/lists": (st) => apiLists(st),
   "/api/approaches": (st) => apiApproaches(st),
   "/api/plan": apiPlan,
@@ -322,10 +379,12 @@ function readBody(req: IncomingMessage): Promise<string> {
 export interface ServeOptions {
   host?: string;
   port?: number;
+  /** 测试里起服务用：不打印、不接管 SIGINT */
+  silent?: boolean;
 }
 
-export function serve(st: Store, options: ServeOptions = {}): void {
-  const { host = "127.0.0.1", port = 8848 } = options;
+export function serve(st: Store, options: ServeOptions = {}): Server {
+  const { host = "127.0.0.1", port = 8848, silent = false } = options;
   if (!existsSync(WEB_DIR)) throw new Error(`缺少前端目录 ${WEB_DIR}`);
 
   // 相似度文件不小，起服务时先热一下，别让第一次打开学习计划卡住
@@ -372,13 +431,17 @@ export function serve(st: Store, options: ServeOptions = {}): void {
   });
 
   server.listen(port, host, () => {
+    if (silent) return;
     process.stdout.write(`刷题训练台 web 端 → http://${host}:${port}\n`);
     process.stdout.write(`题库 ${st.meta.stats.total} 道 · 本地题解已识别 ${st.localSolutions().size} 题\n`);
     process.stdout.write("按 Ctrl+C 停止\n");
   });
 
-  process.on("SIGINT", () => {
-    process.stdout.write("\n已停止\n");
-    server.close(() => process.exit(0));
-  });
+  if (!silent) {
+    process.on("SIGINT", () => {
+      process.stdout.write("\n已停止\n");
+      server.close(() => process.exit(0));
+    });
+  }
+  return server;
 }

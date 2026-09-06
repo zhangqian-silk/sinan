@@ -791,6 +791,16 @@ export const ROUTES: Route[] = [
 
 export const ROUTE_BY_ID = new Map(ROUTES.map((r) => [r.id, r]));
 
+/** 这条主线要靠面试频次才排得出来。 */
+export function needsFreq(route: Route): boolean {
+  return route.hotOnly || route.dynamic === "weak";
+}
+
+/** 这份数据里有没有面试频次信号 —— 随包基线没有，全站的口径都跟着它变。 */
+export function hasFreqSignal(store: Store): boolean {
+  return store.problems.some((p) => p.freq > 0);
+}
+
 export function routeTopics(store: Store, r: Route): Topic[] {
   const ids = r.dynamic === "weak"
     ? weakTopics(store, 8).map(([tag]) => tag)
@@ -1020,3 +1030,66 @@ function affinity(p: Problem, topic: Topic): number {
   }
   return 0;   // 题单是人工编排的，谈不上「贴不贴」
 }
+
+/**
+ * 从一份计划里取样出「代表题」：讲解页要用的那几道。
+ *
+ * 名额按难度分档（易/中/难），档内优先换一个还没露过面的子标签。两个都想要 ——
+ * 难度上要看得见这个专题最后能难到哪去（只取计划前几道的话全是入门题），
+ * 广度上大类里的每个知识点都该有机会露面。最后按难度排成一条坡道。
+ *
+ * 终端和网页共用这一份，两边看到的代表题必然一致。
+ */
+export function representativeSample(plan: Plan, limit: number): [Step, string][] {
+  const sections = plan.sections.filter((s) => s.steps.length);
+  if (!sections.length || limit <= 0) return [];
+  const multi = sections.length > 1;
+  const all: [Step, string][] = sections.flatMap(
+    (sec) => sec.steps.map((s): [Step, string] => [s, multi ? sec.name : ""]));
+  const byDiff = (rows: [Step, string][]): [Step, string][] =>
+    [...rows].sort(([a], [b]) => DIFF_RANK[a.p.difficulty] - DIFF_RANK[b.p.difficulty]);
+  if (all.length <= limit) return byDiff(all);
+
+  const tiers: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
+  const buckets = new Map(tiers.map((d) => [d, all.filter(([s]) => s.p.difficulty === d)]));
+  const base = Math.floor(limit / 3);
+  const rest = limit - base * 3;
+  // 除不尽时先给中等，再给困难 —— 和 depth 节奏一致
+  const quota = new Map<Difficulty, number>([
+    ["EASY", base], ["MEDIUM", base + (rest > 0 ? 1 : 0)], ["HARD", base + (rest > 1 ? 1 : 0)],
+  ]);
+  // 某一档不够（比如入门专题没有困难题），名额顺延给别档
+  let short = 0;
+  for (const d of tiers) {
+    const gap = quota.get(d)! - buckets.get(d)!.length;
+    if (gap > 0) { quota.set(d, buckets.get(d)!.length); short += gap; }
+  }
+  for (const d of ["MEDIUM", "HARD", "EASY"] as Difficulty[]) {
+    while (short > 0 && quota.get(d)! < buckets.get(d)!.length) {
+      quota.set(d, quota.get(d)! + 1);
+      short -= 1;
+    }
+  }
+
+  const picks: [Step, string][] = [];
+  const usedSections = new Set<string>();
+  for (const d of tiers) {
+    const pool = buckets.get(d)!;
+    const want = quota.get(d)!;
+    const taken = new Set<Step>();
+    for (const pass of [0, 1]) {
+      for (const cand of pool) {
+        if (taken.size >= want) break;
+        if (taken.has(cand[0])) continue;
+        if (pass === 0 && usedSections.has(cand[1])) continue;   // 先换个知识点
+        taken.add(cand[0]);
+        usedSections.add(cand[1]);
+        picks.push(cand);
+      }
+    }
+  }
+  return byDiff(picks);
+}
+
+/** 讲解页默认给几道代表题。终端和网页保持一致。 */
+export const SAMPLE_SIZE = 6;

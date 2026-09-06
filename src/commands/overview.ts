@@ -47,7 +47,7 @@ export function cmdHome(store: Store, _args: Args): void {
 
   const picks = planner.nextSteps(store, 3);
   if (picks.length) {
-    out(r.rule(`下一步  ${planner.weakTopics(store, 1).length
+    out(r.rule(`下一步  ${planner.hasFreqSignal(store)
       ? "取自最薄弱专题的代表题" : "入门主线的头几步"}`));
     picks.forEach(([topicName, step], i) => {
       out(`  ${i + 1}. ${r.paint(topicName, "amber")}  `

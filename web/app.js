@@ -1,5 +1,5 @@
-// 刷题训练台 web 端。所有计算都在服务端（复用 store.py / planner.py），
-// 这里只负责取数据和渲染，所以网页和 ./sinan 看到的结论完全一致。
+// 刷题训练台 web 端。所有计算都在服务端（复用 store.ts / planner.ts），
+// 这里只负责取数据和渲染，所以网页和 sinan 命令行看到的结论完全一致。
 
 const CAT_COLOR = {
   basics: '#7f8ea3', array: '#4ea1ff', 'ds-basic': '#56c8d8', string: '#7dd3a0',
@@ -65,6 +65,7 @@ const VIEWS = [
   ['overview', '总览', '◉'],
   ['problems', '题库', '▤'],
   ['topics', '标签体系', '⌗'],
+  ['learn', '讲解', '❖'],
   ['approaches', '题解思路', '✳'],
   ['lists', '特殊题单', '★'],
   ['plan', '学习计划', '✦'],
@@ -76,11 +77,20 @@ const state = {
   filters: { cat: '', tag: '', approach: '', diff: new Set(), hot: false, todo: false, mine: false, source: '', paid: false, in: '', sort: 'id' },
   limit: 60,
   plan: { kind: 'route', route: 'starter', topic: 'lc:top-100-liked', mode: 'auto', pace: 'depth', all: false, paid: false },
+  learn: { topic: null },
   openSlug: null,
 };
-const cache = { meta: null, topics: null, approaches: null, lists: null, routes: null };
+const cache = { meta: null, topics: null, notes: null, approaches: null, lists: null, routes: null };
 
 // --- 公共零件 ----------------------------------------------------------------
+
+// 随包的精简题库：分类、思路、题目、链接都在，题面/面试频次/官方题单要自己抓。
+// 凡是因此拿不到的东西，都要说清楚缺什么怎么补，而不是显示一个 0。
+const isBaseline = () => Boolean(cache.meta && cache.meta.meta && cache.meta.meta.baseline);
+
+function syncHint(what) {
+  return h('p.syncHint', {}, `${what}需要本地抓取后才有：`, h('code', {}, 'sinan sync'));
+}
 
 function goLink(p, label = '↗') {
   return h('a.goLink', {
@@ -142,7 +152,7 @@ function problemRow(p, byApproach) {
     h('span', {}, diffPill(p)),
     byApproach ? apStrip(p) : tagStrip(p),
     h('span.row__num', { title: 'CodeTop 面试频次' }, p.freq ? `热 ${p.freq}` : '—'),
-    h('span.row__num', {}, `${Math.round(p.acRate * 100)}%`),
+    h('span.row__num', {}, p.acRate ? `${Math.round(p.acRate * 100)}%` : '—'),
     h('span.row__done', { title: p.mine.length ? `本地题解：${p.mine.join(', ')}` : '' },
       p.done ? (p.mine.length ? '✔' : '✓') : ''),
     goLink(p),
@@ -167,16 +177,21 @@ function sectionHead(title, note, ...extra) {
 async function viewOverview(host) {
   const { meta, cats, progress } = cache.meta;
   const st = meta.stats;
+  const baseline = isBaseline();
   host.append(h('div.metrics', {},
     metric('题库', st.total, `${st.free} 道免费`),
     metric('已刷', progress.done, `/ ${progress.total}`, (progress.done / progress.total) * 100),
-    metric('高频命中', progress.hotDone, `/ ${progress.hotTotal} CodeTop`,
-      (progress.hotDone / Math.max(progress.hotTotal, 1)) * 100),
+    baseline
+      ? metric('一题多解', st.multiApproach, `/ ${st.total} 题有 2 种以上思路`,
+          (st.multiApproach / Math.max(st.total, 1)) * 100)
+      : metric('高频命中', progress.hotDone, `/ ${progress.hotTotal} CodeTop`,
+          (progress.hotDone / Math.max(progress.hotTotal, 1)) * 100),
     metric('覆盖标签', progress.tagsTouched, `/ ${progress.tagCount}`,
       (progress.tagsTouched / progress.tagCount) * 100),
   ));
 
   host.append(sectionHead('知识地图', `13 个大类 · 一题多解会计入多个大类（平均 ${st.avgTags} 个标签/题）`,
+    h('button.btn.btn--ghost.btn--sm', { onClick: () => go('learn') }, '看讲解 →'),
     h('button.btn.btn--ghost.btn--sm', { onClick: () => go('topics') }, '看子标签 →')));
   host.append(h('div.mapGrid', {}, cats.map((c) => h('button.mapCard', {
     style: { '--catColor': CAT_COLOR[c.id] || '#8fa3b8' },
@@ -199,7 +214,8 @@ async function viewOverview(host) {
   api('/api/next', { n: 4 }).then(({ items }) => {
     clear(todoCard).append(
       h('div.sectionHead', { style: { padding: '14px 16px 0', margin: 0 } },
-        h('h2', {}, '下一步'), h('p', {}, '取自最薄弱专题的代表题')),
+        h('h2', {}, '下一步'),
+        h('p', {}, baseline ? '入门主线的头几步，按先修顺序' : '取自最薄弱专题的代表题')),
       h('div', { style: { padding: '4px 6px 10px' } }, items.map((it) => h('div.taskRow', {
         dataset: { done: String(it.problem.done) },
       },
@@ -216,7 +232,19 @@ async function viewOverview(host) {
       ))));
   }).catch((e) => clear(todoCard).append(h('div.empty', {}, String(e.message))));
 
-  api('/api/lists').then(({ lists }) => {
+  if (baseline) {
+    // 题单是平台自己挑选与编排的内容，不随包分发。这块空着不如换成能用的入口。
+    clear(listCard).append(
+      h('div.sectionHead', { style: { padding: '14px 16px 0', margin: 0 } },
+        h('h2', {}, '从哪开始'), h('p', {}, '随包的精简题库')),
+      h('div', { style: { padding: '2px 16px 16px' } },
+        h('p.syncHint', { style: { marginTop: 0 } },
+          '分类体系、每一类的核心解题思路、题目与平台链接都在包里，装完就能看。'),
+        syncHint('题面原文、面试高频（CodeTop 频次与排名）、28 份官方 / 公司题单'),
+        h('div', { style: { display: 'flex', gap: '8px', marginTop: '10px' } },
+          h('button.btn.btn--primary.btn--sm', { onClick: () => go('learn') }, '看讲解与代表题 →'),
+          h('button.btn.btn--sm', { onClick: () => { state.plan.kind = 'route'; state.plan.route = 'starter'; go('plan'); } }, '入门主线'))));
+  } else api('/api/lists').then(({ lists }) => {
     clear(listCard).append(
       h('div.sectionHead', { style: { padding: '14px 16px 0', margin: 0 } },
         h('h2', {}, '特殊题单'), h('p', {}, `${lists.length} 份`),
@@ -359,6 +387,7 @@ async function viewTopics(host) {
         h('button.btn.btn--sm', {
           onClick: () => { state.filters.cat = c.id; state.filters.tag = s.id; state.filters.approach = ''; go('problems'); },
         }, `去练 ${s.count} 题`),
+        h('button.btn.btn--sm.btn--ghost', { onClick: () => openLearn(s.id) }, '讲解'),
         h('button.btn.btn--sm.btn--ghost', {
           onClick: () => { state.plan.topic = s.id; go('plan'); },
         }, '学习计划'),
@@ -371,6 +400,113 @@ async function viewTopics(host) {
         h('span', {}, h('div.topicCat__title', {}, c.name), h('div.topicCat__desc', {}, c.desc)),
         h('span.topicCat__meta', {}, `${c.done}/${c.total} 题`, h('br'), `${c.subs.length} 个标签`)),
       body));
+  }
+}
+
+// --- 视图：讲解 --------------------------------------------------------------
+
+function openLearn(topic) {
+  state.learn.topic = topic || null;
+  state.view = 'learn';
+  location.hash = topic ? `learn/${encodeURIComponent(topic)}` : 'learn';
+  render();
+}
+
+/** 讲解总目录 + 单条讲解。和 `sinan learn` 是同一份内容。 */
+async function viewLearn(host) {
+  if (state.learn.topic) { await learnDetail(host, state.learn.topic); return; }
+  const { cats } = cache.notes || (cache.notes = await api('/api/notes'));
+  const subCount = cats.reduce((a, c) => a + c.subs.length, 0);
+  host.append(sectionHead('讲解总目录',
+    `${cats.length} 个大类 / ${subCount} 个子标签 · 每条都有核心思想、识别信号、模板、常见坑、代表题与 OI-Wiki`));
+
+  for (const c of cats) {
+    const color = CAT_COLOR[c.id] || '#8fa3b8';
+    host.append(h('div.card.topicCat', { style: { '--catColor': color } },
+      h('div.topicCat__head.topicCat__head--learn', {},
+        h('span.topicCat__bar'),
+        h('span', {},
+          h('div.topicCat__title', {}, c.name),
+          h('div.topicCat__desc', {}, c.gist || c.desc)),
+        h('span.topicCat__meta', {}, `${c.total} 题`, h('br'), `${c.subs.length} 个标签`),
+        h('button.btn.btn--sm', { onClick: () => openLearn(c.id) }, '这一类怎么想 →')),
+      h('div.topicSubs', {}, c.subs.map((s) => h('button.subCard.subCard--btn', {
+        onClick: () => openLearn(s.id),
+      },
+        h('div.subCard__top', {},
+          h('span.subCard__name', {}, s.name),
+          h('span.subCard__n', {}, `${s.total} 题`)),
+        h('p.subCard__desc', {}, s.gist || s.desc))))));
+  }
+}
+
+async function learnDetail(host, topic) {
+  host.append(h('div.sectionHead', {},
+    h('button.btn.btn--sm.btn--ghost', { onClick: () => openLearn(null) }, '← 全部讲解'),
+    h('span.spacer')));
+  const box = h('div', {}, h('div.empty', {}, '加载讲解…'));
+  host.append(box);
+
+  let note;
+  try {
+    note = await api('/api/note', { topic });
+  } catch (e) {
+    clear(box).append(h('div.empty', {}, String(e.message)));
+    return;
+  }
+
+  clear(box).append(h('div.card.planHead', {},
+    h('h2', {}, note.name || topic, ' · 讲解'),
+    note.desc ? h('p', {}, note.desc) : null,
+    h('div.planHead__meta', {},
+      note.poolSize ? h('span', {}, `题池 ${note.poolSize} 道`) : null,
+      note.planSteps ? h('span', {}, `最小覆盖 ${note.planSteps} 道`) : null,
+      h('span', {}, `识别信号 ${(note.signals || []).length} 条`)),
+    h('div.dActions', { style: { marginTop: '10px' } },
+      h('button.btn.btn--primary', {
+        onClick: () => { state.plan.kind = 'topic'; state.plan.topic = note.topic; go('plan'); },
+      }, '按这个专题排计划 →'),
+      h('button.btn', {
+        onClick: () => {
+          // 大类要落在 cat 上、子标签落在 tag 上，两者串了会筛出空列表
+          const isCat = note.kind === 'cat';
+          state.filters.cat = isCat ? note.topic : '';
+          state.filters.tag = isCat ? '' : note.topic;
+          state.filters.approach = '';
+          go('problems');
+        },
+      }, '看全部题目'))));
+
+  box.append(noteCard(note, { title: '核心思想与模板', forceOpen: true }));
+
+  const picks = note.picks || [];
+  if (picks.length) {
+    box.append(h('div.card.dayCard', {},
+      h('div.dayCard__head', {},
+        h('span.dayCard__n', {}, '代表题'),
+        h('span.dayCard__focus', {}, '取自最小覆盖，按难度递进 · 点标题看详情，点链接去平台'),
+        h('span.dayCard__prog', {}, note.planSteps ? `${picks.length} / ${note.planSteps} 道` : `${picks.length} 道`)),
+      picks.map((step, i) => {
+        const p = step.problem;
+        return h('div.stepRow', { dataset: { done: String(p.done) } },
+          h('span.stepRow__n', {}, String(i + 1)),
+          h('button.check', {
+            dataset: { on: String(p.done) },
+            title: p.mine.length ? `本地题解：${p.mine.join(', ')}` : '标记为已完成',
+            onClick: () => toggleCheckin(p.slug),
+          }, '✓'),
+          h('span.row__id', {}, p.id),
+          h('span', {},
+            h('div.stepRow__title', { onClick: () => openProblem(p.slug) }, p.title),
+            step.approaches.length
+              ? h('div.stepMeta', {}, h('span.k', {}, '思路'), step.approaches.join('、'))
+              : null,
+            step.section ? h('div.stepMeta', {}, h('span.k', {}, '知识点'), step.section) : null,
+            h('div.stepMeta', {}, h('span.k', {}, '链接'),
+              h('a.plainLink', { href: p.url, target: '_blank', rel: 'noreferrer' }, p.url))),
+          h('span', {}, diffPill(p), h('div.apNote', { style: { marginTop: '4px' } }, step.stage)),
+          goLink(p));
+      })));
   }
 }
 
@@ -411,6 +547,15 @@ async function viewApproaches(host) {
 
 async function viewLists(host) {
   const { lists } = cache.lists || (cache.lists = await api('/api/lists'));
+  if (!lists.length) {
+    host.append(sectionHead('特殊题单', '力扣官方学习计划 / CodeTop 公司榜'));
+    host.append(h('div.card', { style: { padding: '18px' } },
+      syncHint('题单是平台自己挑选与编排的内容，不随包分发。28 份官方 / 公司题单'),
+      h('p.syncHint', {}, '抓下来之后，这里会列出全部题单，并能按官方知识点分组排计划。'),
+      h('div', { style: { marginTop: '10px' } },
+        h('button.btn.btn--primary.btn--sm', { onClick: () => go('learn') }, '先看讲解与代表题 →'))));
+    return;
+  }
   host.append(sectionHead('特殊题单', `${lists.length} 份 · 点进去直接生成按知识点递进的计划`));
   const groups = new Map();
   for (const l of lists) {
@@ -457,9 +602,9 @@ function richText(s) {
 }
 
 // 教学卡片：核心思想 / 识别信号 / 模板 / 坑 / 复杂度 / OI-Wiki
-function noteCard(note, { compact = false } = {}) {
+function noteCard(note, { compact = false, title = null, forceOpen = false } = {}) {
   const key = compact ? 'lc-note-sec-open' : 'lc-note-open';
-  const open = localStorage.getItem(key) !== '0' && !compact;
+  const open = forceOpen || (localStorage.getItem(key) !== '0' && !compact);
   const card = h('div.card.noteCard', {});
   const bodyBox = h('div.noteCard__body', { style: { display: open ? 'block' : 'none' } });
   const toggle = h('button.noteCard__toggle', {}, open ? '收起' : '展开');
@@ -467,10 +612,10 @@ function noteCard(note, { compact = false } = {}) {
     const now = bodyBox.style.display === 'none';
     bodyBox.style.display = now ? 'block' : 'none';
     toggle.textContent = now ? '收起' : '展开';
-    localStorage.setItem(key, now ? '1' : '0');
+    if (!forceOpen) localStorage.setItem(key, now ? '1' : '0');
   };
   card.append(h('div.noteCard__head', {},
-    h('h3', {}, compact ? '这一节讲什么' : '开练前先看'),
+    h('h3', {}, title || (compact ? '这一节讲什么' : '开练前先看')),
     h('span', {}, '核心思想 · 识别信号 · 模板 · 常见坑'),
     toggle));
   card.append(bodyBox);
@@ -514,13 +659,18 @@ async function viewPlan(host) {
   host.append(sectionHead('学习计划', '四条跨专题的主线路线 · 点卡片展开'));
   host.append(h('div.mapGrid', {}, cache.routes.routes.map((rt) => h('button.mapCard', {
     style: { '--catColor': (opts.kind === 'route' && opts.route === rt.id) ? 'var(--accent)' : 'var(--border-strong)' },
+    dataset: { muted: String(Boolean(rt.needsSync)) },
     onClick: () => { opts.kind = 'route'; opts.route = rt.id; render(); },
   },
     h('div.mapCard__top', {},
       h('span.mapCard__name', {}, rt.name),
-      h('span.mapCard__n', {}, `${rt.done}/${rt.steps}`)),
+      h('span.mapCard__n', {}, rt.needsSync ? '需要同步' : `${rt.done}/${rt.steps}`)),
     h('p.mapCard__desc', {}, rt.tagline),
-    h('div.mapCard__subs', {},
+    rt.needsSync ? h('div.mapCard__subs', {},
+      h('span.mapCard__sub', {}, '要按面试高频排题'),
+      h('span.mapCard__sub', {}, '随包题库里没有频次'),
+      h('span.mapCard__sub', { style: { color: 'var(--accent)' } }, 'sinan sync 之后可用'),
+    ) : h('div.mapCard__subs', {},
       h('span.mapCard__sub', {}, `${rt.steps} 题`),
       h('span.mapCard__sub', {}, `${rt.sections} 个专题`),
       h('span.mapCard__sub', {}, `约 ${Math.round(rt.minutes / 60)} 小时`),
@@ -672,7 +822,7 @@ async function renderDrawer(slug) {
       diffPill(p),
       p.freq ? h('span.pill.pill--hot', {}, `CodeTop 第 ${p.freqRank} 名 · 被面 ${p.freq} 次`) : null,
       p.paid ? h('span.pill.pill--paid', {}, '会员题') : null,
-      h('span.chip.chip--static', {}, `通过率 ${Math.round(p.acRate * 100)}%`),
+      p.acRate ? h('span.chip.chip--static', {}, `通过率 ${Math.round(p.acRate * 100)}%`) : null,
       h('span.chip.chip--static', {}, p.sourceName || p.source),
       p.lists.length ? h('span.chip.chip--static', { title: p.lists.join('、') },
         `收录于 ${p.lists.length} 个题单`) : null),
@@ -684,6 +834,10 @@ async function renderDrawer(slug) {
       h('span.btn.btn--ghost', { style: { userSelect: 'all' } }, p.url),
     ),
   );
+  if (isBaseline()) {
+    host.append(h('div.dBlock', {},
+      syncHint('题面原文与面试高频（CodeTop 频次与排名）')));
+  }
 
   const fp = p.approachFull || [];
   if (fp.length) {
@@ -788,6 +942,7 @@ async function toggleCheckin(slug, keepDrawer) {
   cache.lists = null;
   cache.approaches = null;
   cache.routes = null;
+  cache.notes = null;
   await render();
   if (keepDrawer && state.openSlug) renderDrawer(state.openSlug);
 }
@@ -795,14 +950,24 @@ async function toggleCheckin(slug, keepDrawer) {
 function go(view) {
   state.view = view;
   state.limit = 60;
+  if (view === 'learn') state.learn.topic = null;
   location.hash = view;
   render();
 }
 
 const RENDERERS = {
   overview: viewOverview, problems: viewProblems, topics: viewTopics,
-  approaches: viewApproaches, lists: viewLists, plan: viewPlan,
+  learn: viewLearn, approaches: viewApproaches, lists: viewLists, plan: viewPlan,
 };
+
+/** 地址栏形如 #learn/monotonic：前一段是视图，后一段是它的参数。 */
+function parseHash() {
+  const raw = location.hash.replace('#', '');
+  const cut = raw.indexOf('/');
+  return cut < 0
+    ? { view: raw, arg: '' }
+    : { view: raw.slice(0, cut), arg: decodeURIComponent(raw.slice(cut + 1)) };
+}
 
 async function render() {
   const nav = clear($('#viewNav'));
@@ -837,7 +1002,9 @@ async function render() {
   const pr = cache.meta.progress;
   clear($('#topStats')).append(
     h('span', {}, '已刷 ', h('b', {}, String(pr.done)), ` / ${pr.total}`),
-    h('span', {}, '高频 ', h('b', {}, String(pr.hotDone)), ` / ${pr.hotTotal}`),
+    isBaseline()
+      ? h('span', {}, '标签 ', h('b', {}, String(pr.tagsTouched)), ` / ${pr.tagCount}`)
+      : h('span', {}, '高频 ', h('b', {}, String(pr.hotDone)), ` / ${pr.hotTotal}`),
     h('span', {}, '题库 ', h('b', {}, String(cache.meta.meta.stats.total))),
   );
 
@@ -871,8 +1038,13 @@ function wire() {
     }
   });
   window.addEventListener('hashchange', () => {
-    const v = location.hash.replace('#', '');
-    if (RENDERERS[v] && v !== state.view) { state.view = v; render(); }
+    const { view, arg } = parseHash();
+    if (!RENDERERS[view]) return;
+    const topic = view === 'learn' ? (arg || null) : state.learn.topic;
+    if (view === state.view && topic === state.learn.topic) return;
+    state.view = view;
+    if (view === 'learn') state.learn.topic = arg || null;
+    render();
   });
 }
 
@@ -885,8 +1057,11 @@ function wire() {
     bootText.textContent = `装载失败：${e.message}。先跑 ./sinan sync 生成数据`;
     return;
   }
-  const hash = location.hash.replace('#', '');
-  if (RENDERERS[hash]) state.view = hash;
+  const { view: hashView, arg: hashArg } = parseHash();
+  if (RENDERERS[hashView]) {
+    state.view = hashView;
+    if (hashView === 'learn' && hashArg) state.learn.topic = hashArg;
+  }
   state.plan.pace = cache.meta.defaultPace || 'depth';
 
   wire();

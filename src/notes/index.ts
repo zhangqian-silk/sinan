@@ -44,6 +44,28 @@ export function noteFor(topicId: string): Note | null {
   return SUB_NOTES[topicId] ?? CAT_NOTES[topicId] ?? null;
 }
 
+/**
+ * 核心思想的第一句，给目录这类一行一条的地方用。
+ * 终端的讲解总目录和网页的讲解列表都走这里，两边措辞不会各写各的。
+ *
+ * 有几张卡片的开头是「网格连通块。」这种六个字的引子，单独拎出来什么都没说，
+ * 所以不够长就继续取下一句，直到说清楚一件事为止。
+ */
+export function gist(topicId: string, fallback = ""): string {
+  const text = noteFor(topicId)?.idea ?? fallback;
+  const flat = (text || "").replace(/\*\*([\s\S]+?)\*\*/g, "$1")
+    .replaceAll("`", "").replace(/\s+/g, " ").trim();
+  const MIN = 12;
+  let end = 0;
+  while (end < flat.length) {
+    const next = flat.slice(end).search(/[。；]/);
+    if (next < 0) return flat;
+    end += next + 1;
+    if (end >= MIN) break;
+  }
+  return end > 0 ? flat.slice(0, end) : flat;
+}
+
 export function hasNote(topicId: string): boolean {
   return topicId in SUB_NOTES || topicId in CAT_NOTES || signals(topicId).length > 0;
 }

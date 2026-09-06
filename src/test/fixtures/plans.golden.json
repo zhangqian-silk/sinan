@@ -1,7 +1,7 @@
 {
   "topic:monotonic": {
     "poolSize": 31,
-    "covered": 24,
+    "covered": 26,
     "sections": [
       {
         "key": "monotonic",
@@ -17,24 +17,25 @@
           "sliding-window-maximum",
           "maximal-rectangle",
           "largest-rectangle-in-histogram",
-          "minimum-number-of-increments-on-subarrays-to-form-a-target-array",
+          "create-maximum-number",
           "shortest-subarray-with-sum-at-least-k"
         ]
       }
     ]
   },
   "topic:dp-interval": {
-    "poolSize": 16,
-    "covered": 13,
+    "poolSize": 17,
+    "covered": 15,
     "sections": [
       {
         "key": "dp-interval",
-        "pool": 16,
+        "pool": 17,
         "steps": [
           "generate-parentheses",
           "longest-palindromic-subsequence",
+          "predict-the-winner",
           "palindromic-substrings",
-          "stone-game",
+          "last-stone-weight-ii",
           "palindrome-partitioning",
           "minimum-insertion-steps-to-make-a-string-palindrome",
           "minimum-cost-to-merge-stones",
@@ -85,11 +86,11 @@
   },
   "topic:tree": {
     "poolSize": 47,
-    "covered": 28,
+    "covered": 32,
     "sections": [
       {
         "key": "tree-traversal",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -118,9 +119,13 @@
       },
       {
         "key": "tree-build",
-        "pool": 7,
+        "pool": 8,
         "steps": [
+          "maximum-binary-tree",
           "verify-preorder-serialization-of-a-binary-tree",
+          "populating-next-right-pointers-in-each-node",
+          "recover-binary-search-tree",
+          "construct-binary-search-tree-from-preorder-traversal",
           "construct-binary-tree-from-preorder-and-inorder-traversal",
           "construct-binary-tree-from-inorder-and-postorder-traversal",
           "serialize-and-deserialize-binary-tree"
@@ -262,12 +267,12 @@
     ]
   },
   "route:starter": {
-    "poolSize": 206,
-    "covered": 105,
+    "poolSize": 204,
+    "covered": 106,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 23,
+        "pool": 22,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -312,7 +317,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 39,
+        "pool": 38,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -358,12 +363,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 191,
-    "covered": 108,
+    "poolSize": 188,
+    "covered": 110,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 20,
+        "pool": 19,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -423,12 +428,12 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 39,
+        "pool": 38,
         "steps": [
+          "symmetric-tree",
           "same-tree",
           "binary-tree-level-order-traversal",
-          "sum-root-to-leaf-numbers",
-          "binary-tree-right-side-view"
+          "sum-root-to-leaf-numbers"
         ]
       },
       {
@@ -462,7 +467,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 14,
+        "pool": 13,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
@@ -483,8 +488,8 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 50,
-    "covered": 25,
+    "poolSize": 49,
+    "covered": 27,
     "sections": [
       {
         "key": "dp",
@@ -493,11 +498,11 @@
           "generate-parentheses",
           "maximum-length-of-repeated-subarray",
           "longest-palindromic-subsequence",
-          "increasing-triplet-subsequence",
+          "predict-the-winner",
           "longest-palindromic-substring",
           "palindrome-partitioning",
-          "minimum-insertion-steps-to-make-a-string-palindrome",
-          "maximal-rectangle"
+          "maximal-rectangle",
+          "split-array-largest-sum"
         ]
       },
       {
@@ -513,19 +518,18 @@
       },
       {
         "key": "advanced-ds",
-        "pool": 6,
+        "pool": 5,
         "steps": [
-          "maximum-binary-tree",
           "range-sum-query-mutable",
-          "luogu:P1020",
-          "minimum-cost-tree-from-leaf-values"
+          "minimum-cost-tree-from-leaf-values",
+          "longest-duplicate-substring"
         ]
       }
     ]
   },
   "route:weakness": {
-    "poolSize": 228,
-    "covered": 96,
+    "poolSize": 225,
+    "covered": 98,
     "sections": [
       {
         "key": "two-pointers",
@@ -538,7 +542,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 42,
+        "pool": 41,
         "steps": [
           "balanced-binary-tree",
           "binary-tree-level-order-traversal",
@@ -556,7 +560,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 34,
+        "pool": 33,
         "steps": [
           "palindrome-linked-list",
           "next-greater-element-ii",
@@ -565,7 +569,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 23,
+        "pool": 22,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -573,12 +577,12 @@
         ]
       },
       {
-        "key": "dp-linear",
+        "key": "dp-interval",
         "pool": 17,
         "steps": [
-          "is-subsequence",
-          "maximum-sum-circular-subarray",
-          "longest-subarray-of-1s-after-deleting-one-element"
+          "generate-parentheses",
+          "longest-palindromic-subsequence",
+          "predict-the-winner"
         ]
       },
       {

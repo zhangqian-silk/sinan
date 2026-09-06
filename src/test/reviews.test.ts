@@ -8,14 +8,14 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { loadReviews } from "../build/reviews.js";
+import { loadReviews, tagsOf } from "../build/reviews.js";
 import { NODE_BY_ID } from "../build/taxonomy.js";
 
 const reviews = [...loadReviews().values()];
 
 test("每条判定的标签都在树上", () => {
   for (const r of reviews) {
-    for (const id of r.tags) {
+    for (const id of tagsOf(r)) {
       assert.ok(NODE_BY_ID.has(id), `${r.slug} 用了树上没有的标签：${id}`);
     }
   }
@@ -23,7 +23,7 @@ test("每条判定的标签都在树上", () => {
 
 test("每条判定都至少落到一个二级节点", () => {
   for (const r of reviews) {
-    const hasLevel2 = r.tags.some((id) => {
+    const hasLevel2 = tagsOf(r).some((id) => {
       let cur: string | undefined = id;
       while (cur && NODE_BY_ID.has(cur)) {
         if (NODE_BY_ID.get(cur)!.depth === 2) return true;
@@ -35,16 +35,30 @@ test("每条判定都至少落到一个二级节点", () => {
   }
 });
 
-test("解法思路写清楚了，别只丢一句话占位", () => {
+test("每种解法都讲清楚了它在这道题上是什么样子", () => {
   for (const r of reviews) {
-    assert.ok(r.idea.length >= 20, `${r.slug} 的解法思路太短：${r.idea}`);
     assert.ok(r.id, `${r.slug} 缺题号`);
-    if (r.alt) for (const a of r.alt) assert.ok(a.length >= 8, `${r.slug} 的替代解法太短`);
+    for (const sol of r.solutions) {
+      assert.ok(sol.name.length >= 2, `${r.slug} 的解法没名字`);
+      assert.ok(sol.idea.length >= 25, `${r.slug} 的「${sol.name}」讲得太短：${sol.idea}`);
+    }
   }
 });
 
-test("标签不重复，也别把同一个节点写两遍", () => {
+test("一条解法里的标签不重复", () => {
   for (const r of reviews) {
-    assert.equal(new Set(r.tags).size, r.tags.length, `${r.slug} 的标签有重复`);
+    for (const sol of r.solutions) {
+      assert.equal(new Set(sol.tags).size, sol.tags.length, `${r.slug}「${sol.name}」标签重复`);
+    }
+  }
+});
+
+test("解法不提出处，也不写日期 —— 这些都是噪音", () => {
+  for (const r of reviews) {
+    for (const sol of r.solutions) {
+      assert.ok(!/官方|题解区|我们自己|读题后/.test(sol.idea),
+        `${r.slug} 的「${sol.name}」提到了出处：${sol.idea}`);
+      assert.ok(!/20\d\d-\d\d-\d\d/.test(sol.idea), `${r.slug} 的「${sol.name}」里混进了日期`);
+    }
   }
 });

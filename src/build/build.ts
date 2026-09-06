@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { analyzeBlocks, tagSeeds, type CodeBlock } from "./codeprint.js";
 import { buildCurated, type RawList } from "./curated.js";
 import { loadExtraSources, lookup } from "./extra.js";
-import { loadReviews, type Review } from "./reviews.js";
+import { loadReviews, tagsOf, type Review } from "./reviews.js";
 import { APPROACHES, fingerprint, vector } from "./fingerprint.js";
 import { distDir, dumpJson, loadJson, rawDir, readJsonl } from "./io.js";
 import { py } from "./pyre.js";
@@ -86,7 +86,7 @@ function reviewTags(review: Review): {
       ...(info.depth >= 3 ? { level: info.depth, parent: info.parent } : {}),
     });
   };
-  for (const id of review.tags) {
+  for (const id of tagsOf(review)) {
     // 先补父链再放自己，保证 tags 里父在前
     const chain: string[] = [];
     let cur: string | undefined = id;
@@ -485,11 +485,8 @@ export function build(): void {
       // 「凭什么这么判」要能当场翻出来，否则打标就是黑箱
       approachWhy,
       ...(review ? { review: {
-        idea: review.idea,
-        ...(review.complexity ? { complexity: review.complexity } : {}),
-        ...(review.alt?.length ? { alt: review.alt } : {}),
+        solutions: review.solutions,
         ...(review.pitfall ? { pitfall: review.pitfall } : {}),
-        ...(review.at ? { at: review.at } : {}),
       } } : {}),
       value: 0,
     };

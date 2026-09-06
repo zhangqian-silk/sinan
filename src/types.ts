@@ -24,21 +24,23 @@ export interface ApproachRef {
   from: string;
 }
 
-/**
- * 人工判定：逐题读题面之后自己写的最简解法与判断。
- * 内容是我们自己写的，不是平台题解，所以随包分发。
- */
-export interface ProblemReview {
-  /** 最简可行解，两三句说清楚怎么想 */
+/** 一道题的一种解法：这个技巧的核心思想，落到这道题上是什么样子。 */
+export interface ReviewSolution {
+  /** 这个解法用到的标签节点 id，一个解法常常同时用到几个技巧 */
+  tags: string[];
+  /** 这个解法在本题里的叫法 */
+  name: string;
+  /** 核心思想怎么映射到这道题 */
   idea: string;
   /** 时间 / 空间 */
   complexity?: string;
-  /** 其它值得知道的解法 */
-  alt?: string[];
+}
+
+/** 一道题的全部解法，按上手顺序排，第一条就是最简可行的那个。 */
+export interface ProblemReview {
+  solutions: ReviewSolution[];
   /** 这题最容易错的地方 */
   pitfall?: string;
-  /** 评的日期 */
-  at?: string;
 }
 
 export interface Problem {

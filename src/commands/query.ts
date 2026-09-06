@@ -145,19 +145,20 @@ export function cmdShow(store: Store, args: Args): void {
   if (meta.length) out(`  ${meta.join("\n  ")}`);
   out(`  ${r.paint("平台链接", "gray")} ${r.hyperlink(p.url, p.url)}`);
 
-  // 人工判定优先展示：这是我们自己读完题写的，比抓来的题解更该先看见
+  // 解法排在最前面：每一种讲清楚它的核心思想落到这道题上是什么样子
   if (p.review) {
-    const width = Math.max(r.termWidth() - 6, 50);
-    out("", r.rule(`最简解法  我们自己读题后写的${p.review.at ? ` · ${p.review.at}` : ""}`));
-    for (const line of r.wrap(p.review.idea, width)) out(`  ${line}`);
-    if (p.review.complexity) out(`  ${r.paint("复杂度", "gray")} ${p.review.complexity}`);
-    for (const a of p.review.alt ?? []) {
-      r.wrap(a, width - 4).forEach((line, i) => {
-        out(`  ${r.paint((i === 0 ? "· " : "  ") + line, "gray")}`);
-      });
-    }
+    const width = Math.max(r.termWidth() - 8, 48);
+    out("", r.rule(`解法  ${p.review.solutions.length} 种，第一条最好上手`));
+    p.review.solutions.forEach((sol, i) => {
+      const cat = store.nodeById.get(sol.tags[0])?.cat ?? "";
+      const names = sol.tags.map((t) => store.nodeById.get(t)?.name ?? t).join(" · ");
+      out(`  ${r.paint(`${i + 1}.`, "gray")} ${r.paint(sol.name, r.CAT_COLOR[cat] ?? "steel")}`
+        + `  ${r.paint(names, "gray")}`
+        + (sol.complexity ? `  ${r.paint(sol.complexity, "gray")}` : ""));
+      for (const line of r.wrap(sol.idea, width)) out(`     ${line}`);
+    });
     if (p.review.pitfall) {
-      r.wrap(p.review.pitfall, width - 4).forEach((line, i) => {
+      r.wrap(p.review.pitfall, width).forEach((line, i) => {
         out(`  ${r.paint((i === 0 ? "! " : "  ") + line, i === 0 ? "red" : "gray")}`);
       });
     }

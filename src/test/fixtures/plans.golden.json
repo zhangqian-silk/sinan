@@ -260,7 +260,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 208,
+    "poolSize": 207,
     "covered": 115,
     "sections": [
       {
@@ -287,7 +287,7 @@
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "4sum"
+          "smallest-subarrays-with-maximum-bitwise-or"
         ]
       },
       {
@@ -319,7 +319,7 @@
       },
       {
         "key": "bs-array",
-        "pool": 29,
+        "pool": 28,
         "steps": [
           "minimum-capacity-box",
           "minimum-number-of-days-to-make-m-bouquets",
@@ -356,7 +356,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 185,
+    "poolSize": 183,
     "covered": 107,
     "sections": [
       {
@@ -371,17 +371,17 @@
       },
       {
         "key": "sliding-window",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "4sum",
-          "minimum-size-subarray-sum"
+          "minimum-size-subarray-sum",
+          "longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 39,
+        "pool": 40,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 31,
+        "pool": 30,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -411,7 +411,7 @@
       },
       {
         "key": "heap",
-        "pool": 5,
+        "pool": 4,
         "steps": [
           "kth-smallest-element-in-a-sorted-matrix",
           "k-th-smallest-prime-fraction",

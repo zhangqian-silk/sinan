@@ -1,7 +1,7 @@
 {
   "topic:monotonic": {
     "poolSize": 35,
-    "covered": 28,
+    "covered": 26,
     "sections": [
       {
         "key": "monotonic",
@@ -9,14 +9,14 @@
         "steps": [
           "next-greater-element-i",
           "daily-temperatures",
-          "maximum-sum-circular-subarray",
           "asteroid-collision",
+          "next-greater-element-iii",
           "remove-k-digits",
           "construct-binary-tree-from-preorder-and-inorder-traversal",
-          "trapping-rain-water",
           "sliding-window-maximum",
           "maximal-rectangle",
           "largest-rectangle-in-histogram",
+          "basic-calculator-iv",
           "shortest-subarray-with-sum-at-least-k",
           "sliding-window-median"
         ]
@@ -149,6 +149,7 @@
           "can-place-flowers",
           "merge-strings-alternately",
           "reverse-vowels-of-a-string",
+          "reverse-words-in-a-string",
           "product-of-array-except-self",
           "increasing-triplet-subsequence",
           "string-compression"
@@ -277,12 +278,12 @@
     ]
   },
   "route:starter": {
-    "poolSize": 258,
-    "covered": 118,
+    "poolSize": 254,
+    "covered": 112,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 33,
+        "pool": 32,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -300,11 +301,11 @@
       },
       {
         "key": "sliding-window",
-        "pool": 16,
+        "pool": 15,
         "steps": [
           "maximum-average-subarray-i",
           "remove-element",
-          "reverse-words-in-a-string"
+          "3sum-closest"
         ]
       },
       {
@@ -318,11 +319,11 @@
       },
       {
         "key": "stack-queue",
-        "pool": 38,
+        "pool": 35,
         "steps": [
           "palindrome-linked-list",
-          "daily-temperatures",
-          "remove-nth-node-from-end-of-list"
+          "remove-nth-node-from-end-of-list",
+          "asteroid-collision"
         ]
       },
       {
@@ -345,7 +346,7 @@
       },
       {
         "key": "prefix-sum",
-        "pool": 10,
+        "pool": 11,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -365,33 +366,33 @@
         "key": "dp-linear",
         "pool": 22,
         "steps": [
-          "is-subsequence",
           "fibonacci-number",
+          "maximum-sum-circular-subarray",
           "longest-palindromic-subsequence"
         ]
       }
     ]
   },
   "route:interview": {
-    "poolSize": 289,
-    "covered": 133,
+    "poolSize": 284,
+    "covered": 134,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 32,
+        "pool": 31,
         "steps": [
           "two-sum",
           "linked-list-cycle",
           "longest-substring-without-repeating-characters",
-          "remove-k-digits"
+          "binary-tree-right-side-view"
         ]
       },
       {
         "key": "sliding-window",
-        "pool": 23,
+        "pool": 22,
         "steps": [
           "maximum-average-subarray-i",
-          "reverse-words-in-a-string",
+          "remove-element",
           "3sum-closest",
           "remove-duplicates-from-sorted-array-ii"
         ]
@@ -403,7 +404,7 @@
           "move-zeroes",
           "3sum",
           "reorder-list",
-          "longest-palindromic-substring"
+          "minimum-size-subarray-sum"
         ]
       },
       {
@@ -418,22 +419,22 @@
       },
       {
         "key": "monotonic",
-        "pool": 34,
+        "pool": 35,
         "steps": [
           "daily-temperatures",
           "asteroid-collision",
-          "construct-binary-tree-from-preorder-and-inorder-traversal",
+          "remove-k-digits",
           "sliding-window-maximum"
         ]
       },
       {
         "key": "heap",
-        "pool": 19,
+        "pool": 17,
         "steps": [
-          "remove-duplicates-from-sorted-array",
-          "remove-element",
           "sort-colors",
-          "partition-list"
+          "partition-list",
+          "kth-smallest-element-in-a-sorted-matrix",
+          "evaluate-division"
         ]
       },
       {
@@ -442,23 +443,23 @@
         "steps": [
           "same-tree",
           "binary-tree-level-order-traversal",
-          "sum-root-to-leaf-numbers",
-          "lowest-common-ancestor-of-a-binary-tree"
+          "binary-tree-zigzag-level-order-traversal",
+          "sum-root-to-leaf-numbers"
         ]
       },
       {
         "key": "tree-path",
-        "pool": 7,
+        "pool": 8,
         "steps": [
           "path-sum",
-          "binary-tree-paths",
+          "lowest-common-ancestor-of-a-binary-tree",
           "lowest-common-ancestor-of-a-binary-search-tree",
-          "path-sum-iii"
+          "longest-zigzag-path-in-a-binary-tree"
         ]
       },
       {
         "key": "bs-answer",
-        "pool": 12,
+        "pool": 11,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
@@ -468,22 +469,22 @@
       },
       {
         "key": "graph-basic",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "keys-and-rooms",
           "number-of-provinces",
           "surrounded-regions",
-          "evaluate-division"
+          "course-schedule-iv"
         ]
       },
       {
         "key": "dp-linear",
-        "pool": 37,
+        "pool": 36,
         "steps": [
-          "is-subsequence",
           "fibonacci-number",
+          "maximum-sum-circular-subarray",
           "longest-palindromic-subsequence",
-          "maximum-subarray"
+          "longest-palindromic-substring"
         ]
       },
       {
@@ -546,15 +547,15 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 317,
-    "covered": 91,
+    "poolSize": 313,
+    "covered": 85,
     "sections": [
       {
         "key": "two-pointers",
         "pool": 56,
         "steps": [
           "linked-list-cycle",
-          "reverse-words-in-a-string",
+          "container-with-most-water",
           "longest-substring-without-repeating-characters"
         ]
       },
@@ -569,10 +570,10 @@
       },
       {
         "key": "stack-queue",
-        "pool": 49,
+        "pool": 46,
         "steps": [
           "palindrome-linked-list",
-          "daily-temperatures",
+          "asteroid-collision",
           "reorder-list"
         ]
       },
@@ -580,36 +581,27 @@
         "key": "dp-linear",
         "pool": 39,
         "steps": [
-          "is-subsequence",
           "fibonacci-number",
+          "maximum-sum-circular-subarray",
           "longest-palindromic-subsequence"
         ]
       },
       {
         "key": "monotonic",
-        "pool": 34,
+        "pool": 33,
         "steps": [
-          "next-greater-element-i",
-          "asteroid-collision",
-          "remove-k-digits"
+          "daily-temperatures",
+          "remove-k-digits",
+          "trapping-rain-water"
         ]
       },
       {
         "key": "hash-count",
-        "pool": 34,
+        "pool": 35,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
           "remove-duplicates-from-sorted-array-ii"
-        ]
-      },
-      {
-        "key": "sorting",
-        "pool": 27,
-        "steps": [
-          "merge-sorted-array",
-          "3sum",
-          "3sum-closest"
         ]
       },
       {
@@ -619,6 +611,15 @@
           "generate-parentheses",
           "valid-parenthesis-string",
           "longest-palindromic-substring"
+        ]
+      },
+      {
+        "key": "sorting",
+        "pool": 26,
+        "steps": [
+          "merge-sorted-array",
+          "3sum",
+          "3sum-closest"
         ]
       }
     ]

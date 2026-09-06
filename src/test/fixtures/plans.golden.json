@@ -24,18 +24,17 @@
     ]
   },
   "topic:dp-interval": {
-    "poolSize": 17,
-    "covered": 15,
+    "poolSize": 16,
+    "covered": 14,
     "sections": [
       {
         "key": "dp-interval",
-        "pool": 17,
+        "pool": 16,
         "steps": [
           "generate-parentheses",
           "longest-palindromic-subsequence",
           "predict-the-winner",
           "palindromic-substrings",
-          "last-stone-weight-ii",
           "palindrome-partitioning",
           "minimum-insertion-steps-to-make-a-string-palindrome",
           "minimum-cost-to-merge-stones",
@@ -85,8 +84,8 @@
     ]
   },
   "topic:tree": {
-    "poolSize": 47,
-    "covered": 29,
+    "poolSize": 45,
+    "covered": 28,
     "sections": [
       {
         "key": "tree-traversal",
@@ -120,9 +119,8 @@
       },
       {
         "key": "tree-build",
-        "pool": 7,
+        "pool": 5,
         "steps": [
-          "verify-preorder-serialization-of-a-binary-tree",
           "construct-binary-tree-from-preorder-and-inorder-traversal",
           "construct-binary-tree-from-inorder-and-postorder-traversal",
           "serialize-and-deserialize-binary-tree"
@@ -264,8 +262,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 202,
-    "covered": 104,
+    "poolSize": 197,
+    "covered": 102,
     "sections": [
       {
         "key": "hash-count",
@@ -305,7 +303,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 32,
+        "pool": 31,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -314,7 +312,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 38,
+        "pool": 36,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -341,7 +339,7 @@
       },
       {
         "key": "backtracking",
-        "pool": 12,
+        "pool": 11,
         "steps": [
           "binary-tree-paths",
           "generate-parentheses",
@@ -350,7 +348,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",
@@ -360,17 +358,17 @@
     ]
   },
   "route:interview": {
-    "poolSize": 191,
-    "covered": 112,
+    "poolSize": 190,
+    "covered": 110,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 20,
+        "pool": 21,
         "steps": [
           "two-sum",
-          "intersection-of-two-linked-lists",
           "linked-list-cycle",
-          "longest-substring-without-repeating-characters"
+          "longest-substring-without-repeating-characters",
+          "3sum"
         ]
       },
       {
@@ -385,22 +383,22 @@
       },
       {
         "key": "two-pointers",
-        "pool": 38,
+        "pool": 39,
         "steps": [
+          "merge-sorted-array",
           "move-zeroes",
           "compare-version-numbers",
-          "3sum",
           "reorder-list"
         ]
       },
       {
         "key": "linked-list",
-        "pool": 11,
+        "pool": 12,
         "steps": [
+          "intersection-of-two-linked-lists",
           "reverse-linked-list",
           "odd-even-linked-list",
-          "remove-nth-node-from-end-of-list",
-          "rotate-list"
+          "remove-nth-node-from-end-of-list"
         ]
       },
       {
@@ -425,7 +423,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 38,
+        "pool": 36,
         "steps": [
           "symmetric-tree",
           "same-tree",
@@ -464,7 +462,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 13,
+        "pool": 12,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
@@ -474,23 +472,22 @@
       },
       {
         "key": "ds-design",
-        "pool": 4,
+        "pool": 3,
         "steps": [
           "design-browser-history",
           "range-sum-query-mutable",
-          "flatten-nested-list-iterator",
           "kth-smallest-element-in-a-bst"
         ]
       }
     ]
   },
   "route:advanced": {
-    "poolSize": 49,
+    "poolSize": 48,
     "covered": 27,
     "sections": [
       {
         "key": "dp",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "generate-parentheses",
           "maximum-length-of-repeated-subarray",
@@ -525,12 +522,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 227,
-    "covered": 97,
+    "poolSize": 225,
+    "covered": 99,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 49,
+        "pool": 50,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -539,7 +536,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 41,
+        "pool": 39,
         "steps": [
           "balanced-binary-tree",
           "binary-tree-level-order-traversal",
@@ -557,7 +554,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 33,
+        "pool": 32,
         "steps": [
           "palindrome-linked-list",
           "next-greater-element-ii",
@@ -566,20 +563,11 @@
       },
       {
         "key": "hash-count",
-        "pool": 23,
+        "pool": 24,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
           "3sum"
-        ]
-      },
-      {
-        "key": "dp-interval",
-        "pool": 17,
-        "steps": [
-          "generate-parentheses",
-          "longest-palindromic-subsequence",
-          "predict-the-winner"
         ]
       },
       {
@@ -598,6 +586,15 @@
           "merge-sorted-array",
           "determine-if-two-strings-are-close",
           "3sum-closest"
+        ]
+      },
+      {
+        "key": "dp-interval",
+        "pool": 16,
+        "steps": [
+          "generate-parentheses",
+          "longest-palindromic-subsequence",
+          "predict-the-winner"
         ]
       }
     ]

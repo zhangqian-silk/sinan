@@ -112,6 +112,7 @@ const COMMANDS: Entry[] = [
       { flag: "--paid", type: "flag", help: "包含会员题" },
       { flag: "--source", type: "string", help: "只用某个题源" },
       { flag: "--brief", type: "flag", help: "不显示「代表」明细" },
+      { flag: "--links", type: "flag", help: "每题多打一行明文链接" },
       { flag: "--no-notes", type: "flag", help: "不显示顶部的「开练前先看」" },
     ],
     run: cmdPlan,
@@ -119,8 +120,12 @@ const COMMANDS: Entry[] = [
 
   {
     name: "learn",
-    help: "专题讲解：核心思想 / 识别信号 / 模板 / 坑 / OI-Wiki 延伸阅读",
-    pos: [{ dest: "topic", nargs: "1", help: "大类或子标签 id，如 sliding-window、dp、monotonic" }],
+    help: "专题讲解：核心思想 / 识别信号 / 模板 / 坑 / 代表题 / OI-Wiki；不带参数是讲解总目录",
+    pos: [{
+      dest: "topic", nargs: "?",
+      help: "大类或子标签 id，如 sliding-window、dp、monotonic；不给就列全部",
+    }],
+    opts: [{ flag: "--n", short: "-n", dest: "n", type: "int", default: 6, help: "代表题给几道" }],
     run: cmdLearn,
   },
 

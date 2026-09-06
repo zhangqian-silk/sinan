@@ -46,8 +46,12 @@ const CASES: string[][] = [
   ["plan", "interview"],
   ["plan", "advanced"],
   ["plan", "weakness"],
+  ["plan", "monotonic", "--links"],
+  ["learn"],
   ["learn", "monotonic"],
   ["learn", "tree"],
+  ["learn", "tree", "-n", "4"],
+  ["topics", "dp"],
   ["--help"],
   ["plan", "--help"],
 ];
@@ -92,4 +96,31 @@ test("未知选项要提示，而不是静默忽略", () => {
   const { code, out } = run(["list", "--nope"]);
   assert.equal(code, 1);
   assert.ok(out.includes("未知选项"), out.slice(0, 200));
+});
+
+test("装完什么都不做：learn 的目录覆盖整个体系", () => {
+  const { code, out } = run(["learn"]);
+  assert.equal(code, 0);
+  // 13 个大类的 id 与名字都要在目录里
+  for (const id of ["basics", "array", "ds-basic", "string", "binary-search", "tree",
+    "search", "dp", "graph", "greedy", "math", "advanced-ds", "design"]) {
+    assert.ok(out.includes(id), `目录里没有大类 ${id}`);
+  }
+  // 抽查几个子标签，确认目录钻到了第二层
+  for (const id of ["monotonic", "sliding-window", "union-find", "dp-knapsack", "segment-tree"]) {
+    assert.ok(out.includes(id), `目录里没有子标签 ${id}`);
+  }
+});
+
+test("讲解页给核心思路，也给代表题和明文链接", () => {
+  for (const topic of ["monotonic", "tree"]) {
+    const { code, out } = run(["learn", topic]);
+    assert.equal(code, 0);
+    assert.ok(out.includes("核心思想"), `${topic} 没有核心思想`);
+    assert.ok(out.includes("代表题"), `${topic} 没有代表题`);
+    const links = out.match(/https:\/\/(leetcode\.cn|www\.luogu\.com\.cn)\/\S+/g) ?? [];
+    assert.ok(links.length >= 3, `${topic} 的代表题没给够链接：${links.length} 条`);
+    // 代表题要横跨难度，不能全是入门题
+    assert.ok(/困难/.test(out), `${topic} 的代表题一道困难都没有`);
+  }
 });

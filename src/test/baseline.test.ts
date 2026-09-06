@@ -15,6 +15,7 @@ import { test } from "node:test";
 
 import { expand, type Packed } from "../baseline.js";
 import { BASELINE_DIR } from "../paths.js";
+import { nextSteps, signatureProblems } from "../planner.js";
 import { Store } from "../store.js";
 import { noteFor } from "../notes/index.js";
 
@@ -80,6 +81,36 @@ test("装完什么都不做：分类、解题思路、题目和链接都能拿�
 
   // 不依赖频次的主线要能排出来
   assert.ok(store.similar()["two-sum"]?.length, "相似度图没读进来");
+});
+
+test("装完什么都不做：每个子标签都给得出代表题，下一步也不空", { skip }, () => {
+  const store = new Store({
+    dataDir: BASELINE_DIR,
+    solutions: [],
+    progressFile: join(BASELINE_DIR, "__no_progress__.json"),
+  });
+
+  // 目录页要给的「代表题」：65 个子标签一个都不能空，且都带链接
+  for (const cat of store.cats) {
+    for (const sub of cat.subs) {
+      const topic = store.topics().get(sub.id)!;
+      const picks = signatureProblems(store, topic, 3);
+      assert.ok(picks.length > 0, `${sub.id} 没有代表题`);
+      for (const p of picks) {
+        assert.ok(/^https:\/\//.test(p.url), `${p.slug} 的链接不对：${p.url}`);
+        assert.ok(p.tagIds.includes(sub.id), `${p.slug} 并不属于 ${sub.id}`);
+      }
+    }
+  }
+
+  // 「下一步」原本按面试频次找最薄弱的专题，基线里没有频次，要退回入门主线
+  const picks = nextSteps(store, 3);
+  assert.equal(picks.length, 3, "零进度零频次时给不出下一步");
+  for (const [name, step] of picks) {
+    assert.ok(name, "下一步缺少专题名");
+    assert.ok(/^https:\/\//.test(step.p.url), `${step.p.slug} 没有链接`);
+    assert.ok(step.reasons.length > 0, `${step.p.slug} 没有「为什么选它」`);
+  }
 });
 
 test("基线展开出来的统计口径自洽", { skip }, () => {

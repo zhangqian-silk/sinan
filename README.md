@@ -11,8 +11,8 @@
 
 ```bash
 npm i -g sinan
-sinan topics            # 13 个大类 / 65 个子标签
-sinan learn monotonic   # 这一类的核心思想、模板、常见坑
+sinan learn             # 讲解总目录：13 个大类 / 65 个子标签，每条一句话核心思路
+sinan learn monotonic   # 展开一条：核心思想、模板、常见坑、代表题与链接
 sinan plan monotonic    # 该做哪些题，按什么顺序，每题带链接
 ```
 
@@ -65,12 +65,17 @@ sinan plan hot100 --day 5         # 热题 100，按每天 5 题切
 ## 每个专题都有讲解
 
 ```bash
-sinan learn monotonic   # 核心思想 / 什么时候想到它 / 模板骨架 / 常见坑 / OI-Wiki
+sinan learn             # 总目录：每个大类和子标签一句话核心思路
+sinan learn monotonic   # 核心思想 / 什么时候想到它 / 模板骨架 / 常见坑 / 代表题 / OI-Wiki
+sinan topics tree       # 钻进一个大类：每个子标签的进度、说明和代表题
 ```
 
 78 张教学卡片，OI-Wiki 延伸阅读的链接全部核过。其中「什么时候想到它」不是手写的，
 而是直接引用打标规则表算出来的 —— 那批规则本来就是「看到这种问法 → 该用这个解法」，
 所以教学写的判断依据和系统实际打标的依据是同一份数据，不可能漂移。
+
+讲解页末尾的**代表题**取自同一套最小覆盖，按易→中→难各挑几道，并给出明文链接 ——
+看完思路可以直接开做，不用先去翻计划。
 
 ## 全部命令
 
@@ -83,7 +88,7 @@ sinan approaches [领域]     题解思路词表
 sinan list [关键词]         题库查询（按大类/子标签/思路/难度/题单/来源筛）
 sinan show <题>             题目详情
 sinan plan <主线|专题>      展开主线，或按专题即时生成计划
-sinan learn <专题>          专题讲解
+sinan learn [专题]          专题讲解；不带参数是讲解总目录
 sinan next                  下一步该做什么
 sinan done <题>...          打卡 / 取消打卡
 sinan stats                 题库统计

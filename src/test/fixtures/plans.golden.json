@@ -60,17 +60,16 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 17,
+    "poolSize": 18,
     "covered": 16,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
           "koko-eating-bananas",
-          "capacity-to-ship-packages-within-d-days",
           "find-the-duplicate-number",
           "maximum-length-of-repeated-subarray",
           "kth-smallest-element-in-a-sorted-matrix",
@@ -276,7 +275,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 42,
+        "pool": 43,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -321,7 +320,7 @@
       },
       {
         "key": "bs-array",
-        "pool": 13,
+        "pool": 12,
         "steps": [
           "two-sum-ii-input-array-is-sorted",
           "capacity-to-ship-packages-within-d-days",
@@ -358,17 +357,17 @@
     ]
   },
   "route:interview": {
-    "poolSize": 190,
-    "covered": 110,
+    "poolSize": 189,
+    "covered": 108,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 21,
+        "pool": 20,
         "steps": [
           "two-sum",
+          "intersection-of-two-linked-lists",
           "linked-list-cycle",
-          "longest-substring-without-repeating-characters",
-          "3sum"
+          "longest-substring-without-repeating-characters"
         ]
       },
       {
@@ -383,22 +382,22 @@
       },
       {
         "key": "two-pointers",
-        "pool": 39,
+        "pool": 40,
         "steps": [
-          "merge-sorted-array",
           "move-zeroes",
           "compare-version-numbers",
+          "3sum",
           "reorder-list"
         ]
       },
       {
         "key": "linked-list",
-        "pool": 12,
+        "pool": 11,
         "steps": [
-          "intersection-of-two-linked-lists",
           "reverse-linked-list",
           "odd-even-linked-list",
-          "remove-nth-node-from-end-of-list"
+          "remove-nth-node-from-end-of-list",
+          "rotate-list"
         ]
       },
       {
@@ -413,10 +412,10 @@
       },
       {
         "key": "heap",
-        "pool": 4,
+        "pool": 5,
         "steps": [
           "kth-smallest-element-in-a-sorted-matrix",
-          "kth-smallest-number-in-multiplication-table",
+          "k-th-smallest-prime-fraction",
           "sliding-window-maximum",
           "find-k-th-smallest-pair-distance"
         ]
@@ -443,12 +442,12 @@
       },
       {
         "key": "bs-answer",
-        "pool": 14,
+        "pool": 15,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
           "koko-eating-bananas",
-          "capacity-to-ship-packages-within-d-days"
+          "find-the-duplicate-number"
         ]
       },
       {
@@ -462,7 +461,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 12,
+        "pool": 11,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
@@ -472,10 +471,9 @@
       },
       {
         "key": "ds-design",
-        "pool": 3,
+        "pool": 2,
         "steps": [
           "design-browser-history",
-          "range-sum-query-mutable",
           "kth-smallest-element-in-a-bst"
         ]
       }
@@ -483,18 +481,18 @@
   },
   "route:advanced": {
     "poolSize": 48,
-    "covered": 27,
+    "covered": 28,
     "sections": [
       {
         "key": "dp",
-        "pool": 27,
+        "pool": 28,
         "steps": [
           "generate-parentheses",
           "maximum-length-of-repeated-subarray",
           "longest-palindromic-subsequence",
           "predict-the-winner",
           "longest-palindromic-substring",
-          "palindrome-partitioning",
+          "house-robber-iii",
           "maximal-rectangle",
           "split-array-largest-sum"
         ]
@@ -512,10 +510,11 @@
       },
       {
         "key": "advanced-ds",
-        "pool": 5,
+        "pool": 4,
         "steps": [
-          "range-sum-query-mutable",
+          "luogu:P1020",
           "minimum-cost-tree-from-leaf-values",
+          "largest-rectangle-in-histogram",
           "longest-duplicate-substring"
         ]
       }
@@ -523,11 +522,11 @@
   },
   "route:weakness": {
     "poolSize": 225,
-    "covered": 99,
+    "covered": 98,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 50,
+        "pool": 51,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -563,7 +562,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 24,
+        "pool": 23,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -572,20 +571,11 @@
       },
       {
         "key": "bs-answer",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "longest-common-prefix",
           "divide-two-integers",
           "koko-eating-bananas"
-        ]
-      },
-      {
-        "key": "sorting",
-        "pool": 16,
-        "steps": [
-          "merge-sorted-array",
-          "determine-if-two-strings-are-close",
-          "3sum-closest"
         ]
       },
       {
@@ -595,6 +585,15 @@
           "generate-parentheses",
           "longest-palindromic-subsequence",
           "predict-the-winner"
+        ]
+      },
+      {
+        "key": "sorting",
+        "pool": 15,
+        "steps": [
+          "merge-sorted-array",
+          "determine-if-two-strings-are-close",
+          "3sum-closest"
         ]
       }
     ]

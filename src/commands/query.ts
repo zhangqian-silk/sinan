@@ -148,7 +148,7 @@ export function cmdShow(store: Store, args: Args): void {
   // 解法排在最前面：每一种讲清楚它的核心思想落到这道题上是什么样子
   if (p.review) {
     const width = Math.max(r.termWidth() - 8, 48);
-    out("", r.rule(`解法  ${p.review.solutions.length} 种，第一条最好上手`));
+    out("", r.rule(`解法  ${p.review.solutions.length} 种`));
     p.review.solutions.forEach((sol, i) => {
       const cat = store.nodeById.get(sol.tags[0])?.cat ?? "";
       const names = sol.tags.map((t) => store.nodeById.get(t)?.name ?? t).join(" · ");

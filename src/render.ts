@@ -160,7 +160,10 @@ export function htmlToText(html: string, limitCols = 92): string {
   text = text.replace(/<br\s*\/?>/gi, "\n");
   text = text.replace(/<\/(p|div|li|ul|ol|pre|h[1-6])>/gi, "\n");
   text = text.replace(/<li>/gi, "· ");
-  text = text.replace(/<[^>]+>/g, "");
+  // 只吃真的标签。题面里的约束经常直接写成 `1 <= n <= 200`，
+  // 用 /<[^>]+>/ 会把「<= n <」当成一个标签整段删掉，约束就没了
+  text = text.replace(/<\/?[a-zA-Z][^>]*>/g, "");
+  text = text.replace(/<!--[\s\S]*?-->/g, "");
   text = unescapeHtml(text).replaceAll("\u00a0", " ");
 
   const out: string[] = [];

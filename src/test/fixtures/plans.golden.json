@@ -83,12 +83,12 @@
     ]
   },
   "topic:tree": {
-    "poolSize": 45,
+    "poolSize": 44,
     "covered": 28,
     "sections": [
       {
         "key": "tree-traversal",
-        "pool": 29,
+        "pool": 28,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -147,7 +147,6 @@
           "can-place-flowers",
           "merge-strings-alternately",
           "reverse-vowels-of-a-string",
-          "reverse-words-in-a-string",
           "product-of-array-except-self",
           "increasing-triplet-subsequence",
           "string-compression"
@@ -261,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 196,
-    "covered": 102,
+    "poolSize": 208,
+    "covered": 115,
     "sections": [
       {
         "key": "hash-count",
@@ -275,7 +274,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 42,
+        "pool": 41,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -302,7 +301,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 31,
+        "pool": 29,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -311,7 +310,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 36,
+        "pool": 34,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -320,16 +319,16 @@
       },
       {
         "key": "bs-array",
-        "pool": 12,
+        "pool": 29,
         "steps": [
-          "two-sum-ii-input-array-is-sorted",
-          "capacity-to-ship-packages-within-d-days",
-          "132-pattern"
+          "minimum-capacity-box",
+          "minimum-number-of-days-to-make-m-bouquets",
+          "two-sum-ii-input-array-is-sorted"
         ]
       },
       {
         "key": "prefix-sum",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -338,11 +337,11 @@
       },
       {
         "key": "backtracking",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "binary-tree-paths",
-          "generate-parentheses",
-          "restore-ip-addresses"
+          "luogu:P1025",
+          "generate-parentheses"
         ]
       },
       {
@@ -357,8 +356,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 189,
-    "covered": 108,
+    "poolSize": 185,
+    "covered": 107,
     "sections": [
       {
         "key": "hash-count",
@@ -382,7 +381,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 40,
+        "pool": 39,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -422,7 +421,7 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 36,
+        "pool": 34,
         "steps": [
           "symmetric-tree",
           "same-tree",
@@ -461,7 +460,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
@@ -480,8 +479,8 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 46,
-    "covered": 28,
+    "poolSize": 45,
+    "covered": 31,
     "sections": [
       {
         "key": "dp",
@@ -499,14 +498,19 @@
       },
       {
         "key": "graph",
-        "pool": 13,
+        "pool": 12,
         "steps": [
           "keys-and-rooms",
+          "luogu:P1006",
           "number-of-provinces",
+          "luogu:P1027",
+          "minimize-the-maximum-edge-weight-of-graph",
           "course-schedule-iv",
+          "minimize-maximum-component-cost",
           "path-with-minimum-effort",
           "find-the-shortest-superstring",
-          "swim-in-rising-water"
+          "swim-in-rising-water",
+          "minimum-degree-of-a-connected-trio-in-a-graph"
         ]
       },
       {
@@ -521,12 +525,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 224,
-    "covered": 98,
+    "poolSize": 219,
+    "covered": 91,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 50,
+        "pool": 49,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -535,11 +539,11 @@
       },
       {
         "key": "tree-traversal",
-        "pool": 39,
+        "pool": 37,
         "steps": [
           "balanced-binary-tree",
-          "binary-tree-level-order-traversal",
-          "binary-tree-zigzag-level-order-traversal"
+          "symmetric-tree",
+          "binary-tree-level-order-traversal"
         ]
       },
       {
@@ -553,11 +557,11 @@
       },
       {
         "key": "stack-queue",
-        "pool": 32,
+        "pool": 30,
         "steps": [
           "palindrome-linked-list",
-          "next-greater-element-ii",
-          "asteroid-collision"
+          "asteroid-collision",
+          "binary-tree-zigzag-level-order-traversal"
         ]
       },
       {

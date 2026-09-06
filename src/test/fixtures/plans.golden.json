@@ -24,12 +24,12 @@
     ]
   },
   "topic:dp-interval": {
-    "poolSize": 16,
+    "poolSize": 15,
     "covered": 14,
     "sections": [
       {
         "key": "dp-interval",
-        "pool": 16,
+        "pool": 15,
         "steps": [
           "generate-parentheses",
           "longest-palindromic-subsequence",
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 200,
-    "covered": 109,
+    "poolSize": 198,
+    "covered": 107,
     "sections": [
       {
         "key": "hash-count",
@@ -319,9 +319,9 @@
       },
       {
         "key": "bs-array",
-        "pool": 22,
+        "pool": 21,
         "steps": [
-          "find-the-smallest-divisor-given-a-threshold",
+          "maximum-candies-allocated-to-k-children",
           "two-sum-ii-input-array-is-sorted",
           "heaters"
         ]
@@ -346,7 +346,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",
@@ -356,7 +356,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 187,
+    "poolSize": 186,
     "covered": 109,
     "sections": [
       {
@@ -460,7 +460,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
@@ -479,12 +479,12 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 46,
-    "covered": 30,
+    "poolSize": 44,
+    "covered": 31,
     "sections": [
       {
         "key": "dp",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "generate-parentheses",
           "maximum-length-of-repeated-subarray",
@@ -498,15 +498,19 @@
       },
       {
         "key": "graph",
-        "pool": 13,
+        "pool": 12,
         "steps": [
           "keys-and-rooms",
           "minimum-number-of-days-to-make-m-bouquets",
+          "luogu:P1006",
           "number-of-provinces",
+          "luogu:P1027",
+          "minimize-the-maximum-edge-weight-of-graph",
           "course-schedule-iv",
           "path-with-minimum-effort",
           "find-the-shortest-superstring",
-          "swim-in-rising-water"
+          "swim-in-rising-water",
+          "minimum-degree-of-a-connected-trio-in-a-graph"
         ]
       },
       {
@@ -521,7 +525,7 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 225,
+    "poolSize": 224,
     "covered": 93,
     "sections": [
       {
@@ -589,7 +593,7 @@
       },
       {
         "key": "dp-interval",
-        "pool": 16,
+        "pool": 15,
         "steps": [
           "generate-parentheses",
           "longest-palindromic-subsequence",

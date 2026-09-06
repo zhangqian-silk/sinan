@@ -1,12 +1,18 @@
 /**
- * 标签体系：13 个大类 / 65 个子标签，以及把原始题库标签映射过来的打标规则。
+ * 标签树：13 个分区打头，下面的层级**不固定**——某一枝真的分化出并列技巧就往下长一层，
+ * 分化不出来就停在原地。目前最深三级（数论 → 筛法 / 快速幂 / 取模 / GCD / 进制），
+ * 但结构是递归的，将来要长第四级不用改类型。
+ *
+ * 深层节点的 id 直接复用思路 id（`math-sieve`、`monotonic-stack`），所以标签树和题解
+ * 思路是同一套 id、同一棵树 —— 深层标签就是「这道题的题解里真的用了这个技巧」。
  *
  * 正则用 Python 的源码口径书写（`\b` `\w` 认中文），编译时交给 pyre.py() 翻译成
  * JS 等价写法。这份表就是打标规则的唯一来源，改规则请改这里。
  */
 
 
-export interface Sub { id: string; name: string; desc: string }
+/** 标签树节点。`kids` 递归，层数由实际分化情况决定，不设上限。 */
+export interface Sub { id: string; name: string; desc: string; kids?: Sub[] }
 export interface Cat { id: string; name: string; desc: string; subs: Sub[] }
 
 /** 标签组合 + 标题正则的补充规则，用来补官方标签没覆盖到的题型。 */
@@ -20,32 +26,181 @@ export interface Rule {
   why?: string;
 }
 
+/**
+ * 原始标签直接点名到某个深层节点的情形。
+ *
+ * 力扣的 `monotonic-stack`、洛谷的「素数判断」说的就是具体技巧本身，比我们从题解里
+ * 反推还直接。洛谷题抓不到题解，深层标签几乎全靠这张表 —— 没有它，2000 道洛谷题
+ * 就只能停在二级。
+ *
+ * 落成标签仍然要求父节点在场，规则和从题解判出来的那批一致。
+ */
+export const LEAF_TAG_MAP: Record<string, string> = {
+  // 力扣（标签 slug）
+  "monotonic-stack": "monotonic-stack",
+  "monotonic-queue": "monotonic-queue",
+  "rolling-hash": "rolling-hash",
+  "knuth-morris-pratt-algorithm": "kmp",
+  "sieve-theory": "math-sieve",
+  "prime-number-sieve": "math-sieve",
+  "primality-test": "math-sieve",
+  "prime-factorization": "math-sieve",
+  "greatest-common-divisor": "math-gcd",
+  "euclidean-algorithm": "math-gcd",
+  "extended-euclidean-algorithm": "math-gcd",
+  "bezouts-lemma": "math-gcd",
+  "least-common-multiple": "math-gcd",
+  "fermats-little-theorem": "math-fermat",
+  // 洛谷（中文标签原文）
+  "单调栈": "monotonic-stack",
+  "单调队列": "monotonic-queue",
+  "素数判断": "math-sieve",
+  "线性筛法": "math-sieve",
+  "筛法": "math-sieve",
+  "最大公约数 gcd": "math-gcd",
+  "扩展欧几里德算法": "math-gcd",
+  "进制": "math-base",
+  "KMP 算法": "kmp",
+  "矩阵加速": "math-fast-pow",
+  "同余方程": "math-mod",
+  "中国剩余定理 CRT": "math-mod",
+  "dijkstra": "graph-dijkstra",
+  "bellman-ford-algorithm": "graph-bellman",
+  "floyd-warshall-algorithm": "graph-floyd",
+  "0-1-bfs": "graph-dijkstra",
+  "minimum-spanning-tree": "graph-mst",
+  "kruskals-algorithm": "graph-mst",
+  "prims-algorithm": "graph-mst",
+  "boruvkas-algorithm": "graph-mst",
+  "bipartite-graph": "graph-bipartite",
+  "hungarian-algorithm": "graph-bipartite",
+  "maximum-matching": "graph-bipartite",
+  "perfect-matching": "graph-bipartite",
+  "matching-graph": "graph-bipartite",
+  "graph-coloring": "graph-bipartite",
+  "strongly-connected-component": "graph-scc",
+  "tarjans-scc-algorithm": "graph-scc",
+  "kosarajus-algorithm": "graph-scc",
+  "biconnected-component": "graph-scc",
+  "articulation-point": "graph-scc",
+  "bridge-graph": "graph-scc",
+  "eulerian-path": "graph-euler",
+  "eulerian-circuit": "graph-euler",
+  "eulerian-graph": "graph-euler",
+  "semi-eulerian-graph": "graph-euler",
+  "flow-network": "graph-flow",
+  "maximum-flow": "graph-flow",
+  "minimum-cut": "graph-flow",
+  "minimum-cost-flow": "graph-flow",
+  "edmonds-karp-algorithm": "graph-flow",
+  "dinics-algorithm": "graph-flow",
+  "push-relabel-algorithm": "graph-flow",
+  "0-1-knapsack": "dp-knapsack-01",
+  "complete-knapsack": "dp-knapsack-full",
+  "longest-increasing-subsequence": "dp-lis",
+  "longest-common-subsequence": "dp-lcs",
+  "z-algorithm": "zfunc",
+  "manacher": "manacher",
+  "floyds-cycle-finding-algorithm": "fast-slow",
+  "sweep-line": "sweep-line",
+  "lowest-common-ancestor": "tree-lca",
+  "binary-lifting": "tree-lca",
+  "inclusion-exclusion-principle": "math-inclusion",
+  "eulers-totient-function": "math-euler-phi",
+  "eulers-theorem": "math-euler-phi",
+  "bidirectional-search": "bidirectional",
+  "meet-in-the-middle": "bidirectional",
+  "a-search": "astar",
+  "heuristic-search": "astar",
+  "Floyd 算法": "graph-floyd",
+  "差分约束": "graph-bellman",
+  "最短路": "graph-dijkstra",
+  "生成树": "graph-mst",
+  "最小生成树": "graph-mst",
+  "二分图": "graph-bipartite",
+  "Tarjan": "graph-scc",
+  "强连通分量": "graph-scc",
+  "网络流": "graph-flow",
+  "最小割": "graph-flow",
+  "费用流": "graph-flow",
+  "欧拉回路": "graph-euler",
+  "差分": "diff-array",
+  "扫描线": "sweep-line",
+  "剪枝": "pruning",
+  "容斥原理": "math-inclusion",
+  "欧拉函数": "math-euler-phi",
+  "逆元": "math-fermat",
+  "最近公共祖先": "tree-lca",
+  "倍增": "tree-lca",
+  "Catalan 数": "math-catalan",
+  "manacher 算法": "manacher",
+  "后缀数组": "zfunc",
+  "最长上升子序列": "dp-lis",
+  "双向搜索": "bidirectional",
+  "启发式搜索": "astar",
+};
+
+/**
+ * 一个节点要不要再往下分，只看一件事：**它底下有没有具名的技巧**。
+ *
+ * 不追求各枝对称，也不卡题量下限 —— 现实本来就是不齐的。最短路底下 Dijkstra 175 题、
+ * Floyd 十几题，照样各占一格；回溯底下只有「剪枝」一个孩子，也照立。反过来，
+ * 「深度优先搜索 → DFS」这种孩子就是父节点本身的，不立；「递归」「模拟」「暴力」
+ * 这类谁都沾边的通用词也不算技巧，题再多也不立。
+ *
+ * 现在是 21 个二级节点各带一层，共 52 个三级节点，其余 44 个二级节点就地收尾。
+ * 同一条判据将来照样适用于第四级 —— 结构是递归的，深到几层由实际情况决定。
+ */
 export const CATEGORIES: Cat[] = [
   { id: "basics", name: "基础与模拟", desc: "把题意翻译成代码的基本功：模拟、枚举、位运算、排序。没有算法门槛，但决定手速和 bug 率。", subs: [
     { id: "simulation", name: "模拟与实现", desc: "按题意一步步照做，考验边界处理与代码组织。" },
     { id: "enumeration", name: "枚举与暴力", desc: "数据范围小的时候直接枚举答案或状态，也是很多优化解法的出发点。" },
     { id: "matrix", name: "矩阵与网格", desc: "二维数组的遍历、旋转、螺旋、原地变换。" },
-    { id: "bit", name: "位运算", desc: "异或性质、lowbit、子集枚举、位计数。" },
+    { id: "bit", name: "位运算", desc: "异或性质、lowbit、子集枚举、位计数。", kids: [
+      { id: "math-xor", name: "异或性质", desc: "自反与交换律，找落单的数、成对消去。" },
+      { id: "bit-enum", name: "子集枚举", desc: "位掩码枚举子集，状压 DP 的入口。" },
+    ] },
     { id: "sorting", name: "排序与自定义比较", desc: "排序本身，以及「先排序再做」这一类预处理套路。" },
   ] },
   { id: "array", name: "数组与区间技巧", desc: "线性表上的经典套路，面试出现频率最高的一层。", subs: [
-    { id: "two-pointers", name: "双指针", desc: "对撞指针、快慢指针、同向双指针，把 O(n²) 压到 O(n)。" },
+    { id: "two-pointers", name: "双指针", desc: "对撞指针、快慢指针、同向双指针，把 O(n²) 压到 O(n)。", kids: [
+      { id: "fast-slow", name: "快慢指针", desc: "一快一慢找环、找中点、找倒数第 k 个。" },
+    ] },
     { id: "sliding-window", name: "滑动窗口", desc: "定长/变长窗口维护区间性质，配合哈希计数。" },
-    { id: "prefix-sum", name: "前缀和与差分", desc: "区间求和 O(1)，差分处理区间修改，二维扩展成矩阵前缀和。" },
-    { id: "interval", name: "区间与扫描线", desc: "区间合并、重叠判定、按端点扫描处理日程与覆盖。" },
+    { id: "prefix-sum", name: "前缀和与差分", desc: "区间求和 O(1)，差分处理区间修改，二维扩展成矩阵前缀和。", kids: [
+      { id: "diff-array", name: "差分数组", desc: "区间加变成两个端点改，扫一遍还原。" },
+    ] },
+    { id: "interval", name: "区间与扫描线", desc: "区间合并、重叠判定、按端点扫描处理日程与覆盖。", kids: [
+      { id: "sweep-line", name: "扫描线", desc: "把区间拆成端点事件，排序后一遍扫过去。" },
+    ] },
   ] },
   { id: "ds-basic", name: "基础数据结构", desc: "面试最爱考的容器：哈希、栈队列、链表、堆。要能手写，也要知道复杂度。", subs: [
     { id: "hash-count", name: "哈希与计数", desc: "哈希表去重、分组、频次统计，以及「用空间换时间」的思路。" },
     { id: "stack-queue", name: "栈与队列", desc: "括号匹配、表达式求值、双端队列、用栈模拟递归。" },
-    { id: "monotonic", name: "单调栈与单调队列", desc: "下一个更大元素、柱状图最大矩形、定长窗口最值。" },
-    { id: "linked-list", name: "链表", desc: "翻转、环检测、合并、双向链表与 LRU 的骨架。" },
+    { id: "monotonic", name: "单调栈与单调队列", desc: "下一个更大元素、柱状图最大矩形、定长窗口最值。", kids: [
+      { id: "dp-opt", name: "单调队列优化 DP", desc: "转移里取窗口最值，用单调队列把一层循环省掉。" },
+      { id: "monotonic-stack", name: "单调栈", desc: "左右两边第一个更大 / 更小元素，弹出的那一刻出答案。" },
+      { id: "monotonic-queue", name: "单调队列", desc: "滑动窗口最值，队尾去无效、队头去出窗。" },
+    ] },
+    { id: "linked-list", name: "链表", desc: "翻转、环检测、合并、双向链表与 LRU 的骨架。", kids: [
+      { id: "list-merge", name: "链表归并", desc: "两两归并或分治归并，K 路合并的骨架。" },
+      { id: "list-dummy", name: "虚拟头节点", desc: "省掉「删的是不是头节点」的分支，插删统一写法。" },
+      { id: "list-reverse", name: "链表反转", desc: "三指针原地翻转，K 个一组、回文链表的基本件。" },
+    ] },
     { id: "heap", name: "堆（优先队列）", desc: "Top-K、多路归并、动态维护最值。" },
     { id: "ordered-set", name: "有序集合", desc: "TreeMap/SortedList 维护有序结构，支持前驱后继查询。" },
   ] },
   { id: "string", name: "字符串", desc: "从基础处理到匹配算法，中文岗位面试里字符串题占比不低。", subs: [
     { id: "string-basic", name: "字符串基础", desc: "分割、翻转、大小写、进制与数字转换、字符统计。" },
-    { id: "palindrome", name: "回文", desc: "中心扩展、回文 DP、Manacher。" },
-    { id: "string-match", name: "字符串匹配", desc: "KMP、Z 函数、滚动哈希、AC 自动机。" },
+    { id: "palindrome", name: "回文", desc: "中心扩展、回文 DP、Manacher。", kids: [
+      { id: "palindrome-center", name: "中心扩展", desc: "枚举中心往两边扩，奇偶各一次。" },
+      { id: "manacher", name: "Manacher", desc: "插分隔符统一奇偶，O(n) 求所有回文半径。" },
+    ] },
+    { id: "string-match", name: "字符串匹配", desc: "KMP、Z 函数、滚动哈希、AC 自动机。", kids: [
+      { id: "zfunc", name: "Z 函数 / 扩展 KMP", desc: "每个后缀与整串的最长公共前缀。" },
+      { id: "kmp", name: "KMP", desc: "失配指针 next 数组，O(n+m) 找模式串。" },
+      { id: "rolling-hash", name: "字符串哈希", desc: "滚动哈希 O(1) 比较子串，注意冲突与双模。" },
+    ] },
     { id: "trie", name: "字典树", desc: "前缀检索、异或最大值、词典类设计题。" },
   ] },
   { id: "binary-search", name: "二分与分治", desc: "只要答案具有单调性，就能二分；分治则把问题切两半再合并。", subs: [
@@ -55,23 +210,49 @@ export const CATEGORIES: Cat[] = [
     { id: "quickselect", name: "快速选择与 Top-K", desc: "快排划分求第 K 大，期望 O(n)。" },
   ] },
   { id: "tree", name: "树", desc: "递归思维的主战场：先想清楚「当前节点该干什么」。", subs: [
-    { id: "tree-traversal", name: "二叉树遍历", desc: "前中后序、层序、迭代写法与 Morris。" },
+    { id: "tree-traversal", name: "二叉树遍历", desc: "前中后序、层序、迭代写法与 Morris。", kids: [
+      { id: "tree-morris", name: "Morris 遍历", desc: "借空指针回溯，O(1) 空间完成中序。" },
+      { id: "tree-preorder", name: "前序遍历", desc: "先处理当前节点再递归子树，自顶向下传信息。" },
+      { id: "tree-inorder", name: "中序遍历", desc: "左-根-右，BST 的中序恰好是升序。" },
+      { id: "tree-postorder", name: "后序遍历", desc: "先收齐子树答案再处理当前节点，树形 DP 全靠它。" },
+      { id: "tree-levelorder", name: "层序遍历", desc: "队列按层展开，用层大小做分层处理。" },
+      { id: "tree-iterative", name: "迭代写法", desc: "显式栈模拟递归，深度大时不爆栈。" },
+    ] },
     { id: "bst", name: "二叉搜索树", desc: "中序有序性、查找插入删除、平衡性判断。" },
-    { id: "tree-build", name: "树的构造与序列化", desc: "从遍历序列还原、序列化/反序列化、克隆。" },
-    { id: "tree-path", name: "路径与最近公共祖先", desc: "路径和、直径、LCA、倍增。" },
+    { id: "tree-build", name: "树的构造与序列化", desc: "从遍历序列还原、序列化/反序列化、克隆。", kids: [
+      { id: "tree-construct", name: "由遍历序列重建", desc: "前序定根、中序分左右，递归还原。" },
+      { id: "tree-serialize", name: "序列化与反序列化", desc: "按遍历顺序编码，空节点也要占位。" },
+    ] },
+    { id: "tree-path", name: "路径与最近公共祖先", desc: "路径和、直径、LCA、倍增。", kids: [
+      { id: "tree-lca", name: "最近公共祖先", desc: "递归回溯找分叉点，多次查询用倍增。" },
+    ] },
   ] },
   { id: "search", name: "搜索与回溯", desc: "在状态空间里穷举：怎么走、怎么剪、怎么记忆化。", subs: [
-    { id: "backtracking", name: "回溯", desc: "子集、排列、组合、棋盘类，模板是「选择-递归-撤销」。" },
+    { id: "backtracking", name: "回溯", desc: "子集、排列、组合、棋盘类，模板是「选择-递归-撤销」。", kids: [
+      { id: "pruning", name: "剪枝", desc: "提前判死路，回溯题的性能全在这。" },
+    ] },
     { id: "dfs-basic", name: "深度优先搜索", desc: "一条路走到黑再回头，树、图、网格上的通用遍历骨架。" },
     { id: "flood-fill", name: "网格搜索", desc: "岛屿、区域填充、多源扩散，DFS/BFS 都能写。" },
     { id: "bfs-shortest", name: "BFS 最短步数", desc: "无权图最短路、状态压缩成节点做 BFS。" },
     { id: "memo-search", name: "记忆化搜索", desc: "自顶向下的 DP，先写暴力递归再加缓存。" },
-    { id: "search-advanced", name: "双向与启发式搜索", desc: "双向 BFS、A*、中途相遇。" },
+    { id: "search-advanced", name: "双向与启发式搜索", desc: "双向 BFS、A*、中途相遇。", kids: [
+      { id: "bidirectional", name: "双向搜索", desc: "两头同时扩，指数级搜索空间开平方。" },
+      { id: "astar", name: "A* / 启发式", desc: "用估价函数决定先扩谁。" },
+    ] },
   ] },
   { id: "dp", name: "动态规划", desc: "定义状态 → 写转移 → 定边界。题量最大、区分度最高的一类。", subs: [
-    { id: "dp-linear", name: "线性 DP", desc: "爬楼梯、打家劫舍这类一维递推，入门首选。" },
-    { id: "dp-sequence", name: "序列 DP", desc: "LIS、LCS、编辑距离，两个序列或子序列上的 DP。" },
-    { id: "dp-knapsack", name: "背包 DP", desc: "01 背包、完全背包、多重背包，凑数与选择问题的统一模型。" },
+    { id: "dp-linear", name: "线性 DP", desc: "爬楼梯、打家劫舍这类一维递推，入门首选。", kids: [
+      { id: "dp-1d", name: "一维递推", desc: "dp[i] 只依赖前面若干项，多数能滚动成 O(1) 空间。" },
+      { id: "dp-2d", name: "二维状态转移", desc: "dp[i][j] 描述两维状态，遍历顺序决定正确性。" },
+    ] },
+    { id: "dp-sequence", name: "序列 DP", desc: "LIS、LCS、编辑距离，两个序列或子序列上的 DP。", kids: [
+      { id: "dp-lis", name: "最长上升子序列", desc: "贪心加二分把 O(n²) 压到 O(n log n)。" },
+      { id: "dp-lcs", name: "LCS 与编辑距离", desc: "两个序列对齐，二维状态一格格推。" },
+    ] },
+    { id: "dp-knapsack", name: "背包 DP", desc: "01 背包、完全背包、多重背包，凑数与选择问题的统一模型。", kids: [
+      { id: "dp-knapsack-01", name: "01 背包", desc: "每件最多选一次，容量维必须倒序遍历。" },
+      { id: "dp-knapsack-full", name: "完全背包", desc: "每件可选无限次，容量维正序遍历。" },
+    ] },
     { id: "dp-grid", name: "网格 DP", desc: "路径数、最小路径和、二维矩阵上的递推。" },
     { id: "dp-interval", name: "区间 DP", desc: "在区间上合并，戳气球、石子合并、回文划分。" },
     { id: "dp-tree", name: "树形 DP", desc: "在树上做 DP，选或不选当前节点、换根。" },
@@ -82,19 +263,42 @@ export const CATEGORIES: Cat[] = [
   { id: "graph", name: "图论", desc: "建图往往比算法难：先想清楚点是什么、边是什么。", subs: [
     { id: "graph-basic", name: "建图与遍历", desc: "邻接表、连通分量、DFS/BFS 在一般图上的应用。" },
     { id: "topo", name: "拓扑排序", desc: "有向无环图的依赖排序、课程表模型、判环。" },
-    { id: "shortest-path", name: "最短路", desc: "Dijkstra、Bellman-Ford、Floyd、0-1 BFS。" },
+    { id: "shortest-path", name: "最短路", desc: "Dijkstra、Bellman-Ford、Floyd、0-1 BFS。", kids: [
+      { id: "graph-dijkstra", name: "Dijkstra", desc: "非负权单源最短路，堆优化到 O(m log n)。" },
+      { id: "graph-bellman", name: "Bellman-Ford / SPFA", desc: "能处理负权，也是差分约束的解法。" },
+      { id: "graph-floyd", name: "Floyd 多源最短路", desc: "三重循环，顺带能求传递闭包。" },
+    ] },
     { id: "union-find", name: "并查集", desc: "连通性合并、带权并查集、按秩合并与路径压缩。" },
-    { id: "graph-advanced", name: "进阶图论", desc: "最小生成树、二分图匹配、强连通分量、网络流。" },
+    { id: "graph-advanced", name: "进阶图论", desc: "最小生成树、二分图匹配、强连通分量、网络流。", kids: [
+      { id: "graph-mst", name: "最小生成树", desc: "Kruskal 排边加并查集，或 Prim 从点扩。" },
+      { id: "graph-bipartite", name: "二分图与匹配", desc: "染色判二分图，匈牙利求最大匹配。" },
+      { id: "graph-scc", name: "Tarjan 与连通性", desc: "强连通分量、割点、桥，一套 dfn/low。" },
+      { id: "graph-euler", name: "欧拉路径", desc: "度数判存在性，Hierholzer 求路径。" },
+      { id: "graph-flow", name: "网络流", desc: "最大流最小割，费用流跑最小费用。" },
+    ] },
   ] },
   { id: "greedy", name: "贪心与构造", desc: "证明比写代码难：要说服自己局部最优能推出全局最优。", subs: [
-    { id: "greedy-basic", name: "贪心策略", desc: "每步取当前最优，常配合排序或哈希。" },
+    { id: "greedy-basic", name: "贪心策略", desc: "每步取当前最优，常配合排序或哈希。", kids: [
+      { id: "exchange-argument", name: "交换论证与反悔贪心", desc: "用交换证明局部最优，反悔用堆撤销。" },
+    ] },
     { id: "greedy-interval", name: "区间贪心", desc: "按右端点排序选不重叠区间、最少箭数、会议安排。" },
     { id: "greedy-heap", name: "堆贪心与调度", desc: "用优先队列动态维护当前最优选择，任务调度类。" },
     { id: "construct", name: "构造与思维题", desc: "摩尔投票、抽屉原理、找规律，代码短但需要洞察。" },
   ] },
   { id: "math", name: "数学", desc: "数论、组合、几何、概率与博弈，公式想明白代码就几行。", subs: [
-    { id: "number-theory", name: "数论", desc: "GCD/LCM、质因数分解、筛法、快速幂与同余。" },
-    { id: "combinatorics", name: "组合数学", desc: "排列组合计数、容斥、卡特兰数。" },
+    { id: "number-theory", name: "数论", desc: "GCD/LCM、质因数分解、筛法、快速幂与同余。", kids: [
+      { id: "math-fermat", name: "费马小定理与逆元", desc: "模质数下用快速幂求逆元。" },
+      { id: "math-euler-phi", name: "欧拉函数", desc: "积性函数，配合欧拉定理降幂。" },
+      { id: "math-sieve", name: "质数与筛法", desc: "埃氏筛 / 线性筛预处理素数与最小质因子。" },
+      { id: "math-fast-pow", name: "快速幂", desc: "二进制拆指数，O(log n) 求幂，也能推广到矩阵幂。" },
+      { id: "math-mod", name: "同余与取模", desc: "边算边取模防溢出，除法要用逆元。" },
+      { id: "math-gcd", name: "GCD 与裴蜀定理", desc: "辗转相除，以及 ax+by=gcd 的可解性判定。" },
+      { id: "math-base", name: "进制与数位", desc: "按位取余拆数字、进制转换、数位处理。" },
+    ] },
+    { id: "combinatorics", name: "组合数学", desc: "排列组合计数、容斥、卡特兰数。", kids: [
+      { id: "math-inclusion", name: "容斥原理", desc: "加加减减去重，配合位运算枚举子集。" },
+      { id: "math-catalan", name: "卡特兰数", desc: "出栈序列、括号匹配、二叉树计数的同一个数列。" },
+    ] },
     { id: "geometry", name: "计算几何", desc: "点线关系、面积、凸包、最近点对。" },
     { id: "probability", name: "概率与随机化", desc: "期望计算、随机采样、水塘抽样、拒绝采样。" },
     { id: "game-theory", name: "博弈论", desc: "必胜态判定、极小化极大、Nim 与 SG 函数。" },

@@ -247,8 +247,13 @@ export function cmdLearn(store: Store, args: Args): void {
     return;
   }
   const topic: Topic | null = store.findTopic(key);
-  const note = notes.noteFor(key) ?? (topic ? notes.noteFor(topic.id) : null);
   const tid = topic ? topic.id : key;
+  // 深层节点没有自己的卡片，继承父节点的 —— 模板和坑是同一族共用的，
+  // 它自己贡献的是识别信号和代表题
+  const own = notes.noteFor(key) ?? notes.noteFor(tid);
+  const parent = topic?.parent ? store.topics().get(topic.parent) : null;
+  const inherited = own ? null : (parent ? notes.noteFor(parent.id) : null);
+  const note = own ?? inherited;
   if (!note && !notes.signals(tid).length) {
     // 主线是「学习计划」，不是知识点，没有自己的讲解 —— 但用户很容易这么试
     const route = planner.ROUTE_BY_ID.get(key);
@@ -263,7 +268,11 @@ export function cmdLearn(store: Store, args: Args): void {
   const width = Math.max(r.termWidth() - 6, 50);
 
   out("", r.heading(`${name} · 讲解`, "核心思想 / 识别信号 / 模板 / 坑 / 代表题 / 延伸阅读"));
+  if (topic?.path) out(`  ${r.paint(store.pathNamesOf(topic).join(" › "), "gray")}`);
   if (topic?.desc) out(`  ${r.paint(topic.desc, "gray")}`);
+  if (inherited && parent) {
+    out(`  ${r.paint(`模板与常见坑跟「${parent.name}」共用：${PROG} learn ${parent.id}`, "steel")}`);
+  }
   if (topic && topic.kind !== "route") {
     const pool = store.members(topic);
     if (pool.length) {
@@ -345,7 +354,7 @@ function renderLearnProblems(store: Store, topic: Topic, limit: number): void {
   });
 }
 
-/** 讲解目录：13 个大类 + 65 个子标签，每条一句话核心思路。 */
+/** 讲解目录：整棵标签树，每个节点一句话核心思路；层级不齐，有的枝多一层。 */
 function learnIndex(store: Store): void {
   const width = Math.max(r.termWidth() - 6, 50);
   out("", r.heading("讲解总目录", `${store.cats.length} 个大类 / ${store.subById.size} 个子标签 · `
@@ -370,6 +379,15 @@ function learnIndex(store: Store): void {
         `${count} 题`,
         r.trunc(notes.gist(sub.id, sub.desc), ideaWidth),
       ]);
+      for (const kid of sub.kids ?? []) {
+        const kn = store.problems.filter((p) => (p.deepTagIds ?? []).includes(kid.id)).length;
+        rows.push([
+          `    ${r.paint(`↳ ${kid.name}`, "gray")}`,
+          r.paint(kid.id, "gray"),
+          `${kn} 题`,
+          r.paint(r.trunc(notes.gist(kid.id, kid.desc), ideaWidth), "gray"),
+        ]);
+      }
     }
     out(r.table(["  子标签", "id", "题量", "核心思路"], rows,
       ["left", "left", "right", "left"]));

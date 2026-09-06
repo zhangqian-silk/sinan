@@ -34,9 +34,25 @@ const SIGNALS: Record<string, string[]> = (() => {
   return bySub;
 })();
 
-/** 「什么时候想到它」：这几条也是打标时实际用的判断依据。 */
-export function signals(subId: string): string[] {
-  return SIGNALS[subId] ?? [];
+/** 同一批规则按思路本身索引一份，给树上更深的那层节点用（它的 id 就是思路 id）。 */
+const SIGNALS_BY_APPROACH: Record<string, string[]> = (() => {
+  const byId: Record<string, string[]> = {};
+  for (const [aid, , strength, why] of PHRASE_PROBES) {
+    if (strength < MIN_STRENGTH) continue;
+    const bucket = byId[aid] ?? [];
+    if (!bucket.includes(why)) bucket.push(why);
+    byId[aid] = bucket;
+  }
+  return byId;
+})();
+
+/**
+ * 「什么时候想到它」：这几条也是打标时实际用的判断依据。
+ *
+ * 深层节点（`math-sieve` 这种）给它自己那条；二级节点给它底下所有技巧的合集。
+ */
+export function signals(topicId: string): string[] {
+  return SIGNALS_BY_APPROACH[topicId] ?? SIGNALS[topicId] ?? [];
 }
 
 /** 专题 id -> 教学卡片。大类和子标签都能查。 */

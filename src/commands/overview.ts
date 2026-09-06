@@ -62,7 +62,7 @@ export function cmdHome(store: Store, _args: Args): void {
   if (store.baseline) {
     out(...baselineFooter());
     out("");
-    out(r.paint("  先看体系：{PROG} learn（13 个大类 / 65 个子标签，每条都有核心思路与代表题）", "gray"));
+    out(r.paint("  先看体系：{PROG} learn（整棵标签树，每个节点都有核心思路与代表题）", "gray"));
     out(r.paint("  {PROG} topics | {PROG} learn <专题> | {PROG} plan <专题> | {PROG} list --tag <标签>", "gray"), "");
     return;
   }
@@ -114,6 +114,18 @@ export function cmdTopics(store: Store, args: Args): void {
         r.bar(sdone, stotal, 10, color),
         r.paint(r.trunc(sub.desc, Math.max(20, r.termWidth() - 76)), "gray"),
       ]);
+      // 有再分化的就把下一层也列出来，没有的就到此为止 —— 层级本来就不齐
+      for (const kid of sub.kids ?? []) {
+        const km = store.problems.filter((p) => (p.deepTagIds ?? []).includes(kid.id));
+        const [kdone, ktotal] = store.progressOf(km);
+        rows.push([
+          `    ${r.paint(`↳ ${kid.name}`, "gray")}`,
+          r.paint(kid.id, "gray"),
+          `${kdone}/${ktotal}`,
+          r.bar(kdone, ktotal, 10, "gray"),
+          r.paint(r.trunc(kid.desc, Math.max(20, r.termWidth() - 76)), "gray"),
+        ]);
+      }
     }
     out(r.table(["  子标签", `${PROG} learn`, "进度", "", "说明"], rows,
       ["left", "left", "right", "left", "left"]));
@@ -140,6 +152,13 @@ function renderSubBlocks(store: Store, cat: Store["cats"][number], color: string
       const cells = picks.map((p) => `${r.paint(`#${p.id}`, "gray")} `
         + `${r.hyperlink(r.trunc(p.title, 18), p.url ?? "")} ${r.diffTag(p)}`);
       out(`    ${r.paint("代表题", "gray")} ${cells.join(r.paint(" · ", "gray"))}`);
+    }
+    if (sub.kids?.length) {
+      const cells = sub.kids.map((kid) => {
+        const n = store.problems.filter((p) => (p.deepTagIds ?? []).includes(kid.id)).length;
+        return `${r.paint(kid.name, color)} ${r.paint(`${n} 题`, "gray")}`;
+      });
+      out(`    ${r.paint("再往下", "gray")} ${cells.join(r.paint(" · ", "gray"))}`);
     }
     out(`    ${r.paint(`讲解 {PROG} learn ${sub.id}`, "steel")}`
       + `    ${r.paint(`计划 {PROG} plan ${sub.id}`, "steel")}`);

@@ -8,6 +8,10 @@ export interface TagRef {
   cat: string;
   w: number;
   src: string[];
+  /** 在标签树里的深度：1=分区，2=子标签，3 及以下=更细的技巧。省略按 2 处理 */
+  level?: number;
+  /** level ≥ 3 时的父节点 id */
+  parent?: string;
 }
 
 export interface ApproachRef {
@@ -34,6 +38,8 @@ export interface Problem {
   tagNames: string[];
   tags: TagRef[];
   tagIds: string[];
+  /** 更深一层的技巧标签（level ≥ 3）。父节点一定也在这道题的标签里 */
+  deepTagIds?: string[];
   mainTag: string;
   mainTagName: string;
   mainCat: string;
@@ -65,6 +71,8 @@ export interface SubCategory {
   desc: string;
   count: number;
   main: number;
+  /** 再往下一层的节点，递归；没有分化的节点就没有这个字段 */
+  kids?: SubCategory[];
 }
 
 export interface Category {

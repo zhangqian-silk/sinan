@@ -383,6 +383,11 @@ async function viewTopics(host) {
         h('span.subCard__n', {}, `${s.done}/${s.total}`)),
       h('p.subCard__desc', {}, s.desc),
       h('div.subCard__meter', {}, h('i', { style: { width: `${s.total ? (s.done / s.total) * 100 : 0}%`, background: color } })),
+      // 有再往下分的就列出来；层级不齐是常态，没有就不显示这一行
+      s.kids?.length ? h('div.kidRow', {}, s.kids.map((k) => h('button.kidChip', {
+        title: `${k.name}：${k.desc}`,
+        onClick: () => { state.filters.cat = ''; state.filters.tag = k.id; state.filters.approach = ''; go('problems'); },
+      }, k.name, h('em', {}, ` ${k.count ?? 0}`))) ) : null,
       h('div.subCard__acts', {},
         h('button.btn.btn--sm', {
           onClick: () => { state.filters.cat = c.id; state.filters.tag = s.id; state.filters.approach = ''; go('problems'); },
@@ -436,7 +441,12 @@ async function viewLearn(host) {
         h('div.subCard__top', {},
           h('span.subCard__name', {}, s.name),
           h('span.subCard__n', {}, `${s.total} 题`)),
-        h('p.subCard__desc', {}, s.gist || s.desc))))));
+        h('p.subCard__desc', {}, s.gist || s.desc),
+        // 再往下一层，点了直接进那一层的讲解
+        s.kids?.length ? h('div.kidRow', {}, s.kids.map((k) => h('span.kidChip', {
+          title: k.gist || k.desc,
+          onClick: (e) => { e.stopPropagation(); openLearn(k.id); },
+        }, k.name, h('em', {}, ` ${k.total}`)))) : null)))));
   }
 }
 
@@ -457,7 +467,17 @@ async function learnDetail(host, topic) {
 
   clear(box).append(h('div.card.planHead', {},
     h('h2', {}, note.name || topic, ' · 讲解'),
+    note.pathNames && note.pathNames.length > 1
+      ? h('p.crumb', {}, note.pathNames.join(' › '))
+      : null,
     note.desc ? h('p', {}, note.desc) : null,
+    note.inheritedFrom
+      ? h('p', { style: { color: 'var(--accent)' } },
+          `模板与常见坑跟「${note.inheritedFrom.name}」共用 · `,
+          h('button.btn.btn--sm.btn--ghost', {
+            onClick: () => openLearn(note.inheritedFrom.id),
+          }, `看 ${note.inheritedFrom.name} →`))
+      : null,
     h('div.planHead__meta', {},
       note.poolSize ? h('span', {}, `题池 ${note.poolSize} 道`) : null,
       note.planSteps ? h('span', {}, `最小覆盖 ${note.planSteps} 道`) : null,

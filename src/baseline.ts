@@ -11,7 +11,7 @@
  */
 
 import type {
-  Category, Difficulty, Meta, Problem, SimilarEntry, SubCategory,
+  Category, Difficulty, Meta, Problem, ProblemReview, SimilarEntry, SubCategory,
 } from "./types.js";
 
 /** 只有这两个题源，链接可以由 slug / 题号推出来，不必逐题存一遍。 */
@@ -30,6 +30,7 @@ export interface PackedProblem {
   /** 标签 [[标签下标, 权重, 来源下标[]], ...] */ 5: [number, number, number[]][];
   /** 思路 [[思路下标, 可信度×1000, 证据通道下标], ...] */ 6: [number, number, number][];
   /** 判定理由 {思路下标: 理由下标[]}，没有就省略 */ 7?: Record<string, number[]>;
+  /** 人工判定（我们自己写的解法），没有就省略 */ 8?: ProblemReview;
 }
 
 export interface Packed {
@@ -131,6 +132,7 @@ export function expand(packed: Packed): Expanded {
       tags,
       tagIds,
       deepTagIds,
+      ...(row[8] ? { review: row[8] } : {}),
       mainTag: main,
       mainTagName: subName.get(main) ?? main,
       mainCat: subToCat.get(main) ?? "",

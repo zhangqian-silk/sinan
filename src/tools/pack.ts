@@ -74,6 +74,8 @@ export function pack(distDir: string): Packed {
       5: tags,
       6: fp,
     };
+    // 人工判定是我们自己写的内容，随包发
+    if (p.review) row[8] = p.review;
     const reasons = p.approachWhy ?? {};
     if (Object.keys(reasons).length) {
       const out: Record<string, number[]> = {};

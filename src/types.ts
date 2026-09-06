@@ -24,6 +24,23 @@ export interface ApproachRef {
   from: string;
 }
 
+/**
+ * 人工判定：逐题读题面之后自己写的最简解法与判断。
+ * 内容是我们自己写的，不是平台题解，所以随包分发。
+ */
+export interface ProblemReview {
+  /** 最简可行解，两三句说清楚怎么想 */
+  idea: string;
+  /** 时间 / 空间 */
+  complexity?: string;
+  /** 其它值得知道的解法 */
+  alt?: string[];
+  /** 这题最容易错的地方 */
+  pitfall?: string;
+  /** 评的日期 */
+  at?: string;
+}
+
 export interface Problem {
   id: string;
   slug: string;
@@ -62,6 +79,8 @@ export interface Problem {
   solutionSampled?: number;
   codeBlocks?: number;
   approachWhy?: Record<string, string[]>;
+  /** 有人工判定时带上，标签也以人工为准 */
+  review?: ProblemReview;
   value: number;
 }
 

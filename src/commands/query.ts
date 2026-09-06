@@ -145,6 +145,24 @@ export function cmdShow(store: Store, args: Args): void {
   if (meta.length) out(`  ${meta.join("\n  ")}`);
   out(`  ${r.paint("平台链接", "gray")} ${r.hyperlink(p.url, p.url)}`);
 
+  // 人工判定优先展示：这是我们自己读完题写的，比抓来的题解更该先看见
+  if (p.review) {
+    const width = Math.max(r.termWidth() - 6, 50);
+    out("", r.rule(`最简解法  我们自己读题后写的${p.review.at ? ` · ${p.review.at}` : ""}`));
+    for (const line of r.wrap(p.review.idea, width)) out(`  ${line}`);
+    if (p.review.complexity) out(`  ${r.paint("复杂度", "gray")} ${p.review.complexity}`);
+    for (const a of p.review.alt ?? []) {
+      r.wrap(a, width - 4).forEach((line, i) => {
+        out(`  ${r.paint((i === 0 ? "· " : "  ") + line, "gray")}`);
+      });
+    }
+    if (p.review.pitfall) {
+      r.wrap(p.review.pitfall, width - 4).forEach((line, i) => {
+        out(`  ${r.paint((i === 0 ? "! " : "  ") + line, i === 0 ? "red" : "gray")}`);
+      });
+    }
+  }
+
   out("", r.rule(`解法标签  ${p.tags.length} 个，跨 ${p.catSpan} 个大类`));
   for (const t of p.tags) {
     const catName = store.catById.get(t.cat)?.name ?? t.cat;

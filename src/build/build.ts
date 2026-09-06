@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { analyzeBlocks, tagSeeds, type CodeBlock } from "./codeprint.js";
 import { buildCurated, type RawList } from "./curated.js";
 import { loadExtraSources, lookup } from "./extra.js";
+import { loadReviews, type Review } from "./reviews.js";
 import { APPROACHES, fingerprint, vector } from "./fingerprint.js";
 import { distDir, dumpJson, loadJson, rawDir, readJsonl } from "./io.js";
 import { py } from "./pyre.js";
@@ -60,6 +61,49 @@ function deepTagRefs(
       id, name: info.node.name, cat: info.cat, w: ev.w, src: ev.src, level: depth, parent,
     };
   });
+}
+
+/**
+ * 人工判定的标签。列出来的深层节点会自动补上父链 —— 判定「用了埃氏筛」就意味着
+ * 这是道数论题，没必要让人再写一遍父节点。
+ */
+function reviewTags(review: Review): {
+  tags: TagRef[]; tagIds: string[]; deepTagIds: string[]; main: string;
+} {
+  const refs: TagRef[] = [];
+  const seen = new Set<string>();
+  const push = (id: string, explicit: boolean): void => {
+    if (seen.has(id)) return;
+    const info = NODE_BY_ID.get(id);
+    if (!info) throw new Error(`人工判定 ${review.slug} 用了不存在的标签：${id}`);
+    seen.add(id);
+    refs.push({
+      id,
+      name: info.node.name,
+      cat: info.cat,
+      w: 100,
+      src: [explicit ? "人工判定" : "人工判定（父节点）"],
+      ...(info.depth >= 3 ? { level: info.depth, parent: info.parent } : {}),
+    });
+  };
+  for (const id of review.tags) {
+    // 先补父链再放自己，保证 tags 里父在前
+    const chain: string[] = [];
+    let cur: string | undefined = id;
+    while (cur && NODE_BY_ID.has(cur)) {
+      chain.unshift(cur);
+      cur = NODE_BY_ID.get(cur)!.parent;
+    }
+    for (const nid of chain) push(nid, nid === id);
+  }
+  const tagIds = refs.filter((t) => (t.level ?? 2) === 2).map((t) => t.id);
+  if (!tagIds.length) throw new Error(`人工判定 ${review.slug} 一个二级标签都没有`);
+  return {
+    tags: refs,
+    tagIds,
+    deepTagIds: refs.filter((t) => (t.level ?? 2) >= 3).map((t) => t.id),
+    main: tagIds[0],
+  };
 }
 import { Counter, fixed, pyRoundTo, sortBy } from "../util.js";
 import { overlap } from "../approach.js";
@@ -354,6 +398,8 @@ export function build(): void {
   }
 
   const unmapped = new Counter<string>();
+  const reviews = loadReviews();
+  if (reviews.size) process.stdout.write(`[build] 人工判定 ${reviews.size} 题，这些题的标签以人工为准\n`);
   const items: Problem[] = [];
 
   for (const p of raw) {
@@ -388,6 +434,8 @@ export function build(): void {
       if (idSet.has(aid)) approachWhy[aid] = v.why.slice(0, 3);
     }
     const deep = deepTagRefs(tagIds, fp, tags, tagNames);
+    const review = reviews.get(slug);
+    const judged = review ? reviewTags(review) : null;
 
     const item: Problem = {
       id: p.frontendQuestionId,
@@ -402,20 +450,24 @@ export function build(): void {
       rawTags: tags,
       tagNames: p.topicTags.map((t) => t.nameTranslated || t.name),
       // 多标签：一题多解就会有多个标签，w 是可信度，src 说明这个标签怎么来的
-      tags: [
+      tags: judged ? judged.tags : [
         ...tagList.map((t) => ({
           id: t.id, name: SUB_BY_ID.get(t.id)!.name, cat: SUB_TO_CAT.get(t.id)!,
           w: t.w, src: t.src,
         })),
         ...deep,
       ],
-      tagIds,
-      deepTagIds: deep.map((t) => t.id),
-      mainTag: main,
-      mainTagName: SUB_BY_ID.get(main)!.name,
-      mainCat: SUB_TO_CAT.get(main)!,
-      cats,
-      catSpan: cats.length,
+      tagIds: judged ? judged.tagIds : tagIds,
+      deepTagIds: judged ? judged.deepTagIds : deep.map((t) => t.id),
+      mainTag: judged ? judged.main : main,
+      mainTagName: SUB_BY_ID.get(judged ? judged.main : main)!.name,
+      mainCat: SUB_TO_CAT.get(judged ? judged.main : main)!,
+      cats: judged
+        ? [...new Set(judged.tagIds.map((t) => SUB_TO_CAT.get(t)!))]
+        : cats,
+      catSpan: (judged
+        ? [...new Set(judged.tagIds.map((t) => SUB_TO_CAT.get(t)!))]
+        : cats).length,
       freq: ct ? ct.freq : 0,
       freqRank: ct ? ct.rank : 0,
       hasContent: Boolean(det.content),
@@ -432,6 +484,13 @@ export function build(): void {
       codeBlocks: (codes.get(slug)?.blocks ?? []).length,
       // 「凭什么这么判」要能当场翻出来，否则打标就是黑箱
       approachWhy,
+      ...(review ? { review: {
+        idea: review.idea,
+        ...(review.complexity ? { complexity: review.complexity } : {}),
+        ...(review.alt?.length ? { alt: review.alt } : {}),
+        ...(review.pitfall ? { pitfall: review.pitfall } : {}),
+        ...(review.at ? { at: review.at } : {}),
+      } } : {}),
       value: 0,
     };
     item.value = valueScore(item, maxFreq);

@@ -187,24 +187,30 @@ function apiTopics(st: Store): unknown {
 }
 
 /**
- * 讲解总目录：13 个大类 + 65 个子标签，每条一句话核心思路。
+ * 讲解总目录：整棵标签树，每个节点一句话核心思路。
  * 和 `sinan learn`（不带参数）是同一份内容，措辞取自 notes.gist。
  */
 function apiNotes(st: Store): unknown {
   const cats = st.cats.map((c) => {
     const members = st.problems.filter((p) => p.cats.includes(c.id));
     const [done, total] = st.progressOf(members);
+    // 层级不固定，递归下去；深层节点的题在 deepTagIds 里
+    const node = (s: { id: string; name: string; desc: string; kids?: unknown[] }, depth: number): unknown => {
+      const sm = depth === 2
+        ? st.problems.filter((p) => p.tagIds.includes(s.id))
+        : st.problems.filter((p) => (p.deepTagIds ?? []).includes(s.id));
+      const [sdone, stotal] = st.progressOf(sm);
+      const kids = (s.kids ?? []) as typeof s[];
+      return {
+        id: s.id, name: s.name, desc: s.desc, gist: notes.gist(s.id, s.desc),
+        done: sdone, total: stotal, hasNote: notes.hasNote(s.id), depth,
+        ...(kids.length ? { kids: kids.map((k) => node(k, depth + 1)) } : {}),
+      };
+    };
     return {
       id: c.id, name: c.name, desc: c.desc, gist: notes.gist(c.id, c.desc),
       done, total, hasNote: notes.hasNote(c.id),
-      subs: c.subs.map((s) => {
-        const sm = st.problems.filter((p) => p.tagIds.includes(s.id));
-        const [sdone, stotal] = st.progressOf(sm);
-        return {
-          id: s.id, name: s.name, desc: s.desc, gist: notes.gist(s.id, s.desc),
-          done: sdone, total: stotal, hasNote: notes.hasNote(s.id),
-        };
-      }),
+      subs: c.subs.map((s) => node(s, 2)),
     };
   });
   return { cats };
@@ -213,12 +219,23 @@ function apiNotes(st: Store): unknown {
 function apiNote(st: Store, q: Query): unknown {
   const key = one(q, "topic");
   const topic = st.findTopic(key);
-  const data = noteJson(topic ? topic.id : key);
+  const tid = topic ? topic.id : key;
+  // 深层节点没有自己的卡片，继承父节点的：模板和坑本来就是同一族共用
+  const parent = topic?.parent ? st.topics().get(topic.parent) : null;
+  const data = noteJson(tid) ?? (parent ? noteJson(parent.id) : null);
   if (!data) return { error: `没有这个专题的讲解：${key}` };
   if (topic) {
     data["name"] = topic.name;
     data["desc"] = topic.desc;
     data["kind"] = topic.kind;
+    data["depth"] = topic.depth ?? (topic.kind === "cat" ? 1 : 2);
+    data["path"] = topic.path ?? topic.id;
+    data["pathNames"] = st.pathNamesOf(topic);
+    if (!noteJson(tid) && parent) {
+      data["topic"] = tid;
+      data["signals"] = notes.signals(tid);
+      data["inheritedFrom"] = { id: parent.id, name: parent.name };
+    }
     // 代表题：和 `sinan learn <专题>` 给的是同一批，取自同一套最小覆盖
     if (topic.kind !== "route") {
       const plan = planner.planTopic(st, topic, { mode: "minimal" });

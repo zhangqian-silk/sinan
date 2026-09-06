@@ -9,14 +9,58 @@ import { join } from "node:path";
 
 import { analyzeBlocks, tagSeeds, type CodeBlock } from "./codeprint.js";
 import { buildCurated, type RawList } from "./curated.js";
-import { loadExtraSources } from "./extra.js";
+import { loadExtraSources, lookup } from "./extra.js";
 import { APPROACHES, fingerprint, vector } from "./fingerprint.js";
 import { distDir, dumpJson, loadJson, rawDir, readJsonl } from "./io.js";
 import { py } from "./pyre.js";
 import { analyze as analyzeStatement } from "./statement.js";
-import { exportTaxonomy, SUB_BY_ID, SUB_TO_CAT, tagProblem, CATEGORIES } from "./taxonomy.js";
-import { TAG_MAP } from "./rules/taxonomy.data.js";
-import type { ApproachRef, CuratedList, Meta, Problem, SimilarEntry } from "../types.js";
+import {
+  deepTagsFor, exportTaxonomy, NODE_BY_ID, SUB_BY_ID, SUB_TO_CAT, tagProblem, CATEGORIES,
+} from "./taxonomy.js";
+import { CHANNEL_CN } from "./rules/approach.data.js";
+import { LEAF_TAG_MAP, TAG_MAP } from "./rules/taxonomy.data.js";
+import type { ApproachRef, CuratedList, Meta, Problem, SimilarEntry, TagRef } from "../types.js";
+
+/**
+ * 深层标签：思路命中了树上更细的那一层，就把它也挂成标签。
+ *
+ * 证据有两路：
+ * 1. **题解 / 题面判出来的思路**。只认有真实证据的 —— `from === "tags"` 是「没抓到题解
+ *    也读不出题面，只能由官方标签反推」，拿它生成深层标签等于自己证明自己。
+ * 2. **原始标签直接点名**（力扣 `monotonic-stack`、洛谷「素数判断」）。洛谷题抓不到
+ *    题解，这一路是它们唯一的深层证据。
+ *
+ * 两路都要求父节点在场，规则一致。
+ */
+function deepTagRefs(
+  tagIds: readonly string[],
+  fp: readonly ApproachRef[],
+  rawTags: readonly string[] = [],
+  tagNames: Record<string, string> = {},
+): TagRef[] {
+  const evidence = new Map<string, { w: number; src: string[] }>();
+  const add = (id: string, w: number, src: string): void => {
+    const cur = evidence.get(id) ?? { w: 0, src: [] };
+    cur.w = Math.max(cur.w, w);
+    if (!cur.src.includes(src)) cur.src.push(src);
+    evidence.set(id, cur);
+  };
+  for (const a of fp) {
+    if (a.from === "tags" || !NODE_BY_ID.has(a.id)) continue;
+    for (const c of a.from.split("+")) add(a.id, Math.round(a.conf * 100), CHANNEL_CN[c] ?? c);
+  }
+  for (const t of rawTags) {
+    const leaf = lookup(LEAF_TAG_MAP, t);
+    if (leaf) add(leaf, 70, tagNames[t] ?? t);
+  }
+  return deepTagsFor(tagIds, [...evidence.keys()]).map(({ id, parent, depth }) => {
+    const info = NODE_BY_ID.get(id)!;
+    const ev = evidence.get(id)!;
+    return {
+      id, name: info.node.name, cat: info.cat, w: ev.w, src: ev.src, level: depth, parent,
+    };
+  });
+}
 import { Counter, fixed, pyRoundTo, sortBy } from "../util.js";
 import { overlap } from "../approach.js";
 
@@ -343,6 +387,7 @@ export function build(): void {
     for (const [aid, v] of Object.entries(sev)) {
       if (idSet.has(aid)) approachWhy[aid] = v.why.slice(0, 3);
     }
+    const deep = deepTagRefs(tagIds, fp, tags, tagNames);
 
     const item: Problem = {
       id: p.frontendQuestionId,
@@ -357,11 +402,15 @@ export function build(): void {
       rawTags: tags,
       tagNames: p.topicTags.map((t) => t.nameTranslated || t.name),
       // 多标签：一题多解就会有多个标签，w 是可信度，src 说明这个标签怎么来的
-      tags: tagList.map((t) => ({
-        id: t.id, name: SUB_BY_ID.get(t.id)!.name, cat: SUB_TO_CAT.get(t.id)!,
-        w: t.w, src: t.src,
-      })),
+      tags: [
+        ...tagList.map((t) => ({
+          id: t.id, name: SUB_BY_ID.get(t.id)!.name, cat: SUB_TO_CAT.get(t.id)!,
+          w: t.w, src: t.src,
+        })),
+        ...deep,
+      ],
       tagIds,
+      deepTagIds: deep.map((t) => t.id),
       mainTag: main,
       mainTagName: SUB_BY_ID.get(main)!.name,
       mainCat: SUB_TO_CAT.get(main)!,
@@ -395,6 +444,8 @@ export function build(): void {
     const tagIds = tagList.map((t) => t.id);
     const cats = [...new Set(tagIds.map((t) => SUB_TO_CAT.get(t)!))];
     const fp = fingerprint([], tagIds);
+    // 洛谷抓不到题解，深层证据全靠平台自己的标签：slug 和中文原名都试一遍
+    const deep = deepTagRefs(tagIds, fp, [...extra.rawTags, ...extra.tagNames]);
     const item: Problem = {
       id: extra.id,
       slug: extra.slug,
@@ -407,11 +458,15 @@ export function build(): void {
       solutionCount: 0,
       rawTags: extra.rawTags,
       tagNames: extra.tagNames,
-      tags: tagList.map((t) => ({
-        id: t.id, name: SUB_BY_ID.get(t.id)!.name, cat: SUB_TO_CAT.get(t.id)!,
-        w: t.w, src: t.src,
-      })),
+      tags: [
+        ...tagList.map((t) => ({
+          id: t.id, name: SUB_BY_ID.get(t.id)!.name, cat: SUB_TO_CAT.get(t.id)!,
+          w: t.w, src: t.src,
+        })),
+        ...deep,
+      ],
       tagIds,
+      deepTagIds: deep.map((t) => t.id),
       mainTag: main,
       mainTagName: SUB_BY_ID.get(main)!.name,
       mainCat: SUB_TO_CAT.get(main)!,
@@ -445,6 +500,7 @@ export function build(): void {
   const catMain = new Counter<string>();
   for (const p of items) {
     subCounts.update(p.tagIds);
+    subCounts.update(p.deepTagIds ?? []);
     catCounts.update(p.cats);
     subMain.add(p.mainTag);
     catMain.add(p.mainCat);
@@ -496,9 +552,15 @@ export function build(): void {
     ...cat,
     count: catCounts.get(cat.id),
     main: catMain.get(cat.id),
-    subs: cat.subs.map((sub) => ({
-      ...sub, count: subCounts.get(sub.id), main: subMain.get(sub.id),
-    })),
+    // 层数不固定，计数也递归下去
+    subs: cat.subs.map(function countNode(node): unknown {
+      return {
+        ...node,
+        count: subCounts.get(node.id),
+        main: subMain.get(node.id),
+        ...(node.kids?.length ? { kids: node.kids.map(countNode) } : {}),
+      };
+    }),
   }));
 
   dumpJson(join(DIST, "taxonomy.json"), tree, true);

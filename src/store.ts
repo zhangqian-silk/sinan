@@ -31,6 +31,7 @@ import type {
   Problem,
   Progress,
   SimilarEntry,
+  SubCategory,
   SubWithCat,
 } from "./types.js";
 import { Counter, sortBy, type SortKey } from "./util.js";
@@ -58,6 +59,12 @@ export interface Topic {
   desc: string;
   /** kind=tag 时所属大类 */
   cat: string;
+  /** 在标签树里的深度：1=分区，2=子标签，3 及以下=更细的技巧 */
+  depth?: number;
+  /** 上一层节点的 id（depth ≥ 3 时才有） */
+  parent?: string;
+  /** 从分区到这里的完整路径，如 math/number-theory/math-sieve */
+  path?: string;
   /** kind=list 时的题目集合 */
   slugs: string[];
   /** kind=list 时官方的知识点分组 */
@@ -71,6 +78,14 @@ function makeTopic(init: Partial<Topic> & Pick<Topic, "id" | "name" | "kind">): 
     desc: "", cat: "", slugs: [], groups: [], url: "", source: "",
     ...init,
   };
+}
+
+/** 标签树上的一个节点，带上它在树里的位置。 */
+export interface TreeNode extends SubWithCat {
+  parent: string;
+  depth: number;
+  /** 分区/子标签/…… 一路拼下来的路径 */
+  path: string;
 }
 
 /**
@@ -154,6 +169,8 @@ export class Store {
   readonly byId = new Map<string, Problem>();
   readonly catById = new Map<string, Category>();
   readonly subById = new Map<string, SubWithCat>();
+  /** 整棵标签树（二级及以下，层数不限）。二级节点在 subById 里也有一份 */
+  readonly nodeById = new Map<string, TreeNode>();
   /** 思路 id -> 名称 / 领域 / 区分度，从题目产物里就地汇总，不再另存一份词表。 */
   readonly approachById = new Map<string, { id: string; name: string; domain: string; w: number }>();
 
@@ -203,7 +220,18 @@ export class Store {
     }
     for (const c of this.cats) {
       this.catById.set(c.id, c);
+      // 二级照旧进 subById（进度、统计的口径都按它算），整棵树另存一份
       for (const s of c.subs) this.subById.set(s.id, { ...s, cat: c.id, catName: c.name });
+      const walk = (nodes: readonly SubCategory[], parent: string, depth: number): void => {
+        for (const n of nodes) {
+          const path = depth === 2 ? `${c.id}/${n.id}` : `${this.nodeById.get(parent)!.path}/${n.id}`;
+          this.nodeById.set(n.id, {
+            ...n, cat: c.id, catName: c.name, parent, depth, path,
+          });
+          if (n.kids?.length) walk(n.kids, n.id, depth + 1);
+        }
+      };
+      walk(c.subs, c.id, 2);
     }
 
     this.progress = this.readProgress();
@@ -358,8 +386,12 @@ export class Store {
     for (const c of this.cats) {
       out.set(c.id, makeTopic({ id: c.id, name: c.name, kind: "cat", desc: c.desc }));
     }
-    for (const [sid, s] of this.subById) {
-      out.set(sid, makeTopic({ id: sid, name: s.name, kind: "tag", desc: s.desc, cat: s.cat }));
+    // 整棵树都能当专题练：二级、三级……层数不限
+    for (const [nid, n] of this.nodeById) {
+      out.set(nid, makeTopic({
+        id: nid, name: n.name, kind: "tag", desc: n.desc, cat: n.cat,
+        depth: n.depth, parent: n.parent, path: n.path,
+      }));
     }
     for (const lst of this.curated) {
       out.set(lst.id, makeTopic({
@@ -371,10 +403,27 @@ export class Store {
     return out;
   });
 
+  /** 从分区到这个节点，一路的中文名。给面包屑用。 */
+  pathNamesOf(topic: Topic): string[] {
+    const ids = topic.path ? topic.path.split("/") : [topic.id];
+    return ids.map((id) => this.catById.get(id)?.name ?? this.nodeById.get(id)?.name ?? id);
+  }
+
   findTopic(key: string): Topic | null {
     const topics = this.topics();
     const direct = topics.get(key);
     if (direct) return direct;
+    // 路径寻址：math/number-theory/math-sieve。认最后一段，前面几段必须真的是它的祖先 ——
+    // 写错了就不认，免得默默返回一个别的专题
+    if (key.includes("/")) {
+      const parts = key.split("/").filter(Boolean);
+      const node = topics.get(parts[parts.length - 1]);
+      if (!node) return null;
+      const chain = node.path ? node.path.split("/") : [node.id];
+      if (parts.length > chain.length) return null;
+      const offset = chain.length - parts.length;
+      return parts.every((seg, i) => chain[offset + i] === seg) ? node : null;
+    }
     const low = key.toLowerCase();
     // 支持简写：hot100 / top100 / 150 …
     const aliases: Record<string, string> = {
@@ -417,6 +466,9 @@ export class Store {
       }
     } else if (topic.kind === "cat") {
       pool = this.problems.filter((p) => p.cats.includes(topic.id));
+    } else if ((topic.depth ?? 2) >= 3) {
+      // 更深一层的技巧标签存在 deepTagIds 里，不在 tagIds 里
+      pool = this.problems.filter((p) => (p.deepTagIds ?? []).includes(topic.id));
     } else {
       pool = this.problems.filter((p) => p.tagIds.includes(topic.id));
     }
@@ -471,7 +523,8 @@ export class Store {
       if (!includePaid && p.paid) continue;
       if (allowed && !allowed.has(p.slug)) continue;
       if (cat && !p.cats.includes(cat)) continue;
-      if (tag && !p.tagIds.includes(tag)) continue;
+      // --tag 认树上任意一层：二级在 tagIds 里，更深的在 deepTagIds 里
+      if (tag && !p.tagIds.includes(tag) && !(p.deepTagIds ?? []).includes(tag)) continue;
       if (source && p.source !== source) continue;
       if (apLow && !(p.approach ?? []).some((a) => approachMatches(apLow, a))) continue;
       if (diffs && diffs.size && !diffs.has(p.difficulty)) continue;

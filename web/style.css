@@ -403,6 +403,14 @@ select, .selectish {
 .subCard--btn .subCard__desc { margin-bottom: 0; }
 .plainLink { font-family: var(--mono); font-size: 11px; color: var(--faint); text-decoration: none; }
 .plainLink:hover { color: var(--accent); text-decoration: underline; }
+.crumb { font-family: var(--mono); font-size: 11.5px; color: var(--faint); margin: 2px 0 6px; }
+.kidRow { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 9px; }
+.kidChip {
+  font-size: 11px; color: var(--muted); background: var(--surface-3);
+  border: 1px solid transparent; border-radius: var(--r-sm); padding: 1px 6px; cursor: pointer;
+}
+.kidChip:hover { color: var(--text); border-color: var(--accent); }
+.kidChip em { font-style: normal; font-family: var(--mono); color: var(--faint); }
 .syncHint { margin: 6px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
 .syncHint code {
   font-family: var(--mono); font-size: 11.5px; color: var(--accent);

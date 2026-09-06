@@ -10,7 +10,9 @@
  * 展开在这里做一次，还原成和完整产物一模一样的形状，上层代码看不出区别。
  */
 
-import type { Category, Difficulty, Meta, Problem, SimilarEntry } from "./types.js";
+import type {
+  Category, Difficulty, Meta, Problem, SimilarEntry, SubCategory,
+} from "./types.js";
 
 /** 只有这两个题源，链接可以由 slug / 题号推出来，不必逐题存一遍。 */
 export const URL_TEMPLATE: Record<string, string> = {
@@ -65,13 +67,22 @@ export function expand(packed: Packed): Expanded {
     throw new Error(`基线数据格式版本 ${String(packed.v)} 不认识，升级一下 sinan`);
   }
   const { pool } = packed;
+  // 层级不固定，所以按树走一遍：记下每个节点的名字、所属分区、深度和父节点
   const subToCat = new Map<string, string>();
   const subName = new Map<string, string>();
+  const nodeDepth = new Map<string, number>();
+  const nodeParent = new Map<string, string>();
   for (const c of packed.cats) {
-    for (const s of c.subs) {
-      subToCat.set(s.id, c.id);
-      subName.set(s.id, s.name);
-    }
+    const walk = (nodes: readonly SubCategory[], parent: string, depth: number): void => {
+      for (const s of nodes) {
+        subToCat.set(s.id, c.id);
+        subName.set(s.id, s.name);
+        nodeDepth.set(s.id, depth);
+        nodeParent.set(s.id, parent);
+        if (s.kids?.length) walk(s.kids, s.id, depth + 1);
+      }
+    };
+    walk(c.subs, c.id, 2);
   }
 
   const problems: Problem[] = packed.problems.map((row) => {
@@ -79,13 +90,23 @@ export function expand(packed: Packed): Expanded {
     const difficulty = pool.diff[row[3]] as Difficulty;
     const tags = row[5].map(([at, w, src]) => {
       const id = pool.tag[at];
-      return { id, name: subName.get(id) ?? id, cat: subToCat.get(id) ?? "", w, src: src.map((i) => pool.tagSrc[i]) };
+      const depth = nodeDepth.get(id) ?? 2;
+      return {
+        id,
+        name: subName.get(id) ?? id,
+        cat: subToCat.get(id) ?? "",
+        w,
+        src: src.map((i) => pool.tagSrc[i]),
+        ...(depth >= 3 ? { level: depth, parent: nodeParent.get(id) } : {}),
+      };
     });
     const approach = row[6].map(([at, conf, ch]) => {
       const [id, name, domain, w] = pool.approach[at];
       return { id, name, domain, conf: conf / 1000, w, hits: 0, from: pool.channel[ch] };
     });
-    const tagIds = tags.map((t) => t.id);
+    // 二级归 tagIds，更深的归 deepTagIds —— 和完整产物一个口径
+    const tagIds = tags.filter((t) => (nodeDepth.get(t.id) ?? 2) === 2).map((t) => t.id);
+    const deepTagIds = tags.filter((t) => (nodeDepth.get(t.id) ?? 2) >= 3).map((t) => t.id);
     const cats = [...new Set(tags.map((t) => t.cat))];
     const main = tagIds[0] ?? "";
     const approachWhy: Record<string, string[]> = {};
@@ -109,6 +130,7 @@ export function expand(packed: Packed): Expanded {
       tagNames: [],
       tags,
       tagIds,
+      deepTagIds,
       mainTag: main,
       mainTagName: subName.get(main) ?? main,
       mainCat: subToCat.get(main) ?? "",

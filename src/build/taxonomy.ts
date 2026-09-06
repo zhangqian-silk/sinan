@@ -25,6 +25,58 @@ for (const c of CATEGORIES) {
   }
 }
 
+/** 树上任意一个节点的位置信息。depth：1=分区，2=子标签，3 及以下=更细的技巧。 */
+export interface NodeInfo {
+  node: Sub;
+  cat: string;
+  parent: string;
+  depth: number;
+}
+
+/** 二级及以下的全部节点，按 id 索引。层数不限，深的枝就多几层。 */
+export const NODE_BY_ID = new Map<string, NodeInfo>();
+
+(function indexTree(): void {
+  const walk = (nodes: readonly Sub[], cat: string, parent: string, depth: number): void => {
+    for (const n of nodes) {
+      if (NODE_BY_ID.has(n.id)) throw new Error(`标签 id 重复：${n.id}，全树必须唯一`);
+      NODE_BY_ID.set(n.id, { node: n, cat, parent, depth });
+      if (n.kids?.length) walk(n.kids, cat, n.id, depth + 1);
+    }
+  };
+  for (const c of CATEGORIES) walk(c.subs, c.id, c.id, 2);
+}());
+
+/** 按深度从浅到深排好的深层节点（depth ≥ 3），打标时要一层层往下加。 */
+const DEEP_NODES = [...NODE_BY_ID.values()]
+  .filter((n) => n.depth >= 3)
+  .sort((a, b) => a.depth - b.depth);
+
+/**
+ * 这道题该挂哪些深层标签：思路命中了这个节点，且它的父节点也在场。
+ *
+ * 要求父节点在场是为了让树自洽 —— 不然 #21 合并两个有序链表 会因为题解里有一句
+ * 「迭代写法」而挂到「二叉树遍历 / 迭代写法」下面去。这类低置信度的技巧痕迹
+ * 仍然留在题解思路里，只是不进标签树。
+ *
+ * 逐层推进，所以第四级只有在第三级也成立时才挂得上，层数再多也是这套规则。
+ */
+export function deepTagsFor(
+  tagIds: readonly string[],
+  approachIds: readonly string[],
+): { id: string; parent: string; depth: number }[] {
+  const present = new Set<string>(tagIds);
+  const hit = new Set(approachIds);
+  const out: { id: string; parent: string; depth: number }[] = [];
+  for (const info of DEEP_NODES) {
+    const id = info.node.id;
+    if (!hit.has(id) || !present.has(info.parent)) continue;
+    present.add(id);
+    out.push({ id, parent: info.parent, depth: info.depth });
+  }
+  return out;
+}
+
 function ruleMatches(rule: Rule, tags: Set<string>, title: string): boolean {
   if (rule.allTags?.length && !rule.allTags.every((t) => tags.has(t))) return false;
   if (rule.anyTags?.length && !rule.anyTags.some((t) => tags.has(t))) return false;
@@ -105,13 +157,19 @@ export function tagProblem(
 /** 给前端用的分类树。 */
 export function exportTaxonomy(): {
   id: string; name: string; desc: string; order: number;
-  subs: { id: string; name: string; desc: string }[];
+  subs: Sub[];
 }[] {
+  const clone = (n: Sub): Sub => ({
+    id: n.id,
+    name: n.name,
+    desc: n.desc,
+    ...(n.kids?.length ? { kids: n.kids.map(clone) } : {}),
+  });
   return CATEGORIES.map((c) => ({
     id: c.id,
     name: c.name,
     desc: c.desc,
     order: CAT_ORDER.indexOf(c.id),
-    subs: c.subs.map((s) => ({ id: s.id, name: s.name, desc: s.desc })),
+    subs: c.subs.map(clone),
   }));
 }

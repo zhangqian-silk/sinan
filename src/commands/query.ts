@@ -92,8 +92,13 @@ export function cmdList(store: Store, args: Args): void {
   });
   const limit = args["limit"] as number;
   const shown = items.slice(0, limit);
-  const label = (args["approach"] as string) || (args["tag"] as string) || (args["cat"] as string)
-    || (args["inList"] as string) || query || "全部题目";
+  // 标签用中文名显示，深到第几层都认；`--tag math-sieve` 要写成「质数与筛法」
+  const named = (id: string): string => store.nodeById.get(id)?.name
+    ?? store.catById.get(id)?.name ?? store.topics().get(id)?.name ?? id;
+  const tagArg = args["tag"] as string;
+  const catArg = args["cat"] as string;
+  const label = (args["approach"] as string) || (tagArg && named(tagArg))
+    || (catArg && named(catArg)) || (args["inList"] as string) || query || "全部题目";
   out("", r.heading(`题库 · ${label}`, `命中 ${items.length} 题，显示 ${shown.length}`), "");
   const { headers, rows, aligns } = problemRows(store, shown, {
     showLists: Boolean(args["withLists"]),

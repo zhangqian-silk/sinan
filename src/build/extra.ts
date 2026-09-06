@@ -30,7 +30,7 @@ import type { Seed } from "./taxonomy.js";
 const LATIN_TAIL_RE = py(LATIN_TAIL);
 
 /** 「动态规划 DP」「深度优先搜索 DFS」这类后缀，去掉尾部的英文再匹配一次。 */
-function lookup(table: Record<string, string>, name: string): string | null {
+export function lookup(table: Record<string, string>, name: string): string | null {
   if (name in table) return table[name];
   const trimmed = name.replace(new RegExp(LATIN_TAIL_RE.source, "u"), "").trim();
   return trimmed ? (table[trimmed] ?? null) : null;

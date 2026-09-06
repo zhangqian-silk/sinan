@@ -34,7 +34,7 @@ const COMMANDS: Entry[] = [
 
   {
     name: "topics",
-    help: "标签体系：13 个大类 / 65 个子标签",
+    help: "标签树：13 个分区 / 65 个子标签 / 52 个技巧节点",
     pos: [{ dest: "cat", nargs: "?", help: "只看某个大类" }],
     run: cmdTopics,
   },

@@ -59,8 +59,8 @@ sinan learn monotonic   # 核心思想 / 什么时候想到它 / 模板骨架 / 
 ```
 
 78 张教学卡片，OI-Wiki 延伸阅读的链接全部核过。其中「什么时候想到它」不是手写的，
-而是从打标规则里反查出来的（`scripts/gen_signals.py`）—— 那批规则本来就是
-「看到这种问法 → 该用这个解法」，所以教学写的判断依据和系统实际打标的依据永远一致。
+而是直接引用打标规则表算出来的 —— 那批规则本来就是「看到这种问法 → 该用这个解法」，
+所以教学写的判断依据和系统实际打标的依据是同一份数据，不可能漂移。
 
 ## 全部命令
 
@@ -90,8 +90,8 @@ sinan where                 数据、题解、打卡记录分别在哪
 npm i -g sinan     # 或者不装，直接 npx sinan
 ```
 
-需要 Node 18+。`sinan sync` 会调用随包分发的抓取脚本，那部分是 Python 写的
-（只用标准库），需要 Python 3.10+；其余命令不需要 Python。
+只需要 Node 18+，零运行时依赖 —— HTTP 服务、参数解析、抓取、打标构建全部走 Node
+内置能力，不装任何第三方包。
 
 ## 数据放在哪
 
@@ -119,32 +119,38 @@ npm i -g sinan     # 或者不装，直接 npx sinan
 ## 开发
 
 ```
-src/           TypeScript：数据层、规划器、渲染、CLI、Web 服务
-  planner.ts   谁能代表谁、贪心最小覆盖、4 条主线
-  store.ts     加载产物、查询、六维分面、进度
-  notes/       78 张教学卡片（cards.ts 手写，signals.ts 生成）
-web/           前端，无框架无构建
-scripts/       Python：抓取与打标构建
-  codeprint.py 读题解代码判解法（正则 + AST），自带 35 条用例
-  statement.py 读题面判解法（57 条问法规则 + 数据范围），自带 65 条用例
-  taxonomy.py  13 大类 / 65 子标签与打标规则
-  build.py     打标 + 指纹 + 相似度 → data/dist/*.json
+src/
+  store.ts          加载产物、查询、六维分面、进度
+  planner.ts        谁能代表谁、贪心最小覆盖、4 条主线
+  render.ts         终端渲染：中英混排对齐、颜色、表格
+  cli.ts / args.ts  15 个子命令与参数解析
+  serve.ts          Web 端：静态页面 + 一组 JSON 接口
+  notes/            78 张教学卡片；识别信号从打标规则直接反查
+  build/
+    pyre.ts         Python 正则语义翻译（\b \w 按 Unicode 口径）
+    codeprint.ts    读题解代码判解法，自带 37 条用例
+    statement.ts    读题面判解法（57 条问法规则 + 数据范围），自带 45 条用例
+    taxonomy.ts     13 大类 / 65 子标签的打标逻辑
+    fingerprint.ts  三条证据通道合成思路指纹
+    build.ts        打标 + 相似度 + 题单 → dist/*.json
+    fetch/          六个抓取器，断点续传
+    rules/          规则表：175 条标签映射 / 96 种思路 / 48 条代码探针 / 57 条问法规则
+web/                前端，无框架无构建
 ```
 
 ```bash
-npm run build        # 编译
-npm test             # 单元测试
-python3 scripts/codeprint.py     # 代码判定的自检用例
-python3 scripts/statement.py     # 题面判定的自检用例
-python3 scripts/gen_signals.py   # 打标规则变了之后重新生成识别信号
+npm run build       # 编译
+npm test            # 单元测试；有抓取数据时会连带跑 82 条打标自检用例
+npm run check:links # 体检教学卡片里的 86 个 OI-Wiki 链接（要联网）
 ```
 
-### 为什么抓取部分还是 Python
+### 关于打标规则里的正则
 
-抓取和打标那一层留在 Python，不是没搬完，是搬过去会更差：判定规则里有 20 处
-环视断言（`(?<!元)素数(?!目)`、`前缀(?!和)`、`回文(?!链表)`），全是压中文子串误命中的关键补丁；
-题解代码的结构判定直接用了 Python 的 `ast` 标准库。CLI 只是把它当子进程调起来，
-两边通过 `SINAN_DATA_ROOT` 共用同一个数据目录。
+`rules/*.data.ts` 里的正则按 **Python 的语义**书写，编译时由 `pyre.ts` 翻译。
+原因是两处真实差异：Python 的 `\w` 认中日韩、JS 的只认 ASCII，所以 `\bdfs\b`
+直接照搬会让「用dfs解」凭空命中；而开启 `u` 标志（`\p{...}` 需要）之后，
+JS 又会拒绝 `\-` 这类 Python 容忍的多余转义。翻译层把这两件事一起处理掉，
+250+ 条规则都有编译用例守着。
 
 ## 致谢与声明
 

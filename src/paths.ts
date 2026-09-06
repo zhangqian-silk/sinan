@@ -18,9 +18,6 @@ export const PKG_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 /** 前端静态资源随包分发，不跟着数据走。 */
 export const WEB_DIR = join(PKG_ROOT, "web");
 
-/** 抓取与构建脚本（Python）也随包分发，`sinan sync` 会调它们。 */
-export const SCRIPTS_DIR = join(PKG_ROOT, "scripts");
-
 export const SINAN_HOME = process.env["SINAN_HOME"]
   ? resolve(process.env["SINAN_HOME"])
   : join(homedir(), ".sinan");

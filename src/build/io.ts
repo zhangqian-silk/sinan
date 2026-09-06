@@ -40,9 +40,8 @@ export function readJsonl<T>(path: string): T[] {
 /**
  * 写 JSON。
  *
- * 缩进和分隔符要和 Python 的 `json.dumps` 对齐 —— 产物要能和旧版本逐字比对，
- * 格式差一个空格就没法 diff 了。Python 的 `indent=2` 会在 `, ` 和 `: ` 后带空格，
- * 而且行尾不留空白；JS 的 `JSON.stringify(x, null, 2)` 正好一致。
+ * 大文件（题库、相似度图）用 compact 模式：几 MB 的产物没人会去读，缩进只会让
+ * 体积多出三成。meta.json 这种要人看的才排版。
  */
 export function dumpJson(path: string, obj: unknown, compact = false): void {
   mkdirSync(dirname(path), { recursive: true });

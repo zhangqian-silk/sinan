@@ -18,11 +18,9 @@
     "bin",
     "dist",
     "web",
-    "scripts",
     "README.md",
     "LICENSE",
-    "!dist/test",
-    "!scripts/__pycache__"
+    "!dist/test"
   ],
   "engines": {
     "node": ">=18"
@@ -32,6 +30,7 @@
     "dev": "tsc -p tsconfig.json --watch",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test dist/test/*.test.js",
+    "check:links": "npm run build && node dist/tools/check-links.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

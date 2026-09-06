@@ -1,6 +1,5 @@
 /** 刷题训练台 CLI：命令名取自 argv[1]，见 bin/sinan.js。 */
 
-import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { dirname } from "node:path";
 
@@ -13,7 +12,7 @@ import { cmdList, cmdShow } from "./commands/query.js";
 import { CliError } from "./errors.js";
 import { out, PROG } from "./out.js";
 import { DEFAULT_PACE } from "./planner.js";
-import { resolveDataDir, SCRIPTS_DIR, SINAN_HOME } from "./paths.js";
+import { resolveDataDir, SINAN_HOME } from "./paths.js";
 import * as r from "./render.js";
 import { Store } from "./store.js";
 
@@ -163,10 +162,9 @@ const COMMANDS: Entry[] = [
 
   {
     name: "sync",
-    help: "抓数据 + 重新构建（调用随包的 Python 抓取脚本）",
+    help: "抓数据 + 重新构建",
     opts: [
       { flag: "--skip-fetch", type: "flag", help: "只重新构建，不抓取" },
-      { flag: "--python", type: "string", default: "python3", help: "Python 解释器" },
     ],
     standalone: runSync,
   },
@@ -180,7 +178,6 @@ const COMMANDS: Entry[] = [
       out(`  ${r.pad("题库数据", 12)}${dataDir}${existsSync(dataDir) ? "" : r.paint("  （还没有，跑 {PROG} sync）", "gray")}`);
       out(`  ${r.pad("打卡记录", 12)}${SINAN_HOME}/progress.json`);
       out(`  ${r.pad("配置文件", 12)}${SINAN_HOME}/config.json`);
-      out(`  ${r.pad("抓取脚本", 12)}${SCRIPTS_DIR}`);
       let store: Store | null = null;
       try {
         store = new Store({
@@ -201,22 +198,15 @@ const COMMANDS: Entry[] = [
 ];
 
 function runSync(args: Args): void {
-  const script = `${SCRIPTS_DIR}/refresh.py`;
-  if (!existsSync(script)) throw new CliError(`缺少抓取脚本 ${script}`);
+  // 抓取和读取共用同一个数据根，免得「抓完了却读不到」
   const dataDir = resolveDataDir(args["dataDir"] as string | undefined);
-  const cmd = [script];
-  if (args["skipFetch"]) cmd.push("--skip-fetch");
-  const result = spawnSync(args["python"] as string, cmd, {
-    cwd: SCRIPTS_DIR,
-    stdio: "inherit",
-    // 抓取脚本和 CLI 共用同一个数据根，免得「抓完了却读不到」
-    env: { ...process.env, SINAN_DATA_ROOT: dirname(dataDir) },
+  process.env["SINAN_DATA_ROOT"] = dirname(dataDir);
+  void import("./build/pipeline.js").then(({ sync }) => sync({
+    skipFetch: Boolean(args["skipFetch"]),
+  })).catch((err: unknown) => {
+    process.stderr.write(`\n抓取或构建失败：${err instanceof Error ? err.message : String(err)}\n`);
+    process.exit(1);
   });
-  if (result.error) {
-    throw new CliError(`跑不起来 ${String(args["python"])}：${result.error.message}\n`
-      + "抓取脚本是 Python 写的（只用标准库），装个 Python 3.10+ 或用 --python 指定解释器");
-  }
-  process.exit(result.status ?? 1);
 }
 
 const DESCRIPTION = "本地刷题训练台：题库打标 + 按知识点递进的学习计划";

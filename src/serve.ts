@@ -171,7 +171,16 @@ function apiProblem(st: Store, q: Query): unknown {
     solutionSampled: p.solutionSampled ?? 0,
     codeBlocks: p.codeBlocks ?? 0,
     approachWhy: p.approachWhy ?? {},
-    review: p.review ?? null,
+    review: p.review
+      ? {
+        ...p.review,
+        solutions: p.review.solutions.map((sol) => ({
+          ...sol,
+          // 标签给全路径，前端不用自己爬树
+          tagPaths: sol.tags.map((t) => st.pathNames(t).join(" › ")),
+        })),
+      }
+      : null,
     content: st.content(p.slug) ?? "",
     similar: sims,
     files,

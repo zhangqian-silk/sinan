@@ -32,8 +32,10 @@ export interface ReviewSolution {
   name: string;
   /** 核心思想怎么映射到这道题 */
   idea: string;
-  /** 时间 / 空间 */
-  complexity?: string;
+  /** 时间复杂度 */
+  time?: string;
+  /** 空间复杂度 */
+  space?: string;
 }
 
 /** 一道题的全部解法，按上手顺序排，第一条就是最简可行的那个。 */

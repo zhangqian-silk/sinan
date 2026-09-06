@@ -868,8 +868,10 @@ async function renderDrawer(slug) {
         h('div.solRow__top', {},
           h('span.solRow__n', {}, String(i + 1)),
           h('span.solRow__name', {}, sol.name),
-          h('span.solRow__tags', {}, (sol.tags || []).join(' · ')),
-          sol.complexity ? h('span.apNote', {}, sol.complexity) : null),
+          sol.time ? h('span.apNote', {}, `时间 ${sol.time}`) : null,
+          sol.space ? h('span.apNote', {}, `空间 ${sol.space}`) : null),
+        h('div.solRow__tags', {}, h('span.k', {}, '标签'), ' ',
+          (sol.tagPaths || sol.tags || []).join('  ·  ')),
         h('p.solRow__idea', {}, sol.idea))),
       p.review.pitfall ? h('p.solPit', {}, p.review.pitfall) : null));
   }

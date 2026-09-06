@@ -409,6 +409,13 @@ export class Store {
     return ids.map((id) => this.catById.get(id)?.name ?? this.nodeById.get(id)?.name ?? id);
   }
 
+  /** 同上，按节点 id 查 —— 标签只有 id 时用这个。 */
+  pathNames(id: string): string[] {
+    const node = this.nodeById.get(id);
+    const ids = node ? node.path.split("/") : [id];
+    return ids.map((x) => this.catById.get(x)?.name ?? this.nodeById.get(x)?.name ?? x);
+  }
+
   findTopic(key: string): Topic | null {
     const topics = this.topics();
     const direct = topics.get(key);

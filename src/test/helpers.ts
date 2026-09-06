@@ -3,7 +3,8 @@
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { Store } from "../store.js";
+import { openStore } from "../host-node.js";
+import type { Store } from "../store.js";
 
 export const FIXTURE_DIR = join(
   fileURLToPath(new URL(".", import.meta.url)), "..", "..", "src", "test", "fixtures");
@@ -18,7 +19,7 @@ export const MINI_DIR = join(FIXTURE_DIR, "mini");
  * 断言就会随人而变。
  */
 export function miniStore(): Store {
-  return new Store({
+  return openStore({
     dataDir: MINI_DIR,
     solutions: [],
     progressFile: join(MINI_DIR, "__no_such_progress__.json"),

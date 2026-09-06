@@ -45,6 +45,7 @@
     "check:links": "npm run build && node dist/tools/check-links.js",
     "fixture": "npm run build && node dist/tools/make-fixture.js",
     "baseline": "npm run build && node dist/tools/pack.js \"$SINAN_DIST\" baseline",
+    "site": "npm run build && node dist/tools/build-site.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

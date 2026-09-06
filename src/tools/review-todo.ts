@@ -20,7 +20,7 @@ import { join } from "node:path";
 import { distDir, rawDir, readJsonl } from "../build/io.js";
 import { loadReviews } from "../build/reviews.js";
 import * as planner from "../planner.js";
-import { Store } from "../store.js";
+import { openStore } from "../host-node.js";
 import type { Problem } from "../types.js";
 
 interface Detail { _key: string; content?: string }
@@ -34,7 +34,7 @@ function main(): void {
   const limit = parseInt(flag("--limit") || "0", 10) || 0;
   const tag = flag("--tag");
 
-  const store = new Store({ dataDir: distDir(), progressFile: "/dev/null" });
+  const store = openStore({ dataDir: distDir(), progressFile: "/dev/null" });
   const done = loadReviews();
 
   // 有题面才评得动

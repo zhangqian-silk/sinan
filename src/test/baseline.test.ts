@@ -16,7 +16,7 @@ import { test } from "node:test";
 import { expand, type Packed } from "../baseline.js";
 import { BASELINE_DIR } from "../paths.js";
 import { nextSteps, signatureProblems } from "../planner.js";
-import { Store } from "../store.js";
+import { openStore } from "../host-node.js";
 import { noteFor } from "../notes/index.js";
 
 const FILE = join(BASELINE_DIR, "baseline.json");
@@ -51,7 +51,7 @@ test("基线体积在可以进 git 的范围内", { skip }, () => {
 });
 
 test("装完什么都不做：分类、解题思路、题目和链接都能拿到", { skip }, () => {
-  const store = new Store({
+  const store = openStore({
     dataDir: BASELINE_DIR,
     solutions: [],
     progressFile: join(BASELINE_DIR, "__no_progress__.json"),
@@ -84,7 +84,7 @@ test("装完什么都不做：分类、解题思路、题目和链接都能拿�
 });
 
 test("装完什么都不做：每个子标签都给得出代表题，下一步也不空", { skip }, () => {
-  const store = new Store({
+  const store = openStore({
     dataDir: BASELINE_DIR,
     solutions: [],
     progressFile: join(BASELINE_DIR, "__no_progress__.json"),

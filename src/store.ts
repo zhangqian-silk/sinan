@@ -2,24 +2,14 @@
  * 数据层：加载构建产物、汇总专题、解析刷题进度。
  *
  * CLI 和 web 端的所有命令都从这里取数据，不直接读文件。
+ *
+ * 这里**不碰文件系统** —— 读产物、读题面、读写打卡、扫本地题解全部走注入进来的
+ * `StoreHost`。Node 侧的实现在 `host-node.ts`，浏览器侧（GitHub Pages 上的静态站）
+ * 用 `host-memory.ts`。这样查询、分面、专题、学习计划这些逻辑只有一份，
+ * 命令行、本地 web、静态站算出来的结果必然一致。
  */
 
-import {
-  closeSync,
-  existsSync,
-  mkdirSync,
-  openSync,
-  readdirSync,
-  readFileSync,
-  readSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
-import { basename, dirname, extname, join } from "node:path";
-
 import { CliError } from "./errors.js";
-import { expand, type Packed } from "./baseline.js";
-import { ensureHome, PROGRESS_FILE, resolveDataDir, resolveSolutionDirs } from "./paths.js";
 import type {
   ApproachRef,
   Category,
@@ -36,18 +26,40 @@ import type {
 } from "./types.js";
 import { Counter, sortBy, type SortKey } from "./util.js";
 
-/** 题解文件名以题号开头就能被识别。 */
-const ID_PREFIX = /^(\d{1,4})[.\s_-]/;
-const LANG_BY_SUFFIX: Record<string, string> = {
-  ".py": "Python", ".go": "Go", ".java": "Java", ".cpp": "C++", ".c": "C",
-  ".js": "JS", ".ts": "TS", ".rs": "Rust", ".kt": "Kotlin",
-};
-
-/** 改过名的旧打卡文件都还认：读的时候合并进来，写只写新文件。 */
-const PROGRESS_LEGACY_NAMES = [".sinan-progress.json", ".lc-progress.json", ".hone-progress.json"];
-
 export const DIFF_RANK: Record<Difficulty, number> = { EASY: 0, MEDIUM: 1, HARD: 2 };
 export const DIFF_CN: Record<Difficulty, string> = { EASY: "简单", MEDIUM: "中等", HARD: "困难" };
+
+/** 题库主体。host 负责决定它来自完整产物还是随包基线。 */
+export interface StoreCore {
+  /** 用的是随包的精简基线（没有题面 / 高频 / 题单），而不是用户自己抓的完整产物 */
+  baseline: boolean;
+  meta: Meta;
+  cats: Category[];
+  problems: Problem[];
+  curated: CuratedList[];
+  /** 基线模式下相似度随主文件一起读进来了；完整产物走 readJson 懒加载 */
+  similar: Record<string, SimilarEntry[]> | null;
+}
+
+/**
+ * Store 与外部世界的唯一接口。所有涉及文件、进度、本地题解的动作都在这后面，
+ * 换一个实现就能把整套逻辑搬到浏览器里跑。
+ */
+export interface StoreHost {
+  /** 构建产物目录，只用于展示与报错 */
+  readonly dataDir: string;
+  readonly solutionDirs: string[];
+  readonly progressFile: string;
+  loadCore(): StoreCore;
+  /** 产物里的附加 JSON（相似度、题面索引）；没有就返回 null */
+  readJson<T>(name: string): T | null;
+  /** 按 (偏移, 长度) 从 content.jsonl 里取题面；取不到返回 null */
+  readContent(offset: number, length: number): string | null;
+  loadProgress(): Progress;
+  saveProgress(progress: Progress): void;
+  scanSolutions(): Map<string, LocalFile[]>;
+  readSolutionFile(file: LocalFile): string;
+}
 
 export type TopicKind = "cat" | "tag" | "list" | "route";
 
@@ -178,35 +190,20 @@ export class Store {
   /** 基线模式下相似度随主文件一起读进来了，不再单独有文件 */
   private packedSimilar: Record<string, SimilarEntry[]> | null = null;
 
-  constructor(options: StoreOptions = {}) {
-    this.dist = resolveDataDir(options.dataDir);
-    this.solutionDirs = resolveSolutionDirs(options.solutions ?? []);
-    this.progressFile = options.progressFile ?? PROGRESS_FILE;
-    const full = existsSync(join(this.dist, "problems.json"));
-    const packed = !full && existsSync(join(this.dist, "baseline.json"));
-    if (!full && !packed) {
-      throw new CliError(
-        `还没有题库数据（找过 ${this.dist}）。\n` +
-          "先跑：{PROG} sync   或用 --data-dir / SINAN_DATA 指到已有的构建产物");
-    }
-    this.baseline = packed;
-    if (packed) {
-      const raw = readFileSync(join(this.dist, "baseline.json"), "utf-8");
-      const data = expand(JSON.parse(raw) as Packed);
-      this.meta = data.meta;
-      this.cats = sortBy(data.cats, (c) => [c.order]);
-      this.problems = data.problems;
-      this.curated = [];
-      this.packedSimilar = data.similar;
-    } else {
-      this.meta = this.load<Meta>("meta.json");
-      this.cats = sortBy(this.load<Category[]>("taxonomy.json"), (c) => [c.order]);
-      this.problems = this.load<Problem[]>("problems.json");
-      this.curated = this.load<CuratedList[]>("curated.json", []);
-    }
+  constructor(private readonly host: StoreHost) {
+    this.dist = host.dataDir;
+    this.solutionDirs = host.solutionDirs;
+    this.progressFile = host.progressFile;
+    const core = host.loadCore();
+    this.baseline = core.baseline;
+    this.meta = core.meta;
+    this.cats = sortBy(core.cats, (c) => [c.order]);
+    this.problems = core.problems;
+    this.curated = core.curated;
+    this.packedSimilar = core.similar;
     // 网页那边要靠这个字段决定「高频/题面/题单」这些栏目怎么显示，
     // 完整产物的 meta.json 里没有它，统一在这里落成布尔值，省得两边各判各的
-    this.meta.baseline = packed;
+    this.meta.baseline = core.baseline;
 
     for (const p of this.problems) {
       this.bySlug.set(p.slug, p);
@@ -234,18 +231,16 @@ export class Store {
       walk(c.subs, c.id, 2);
     }
 
-    this.progress = this.readProgress();
+    this.progress = host.loadProgress();
   }
 
   // --- 载入 -----------------------------------------------------------------
 
   private load<T>(name: string, fallback?: T): T {
-    const path = join(this.dist, name);
-    if (!existsSync(path)) {
-      if (fallback === undefined) throw new CliError(`缺少 ${path}，先跑：{PROG} sync`);
-      return fallback;
-    }
-    return JSON.parse(readFileSync(path, "utf-8")) as T;
+    const got = this.host.readJson<T>(name);
+    if (got !== null) return got;
+    if (fallback === undefined) throw new CliError(`缺少 ${this.dist}/${name}，先跑：{PROG} sync`);
+    return fallback;
   }
 
   /** 相似度图，只有需要时才加载（文件不小）。 */
@@ -260,75 +255,17 @@ export class Store {
     const span = this.contentIndex()[slug];
     if (!span) return null;
     const [offset, length] = span;
-    const fd = openSync(join(this.dist, "content.jsonl"), "r");
-    try {
-      const buf = Buffer.allocUnsafe(length);
-      readSync(fd, buf, 0, length, offset);
-      return (JSON.parse(buf.toString("utf-8")) as { html: string }).html;
-    } finally {
-      closeSync(fd);
-    }
+    return this.host.readContent(offset, length);
   }
 
   // --- 进度 -----------------------------------------------------------------
 
-  private readProgress(): Progress {
-    const data: Progress = { checkins: {}, notes: {} };
-    // 旧文件先读、新文件后读，同一道题以新文件为准
-    const candidates: string[] = [];
-    for (const dir of this.solutionDirs) {
-      for (const name of PROGRESS_LEGACY_NAMES) candidates.push(join(dirname(dir), name));
-    }
-    candidates.push(this.progressFile);
-    for (const path of candidates) {
-      if (!existsSync(path)) continue;
-      try {
-        const old = JSON.parse(readFileSync(path, "utf-8")) as Partial<Progress>;
-        Object.assign(data.checkins, old.checkins ?? {});
-        Object.assign(data.notes, old.notes ?? {});
-      } catch {
-        // 坏掉的记录文件跳过，不要连带整个命令挂掉
-      }
-    }
-    return data;
-  }
-
   saveProgress(): void {
-    if (this.progressFile === PROGRESS_FILE) ensureHome();
-    mkdirSync(dirname(this.progressFile), { recursive: true });
-    writeFileSync(this.progressFile, `${JSON.stringify(this.progress, null, 2)}\n`, "utf-8");
+    this.host.saveProgress(this.progress);
   }
 
   /** 扫描本地题解目录，按题号归档。 */
-  readonly localSolutions: () => Map<string, LocalFile[]> = lazy(() => {
-    const found = new Map<string, LocalFile[]>();
-    for (const folder of this.solutionDirs) {
-      let names: string[];
-      try {
-        names = readdirSync(folder).sort();
-      } catch {
-        continue;
-      }
-      const label = basename(folder);
-      for (const name of names) {
-        const abs = join(folder, name);
-        try {
-          if (!statSync(abs).isFile()) continue;
-        } catch {
-          continue;
-        }
-        const match = ID_PREFIX.exec(name);
-        if (!match) continue;
-        const qid = String(parseInt(match[1], 10));
-        const suffix = extname(name).toLowerCase();
-        const lang = LANG_BY_SUFFIX[suffix] ?? suffix.replace(/^\./, "").toUpperCase();
-        const bucket = found.get(qid) ?? [];
-        bucket.push({ path: `${label}/${name}`, lang, abs });
-        found.set(qid, bucket);
-      }
-    }
-    return found;
-  });
+  readonly localSolutions: () => Map<string, LocalFile[]> = lazy(() => this.host.scanSolutions());
 
   filesOf(p: Problem): LocalFile[] {
     return this.localSolutions().get(String(p.id)) ?? [];
@@ -341,11 +278,7 @@ export class Store {
    * 拖一个 `\r`，网页端也会多出空行。
    */
   readSolution(file: LocalFile): string {
-    try {
-      return readFileSync(file.abs, "utf-8").replace(/\r\n?/g, "\n");
-    } catch {
-      return "";
-    }
+    return this.host.readSolutionFile(file);
   }
 
   isChecked(p: Problem): boolean {

@@ -19,7 +19,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { Store } from "../store.js";
+import { openStore } from "../host-node.js";
 import type { CuratedList, Problem, SimilarEntry } from "../types.js";
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src", "test", "fixtures", "mini");
@@ -35,7 +35,7 @@ const PER_TOPIC = 45;
 const LUOGU = 30;
 
 function main(): void {
-  const store = new Store({ progressFile: join(OUT, "__no_progress__.json") });
+  const store = openStore({ progressFile: join(OUT, "__no_progress__.json") });
   const topics = store.topics();
   const picked = new Set<string>();
 

@@ -250,6 +250,12 @@ export function cmdLearn(store: Store, args: Args): void {
   const note = notes.noteFor(key) ?? (topic ? notes.noteFor(topic.id) : null);
   const tid = topic ? topic.id : key;
   if (!note && !notes.signals(tid).length) {
+    // 主线是「学习计划」，不是知识点，没有自己的讲解 —— 但用户很容易这么试
+    const route = planner.ROUTE_BY_ID.get(key);
+    if (route) {
+      throw new CliError(`「${route.name}」是一条主线，不是知识点专题，没有单独的讲解。\n`
+        + `展开它：${PROG} plan ${key}；里面每一节的讲解在 ${PROG} learn <子标签>`);
+    }
     throw new CliError(`没有这个专题的讲解：${key}\n`
       + `用 ${PROG} learn（不带参数）看全部可讲的专题`);
   }

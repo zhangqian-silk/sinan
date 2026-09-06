@@ -25,24 +25,24 @@
     ]
   },
   "topic:dp-interval": {
-    "poolSize": 28,
-    "covered": 20,
+    "poolSize": 22,
+    "covered": 19,
     "sections": [
       {
         "key": "dp-interval",
-        "pool": 28,
+        "pool": 22,
         "steps": [
-          "fibonacci-number",
+          "domino-and-tromino-tiling",
           "generate-parentheses",
-          "non-overlapping-intervals",
           "longest-palindromic-subsequence",
-          "valid-parenthesis-string",
+          "equal-row-and-column-pairs",
           "palindromic-substrings",
+          "stone-game",
+          "palindrome-partitioning",
           "minimum-insertion-steps-to-make-a-string-palindrome",
-          "best-time-to-buy-and-sell-stock-iii",
-          "profitable-schemes",
-          "count-different-palindromic-subsequences",
-          "shortest-path-visiting-all-nodes"
+          "minimum-cost-to-merge-stones",
+          "palindrome-partitioning-ii",
+          "number-of-ways-to-paint-n-3-grid"
         ]
       }
     ]
@@ -139,8 +139,8 @@
     ]
   },
   "topic:lc:leetcode-75": {
-    "poolSize": 51,
-    "covered": 44,
+    "poolSize": 49,
+    "covered": 42,
     "sections": [
       {
         "key": "official:数组 / 字符串",
@@ -242,11 +242,10 @@
       },
       {
         "key": "official:图 - 深度优先搜索",
-        "pool": 4,
+        "pool": 3,
         "steps": [
           "keys-and-rooms",
-          "number-of-provinces",
-          "evaluate-division"
+          "number-of-provinces"
         ]
       },
       {
@@ -264,13 +263,6 @@
         ]
       },
       {
-        "key": "official:区间集合",
-        "pool": 1,
-        "steps": [
-          "non-overlapping-intervals"
-        ]
-      },
-      {
         "key": "official:单调栈",
         "pool": 2,
         "steps": [
@@ -280,12 +272,12 @@
     ]
   },
   "route:starter": {
-    "poolSize": 243,
-    "covered": 104,
+    "poolSize": 242,
+    "covered": 103,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -294,7 +286,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 46,
+        "pool": 45,
         "steps": [
           "move-zeroes",
           "3sum",
@@ -321,7 +313,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 35,
+        "pool": 34,
         "steps": [
           "palindrome-linked-list",
           "remove-nth-node-from-end-of-list",
@@ -348,7 +340,7 @@
       },
       {
         "key": "prefix-sum",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -357,7 +349,7 @@
       },
       {
         "key": "backtracking",
-        "pool": 9,
+        "pool": 13,
         "steps": [
           "binary-tree-paths",
           "generate-parentheses",
@@ -366,22 +358,22 @@
       },
       {
         "key": "dp-linear",
-        "pool": 21,
+        "pool": 18,
         "steps": [
-          "fibonacci-number",
-          "maximum-sum-circular-subarray",
-          "longest-palindromic-subsequence"
+          "is-subsequence",
+          "unique-binary-search-trees",
+          "maximum-sum-circular-subarray"
         ]
       }
     ]
   },
   "route:interview": {
-    "poolSize": 279,
-    "covered": 134,
+    "poolSize": 258,
+    "covered": 122,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -391,17 +383,17 @@
       },
       {
         "key": "sliding-window",
-        "pool": 19,
+        "pool": 17,
         "steps": [
           "maximum-average-subarray-i",
           "remove-element",
           "remove-duplicates-from-sorted-array-ii",
-          "4sum"
+          "longest-subarray-of-1s-after-deleting-one-element"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 44,
+        "pool": 43,
         "steps": [
           "move-zeroes",
           "3sum",
@@ -431,17 +423,17 @@
       },
       {
         "key": "heap",
-        "pool": 17,
+        "pool": 15,
         "steps": [
           "sort-colors",
           "partition-list",
           "kth-smallest-element-in-a-sorted-matrix",
-          "evaluate-division"
+          "kth-smallest-element-in-a-bst"
         ]
       },
       {
         "key": "tree-traversal",
-        "pool": 48,
+        "pool": 47,
         "steps": [
           "same-tree",
           "binary-tree-level-order-traversal",
@@ -471,27 +463,27 @@
       },
       {
         "key": "graph-basic",
-        "pool": 8,
+        "pool": 7,
         "steps": [
           "keys-and-rooms",
           "number-of-provinces",
           "surrounded-regions",
-          "course-schedule-iv"
+          "find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance"
         ]
       },
       {
         "key": "dp-linear",
-        "pool": 36,
+        "pool": 25,
         "steps": [
-          "fibonacci-number",
+          "is-subsequence",
           "maximum-sum-circular-subarray",
           "longest-palindromic-subsequence",
-          "longest-palindromic-substring"
+          "maximum-subarray"
         ]
       },
       {
         "key": "ds-design",
-        "pool": 8,
+        "pool": 6,
         "steps": [
           "online-stock-span",
           "string-compression",
@@ -502,22 +494,22 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 68,
-    "covered": 34,
+    "poolSize": 61,
+    "covered": 31,
     "sections": [
       {
         "key": "dp",
-        "pool": 41,
+        "pool": 35,
         "steps": [
+          "unique-binary-search-trees",
+          "maximum-sum-circular-subarray",
           "generate-parentheses",
-          "non-overlapping-intervals",
           "longest-palindromic-subsequence",
-          "valid-parenthesis-string",
           "maximum-subarray",
           "longest-palindromic-substring",
           "palindrome-partitioning",
-          "trapping-rain-water",
-          "best-time-to-buy-and-sell-stock-iii"
+          "minimum-insertion-steps-to-make-a-string-palindrome",
+          "maximal-rectangle"
         ]
       },
       {
@@ -527,40 +519,28 @@
           "keys-and-rooms",
           "number-of-provinces",
           "surrounded-regions",
-          "evaluate-division",
+          "minimize-the-maximum-edge-weight-of-graph",
+          "course-schedule-iv",
           "number-of-ways-to-paint-n-3-grid",
-          "shortest-path-visiting-all-nodes",
           "odd-even-jump"
         ]
       },
       {
         "key": "advanced-ds",
-        "pool": 8,
+        "pool": 7,
         "steps": [
           "maximum-binary-tree",
           "luogu:P1020",
           "minimum-cost-tree-from-leaf-values",
-          "sliding-window-maximum",
-          "largest-rectangle-in-histogram",
-          "shortest-subarray-with-sum-at-least-k",
-          "sliding-window-median"
+          "shortest-subarray-with-sum-at-least-k"
         ]
       }
     ]
   },
   "route:weakness": {
-    "poolSize": 310,
-    "covered": 84,
+    "poolSize": 290,
+    "covered": 80,
     "sections": [
-      {
-        "key": "two-pointers",
-        "pool": 55,
-        "steps": [
-          "linked-list-cycle",
-          "container-with-most-water",
-          "longest-substring-without-repeating-characters"
-        ]
-      },
       {
         "key": "tree-traversal",
         "pool": 52,
@@ -571,8 +551,17 @@
         ]
       },
       {
+        "key": "two-pointers",
+        "pool": 53,
+        "steps": [
+          "linked-list-cycle",
+          "container-with-most-water",
+          "longest-substring-without-repeating-characters"
+        ]
+      },
+      {
         "key": "stack-queue",
-        "pool": 47,
+        "pool": 44,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -580,17 +569,8 @@
         ]
       },
       {
-        "key": "dp-linear",
-        "pool": 38,
-        "steps": [
-          "fibonacci-number",
-          "maximum-sum-circular-subarray",
-          "longest-palindromic-subsequence"
-        ]
-      },
-      {
         "key": "monotonic",
-        "pool": 33,
+        "pool": 34,
         "steps": [
           "daily-temperatures",
           "remove-k-digits",
@@ -599,7 +579,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 34,
+        "pool": 33,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -607,21 +587,30 @@
         ]
       },
       {
-        "key": "dp-interval",
-        "pool": 26,
+        "key": "dp-linear",
+        "pool": 28,
         "steps": [
-          "generate-parentheses",
-          "valid-parenthesis-string",
-          "longest-palindromic-substring"
+          "is-subsequence",
+          "maximum-sum-circular-subarray",
+          "longest-palindromic-subsequence"
         ]
       },
       {
         "key": "sorting",
-        "pool": 25,
+        "pool": 23,
         "steps": [
           "merge-sorted-array",
           "3sum-closest",
-          "longest-valid-parentheses"
+          "sort-colors"
+        ]
+      },
+      {
+        "key": "bs-array",
+        "pool": 23,
+        "steps": [
+          "convert-sorted-array-to-binary-search-tree",
+          "minimum-size-subarray-sum",
+          "count-complete-tree-nodes"
         ]
       }
     ]

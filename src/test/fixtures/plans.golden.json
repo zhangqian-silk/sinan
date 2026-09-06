@@ -86,7 +86,7 @@
   },
   "topic:tree": {
     "poolSize": 47,
-    "covered": 32,
+    "covered": 29,
     "sections": [
       {
         "key": "tree-traversal",
@@ -105,13 +105,14 @@
       },
       {
         "key": "bst",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "convert-sorted-array-to-binary-search-tree",
           "delete-node-in-a-bst",
           "unique-binary-search-trees-ii",
           "validate-binary-search-tree",
           "lowest-common-ancestor-of-a-binary-search-tree",
+          "recover-binary-search-tree",
           "binary-search-tree-iterator",
           "convert-sorted-list-to-binary-search-tree",
           "kth-smallest-element-in-a-bst"
@@ -119,13 +120,9 @@
       },
       {
         "key": "tree-build",
-        "pool": 8,
+        "pool": 7,
         "steps": [
-          "maximum-binary-tree",
           "verify-preorder-serialization-of-a-binary-tree",
-          "populating-next-right-pointers-in-each-node",
-          "recover-binary-search-tree",
-          "construct-binary-search-tree-from-preorder-traversal",
           "construct-binary-tree-from-preorder-and-inorder-traversal",
           "construct-binary-tree-from-inorder-and-postorder-traversal",
           "serialize-and-deserialize-binary-tree"
@@ -267,8 +264,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 204,
-    "covered": 106,
+    "poolSize": 202,
+    "covered": 104,
     "sections": [
       {
         "key": "hash-count",
@@ -290,7 +287,7 @@
       },
       {
         "key": "sliding-window",
-        "pool": 11,
+        "pool": 9,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -363,12 +360,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 188,
-    "covered": 110,
+    "poolSize": 191,
+    "covered": 112,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 19,
+        "pool": 20,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -378,7 +375,7 @@
       },
       {
         "key": "sliding-window",
-        "pool": 10,
+        "pool": 11,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -388,7 +385,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 37,
+        "pool": 38,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -528,12 +525,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 225,
-    "covered": 98,
+    "poolSize": 227,
+    "covered": 97,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 48,
+        "pool": 49,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -569,7 +566,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",

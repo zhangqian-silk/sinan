@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 202,
-    "covered": 112,
+    "poolSize": 200,
+    "covered": 109,
     "sections": [
       {
         "key": "hash-count",
@@ -319,9 +319,9 @@
       },
       {
         "key": "bs-array",
-        "pool": 24,
+        "pool": 22,
         "steps": [
-          "minimum-number-of-days-to-make-m-bouquets",
+          "find-the-smallest-divisor-given-a-threshold",
           "two-sum-ii-input-array-is-sorted",
           "heaters"
         ]
@@ -480,7 +480,7 @@
   },
   "route:advanced": {
     "poolSize": 46,
-    "covered": 29,
+    "covered": 30,
     "sections": [
       {
         "key": "dp",
@@ -501,6 +501,7 @@
         "pool": 13,
         "steps": [
           "keys-and-rooms",
+          "minimum-number-of-days-to-make-m-bouquets",
           "number-of-provinces",
           "course-schedule-iv",
           "path-with-minimum-effort",
@@ -520,7 +521,7 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 224,
+    "poolSize": 225,
     "covered": 93,
     "sections": [
       {
@@ -579,7 +580,7 @@
       },
       {
         "key": "sorting",
-        "pool": 16,
+        "pool": 17,
         "steps": [
           "merge-sorted-array",
           "determine-if-two-strings-are-close",

@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 198,
-    "covered": 107,
+    "poolSize": 187,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
@@ -319,10 +319,10 @@
       },
       {
         "key": "bs-array",
-        "pool": 21,
+        "pool": 10,
         "steps": [
-          "maximum-candies-allocated-to-k-children",
           "two-sum-ii-input-array-is-sorted",
+          "maximum-width-ramp",
           "heaters"
         ]
       },

@@ -541,7 +541,14 @@ export const KEEP_THRESHOLD = 24;
 export const MAX_TAGS = 8;
 
 /** 更具体的标签出现时，压掉泛化标签。 */
-export const SUPPRESS: Record<string, string[]> = {"dfs-basic": ["flood-fill", "graph-basic", "tree-traversal", "backtracking", "memo-search", "dp-tree"], "bfs-shortest": ["flood-fill", "topo", "tree-traversal"]};
+/**
+ * 弱标签被强标签压制：某个更具体的标签成立时，泛化的那个就是噪音。
+ *
+ * bs-array 被 bs-answer 压制的理由：力扣官方只有一个 binary-search 标签，
+ * 二分答案题也挂着它，于是每道「最小化最大值」都会顺带落进「有序数组二分」的
+ * 题池里 —— 可那类题根本没有数组可查，二分的是答案本身。
+ */
+export const SUPPRESS: Record<string, string[]> = {"dfs-basic": ["flood-fill", "graph-basic", "tree-traversal", "backtracking", "memo-search", "dp-tree"], "bfs-shortest": ["flood-fill", "topo", "tree-traversal"], "bs-array": ["bs-answer"]};
 
 /** 主标签校正：规则算出来不合适时手工钉一下。 */
 export const MAIN_TAG_PINS: Record<string, string> = {"410": "bs-answer", "875": "bs-answer", "1011": "bs-answer", "1482": "bs-answer", "1552": "bs-answer", "1760": "bs-answer", "2064": "bs-answer", "2226": "bs-answer", "1231": "bs-answer", "2517": "bs-answer", "1283": "bs-answer", "1898": "bs-answer", "668": "bs-answer", "719": "bs-answer", "378": "bs-answer", "774": "bs-answer", "233": "dp-digit", "357": "dp-digit", "600": "dp-digit", "902": "dp-digit", "1012": "dp-digit", "2376": "dp-digit", "2719": "dp-digit", "1000": "dp-interval", "1547": "dp-interval", "664": "dp-interval", "546": "dp-interval", "309": "dp-machine", "714": "dp-machine", "139": "dp-linear", "4": "bs-array", "218": "interval", "315": "fenwick", "42": "monotonic", "460": "ds-design", "146": "ds-design"};
@@ -553,7 +560,8 @@ export const ALT_APPROACHES: Record<string, [string, number][]> = {
   "memo-search": [["dp-linear", 50]],
   "dp-knapsack": [["memo-search", 46]],
   "dp-tree": [["tree-traversal", 46]],
-  "bs-answer": [["bs-array", 44]],
+  // bs-answer 不带出 bs-array：二分答案与有序数组二分是两种技巧，
+  // 不是同一道题的两种写法，联想过来只会污染题池。
   "flood-fill": [["bfs-shortest", 44]],
   "topo": [["graph-basic", 46]],
   "shortest-path": [["graph-basic", 44], ["heap", 42]],

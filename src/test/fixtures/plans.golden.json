@@ -357,7 +357,7 @@
   },
   "route:interview": {
     "poolSize": 182,
-    "covered": 100,
+    "covered": 99,
     "sections": [
       {
         "key": "hash-count",
@@ -375,13 +375,13 @@
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "max-consecutive-ones-iii",
-          "minimum-size-subarray-sum"
+          "minimum-size-subarray-sum",
+          "longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 39,
+        "pool": 40,
         "steps": [
           "merge-sorted-array",
           "move-zeroes",
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",

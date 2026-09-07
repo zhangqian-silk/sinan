@@ -523,8 +523,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 226,
-    "covered": 91,
+    "poolSize": 227,
+    "covered": 90,
     "sections": [
       {
         "key": "two-pointers",
@@ -590,12 +590,12 @@
         ]
       },
       {
-        "key": "dp-interval",
-        "pool": 15,
+        "key": "greedy-basic",
+        "pool": 16,
         "steps": [
-          "generate-parentheses",
-          "longest-palindromic-subsequence",
-          "predict-the-winner"
+          "can-place-flowers",
+          "dota2-senate",
+          "max-number-of-k-sum-pairs"
         ]
       }
     ]

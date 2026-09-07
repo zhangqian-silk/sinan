@@ -1,11 +1,11 @@
 {
   "topic:monotonic": {
-    "poolSize": 31,
-    "covered": 26,
+    "poolSize": 30,
+    "covered": 25,
     "sections": [
       {
         "key": "monotonic",
-        "pool": 31,
+        "pool": 30,
         "steps": [
           "next-greater-element-i",
           "final-prices-with-a-special-discount-in-a-shop",
@@ -261,8 +261,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 189,
-    "covered": 101,
+    "poolSize": 188,
+    "covered": 98,
     "sections": [
       {
         "key": "hash-count",
@@ -302,11 +302,11 @@
       },
       {
         "key": "stack-queue",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "palindrome-linked-list",
-          "asteroid-collision",
-          "binary-tree-zigzag-level-order-traversal"
+          "binary-tree-zigzag-level-order-traversal",
+          "reorder-list"
         ]
       },
       {
@@ -357,7 +357,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 187,
+    "poolSize": 186,
     "covered": 109,
     "sections": [
       {
@@ -402,7 +402,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -525,8 +525,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 228,
-    "covered": 93,
+    "poolSize": 226,
+    "covered": 89,
     "sections": [
       {
         "key": "two-pointers",
@@ -548,7 +548,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 31,
+        "pool": 30,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -557,11 +557,11 @@
       },
       {
         "key": "stack-queue",
-        "pool": 31,
+        "pool": 30,
         "steps": [
           "palindrome-linked-list",
-          "asteroid-collision",
-          "binary-tree-zigzag-level-order-traversal"
+          "binary-tree-zigzag-level-order-traversal",
+          "reorder-list"
         ]
       },
       {

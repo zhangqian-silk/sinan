@@ -260,25 +260,25 @@
     ]
   },
   "route:starter": {
-    "poolSize": 189,
+    "poolSize": 193,
     "covered": 98,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 21,
+        "pool": 22,
         "steps": [
           "two-sum",
-          "intersection-of-two-linked-lists",
-          "linked-list-cycle"
+          "linked-list-cycle",
+          "longest-substring-without-repeating-characters"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 42,
+        "pool": 43,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
-          "longest-substring-without-repeating-characters"
+          "3sum"
         ]
       },
       {
@@ -292,16 +292,16 @@
       },
       {
         "key": "linked-list",
-        "pool": 13,
+        "pool": 14,
         "steps": [
+          "intersection-of-two-linked-lists",
           "reverse-linked-list",
-          "palindrome-linked-list",
           "odd-even-linked-list"
         ]
       },
       {
         "key": "stack-queue",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "binary-tree-preorder-traversal",
           "invert-binary-tree",
@@ -319,16 +319,16 @@
       },
       {
         "key": "bs-array",
-        "pool": 9,
+        "pool": 10,
         "steps": [
+          "find-first-and-last-position-of-element-in-sorted-array",
           "two-sum-ii-input-array-is-sorted",
-          "maximum-width-ramp",
-          "heaters"
+          "minimum-size-subarray-sum"
         ]
       },
       {
         "key": "prefix-sum",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -356,12 +356,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 176,
-    "covered": 105,
+    "poolSize": 178,
+    "covered": 104,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 19,
+        "pool": 20,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -375,8 +375,8 @@
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "minimum-size-subarray-sum",
-          "longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit"
+          "max-consecutive-ones-iii",
+          "minimum-size-subarray-sum"
         ]
       },
       {
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 27,
+        "pool": 28,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -513,12 +513,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 213,
-    "covered": 97,
+    "poolSize": 215,
+    "covered": 96,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 50,
+        "pool": 51,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -554,7 +554,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",

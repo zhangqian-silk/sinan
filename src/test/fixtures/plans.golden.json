@@ -260,7 +260,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 195,
+    "poolSize": 194,
     "covered": 100,
     "sections": [
       {
@@ -346,7 +346,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",

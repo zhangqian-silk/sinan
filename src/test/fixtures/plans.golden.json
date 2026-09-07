@@ -1,35 +1,35 @@
 {
   "topic:monotonic": {
-    "poolSize": 28,
+    "poolSize": 27,
     "covered": 25,
     "sections": [
       {
         "key": "monotonic",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "next-greater-element-i",
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
           "maximum-sum-circular-subarray",
-          "online-stock-span",
           "longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit",
           "remove-k-digits",
           "trapping-rain-water",
           "sliding-window-maximum",
           "maximal-rectangle",
           "largest-rectangle-in-histogram",
+          "create-maximum-number",
           "shortest-subarray-with-sum-at-least-k"
         ]
       }
     ]
   },
   "topic:dp-interval": {
-    "poolSize": 15,
+    "poolSize": 14,
     "covered": 14,
     "sections": [
       {
         "key": "dp-interval",
-        "pool": 15,
+        "pool": 14,
         "steps": [
           "generate-parentheses",
           "longest-palindromic-subsequence",
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 171,
-    "covered": 99,
+    "poolSize": 188,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
@@ -292,7 +292,7 @@
       },
       {
         "key": "linked-list",
-        "pool": 14,
+        "pool": 13,
         "steps": [
           "reverse-linked-list",
           "palindrome-linked-list",
@@ -301,7 +301,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 20,
+        "pool": 18,
         "steps": [
           "binary-tree-preorder-traversal",
           "invert-binary-tree",
@@ -346,18 +346,18 @@
       },
       {
         "key": "dp-linear",
-        "pool": 8,
+        "pool": 28,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",
-          "count-submatrices-with-all-ones"
+          "maximum-length-of-repeated-subarray"
         ]
       }
     ]
   },
   "route:interview": {
-    "poolSize": 180,
-    "covered": 110,
+    "poolSize": 174,
+    "covered": 106,
     "sections": [
       {
         "key": "hash-count",
@@ -391,7 +391,7 @@
       },
       {
         "key": "linked-list",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "reverse-linked-list",
           "odd-even-linked-list",
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -451,40 +451,31 @@
       },
       {
         "key": "graph-basic",
-        "pool": 3,
+        "pool": 2,
         "steps": [
           "keys-and-rooms",
-          "number-of-provinces",
-          "course-schedule-iv"
+          "number-of-provinces"
         ]
       },
       {
         "key": "dp-linear",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
           "longest-palindromic-subsequence",
           "longest-palindromic-substring"
         ]
-      },
-      {
-        "key": "ds-design",
-        "pool": 2,
-        "steps": [
-          "design-browser-history",
-          "kth-smallest-element-in-a-bst"
-        ]
       }
     ]
   },
   "route:advanced": {
-    "poolSize": 40,
-    "covered": 29,
+    "poolSize": 38,
+    "covered": 28,
     "sections": [
       {
         "key": "dp",
-        "pool": 26,
+        "pool": 25,
         "steps": [
           "generate-parentheses",
           "maximum-length-of-repeated-subarray",
@@ -498,14 +489,13 @@
       },
       {
         "key": "graph",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "keys-and-rooms",
           "minimum-number-of-days-to-make-m-bouquets",
           "luogu:P1006",
           "number-of-provinces",
           "luogu:P1027",
-          "course-schedule-iv",
           "path-with-minimum-effort",
           "swim-in-rising-water",
           "minimum-degree-of-a-connected-trio-in-a-graph"
@@ -523,7 +513,7 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 211,
+    "poolSize": 208,
     "covered": 98,
     "sections": [
       {
@@ -546,7 +536,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 28,
+        "pool": 27,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -572,15 +562,6 @@
         ]
       },
       {
-        "key": "stack-queue",
-        "pool": 20,
-        "steps": [
-          "binary-tree-preorder-traversal",
-          "invert-binary-tree",
-          "binary-tree-inorder-traversal"
-        ]
-      },
-      {
         "key": "sorting",
         "pool": 16,
         "steps": [
@@ -590,12 +571,21 @@
         ]
       },
       {
-        "key": "dp-interval",
+        "key": "stack-queue",
+        "pool": 18,
+        "steps": [
+          "binary-tree-preorder-traversal",
+          "invert-binary-tree",
+          "binary-tree-inorder-traversal"
+        ]
+      },
+      {
+        "key": "greedy-basic",
         "pool": 15,
         "steps": [
-          "generate-parentheses",
-          "longest-palindromic-subsequence",
-          "predict-the-winner"
+          "can-place-flowers",
+          "dota2-senate",
+          "max-number-of-k-sum-pairs"
         ]
       }
     ]

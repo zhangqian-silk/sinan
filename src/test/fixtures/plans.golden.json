@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 185,
-    "covered": 97,
+    "poolSize": 184,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
@@ -274,7 +274,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 44,
+        "pool": 43,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -283,11 +283,11 @@
       },
       {
         "key": "sliding-window",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "max-consecutive-ones-iii"
+          "smallest-subarrays-with-maximum-bitwise-or"
         ]
       },
       {
@@ -328,7 +328,7 @@
       },
       {
         "key": "prefix-sum",
-        "pool": 8,
+        "pool": 9,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -356,7 +356,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 186,
+    "poolSize": 184,
     "covered": 109,
     "sections": [
       {
@@ -371,7 +371,7 @@
       },
       {
         "key": "sliding-window",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -381,7 +381,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 40,
+        "pool": 39,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -523,12 +523,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 227,
-    "covered": 90,
+    "poolSize": 226,
+    "covered": 87,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 52,
+        "pool": 51,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",

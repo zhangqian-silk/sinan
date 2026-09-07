@@ -260,16 +260,16 @@
     ]
   },
   "route:starter": {
-    "poolSize": 188,
-    "covered": 98,
+    "poolSize": 184,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 21,
         "steps": [
           "two-sum",
-          "linked-list-cycle",
-          "longest-substring-without-repeating-characters"
+          "intersection-of-two-linked-lists",
+          "linked-list-cycle"
         ]
       },
       {
@@ -278,7 +278,7 @@
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
-          "3sum"
+          "longest-substring-without-repeating-characters"
         ]
       },
       {
@@ -292,25 +292,25 @@
       },
       {
         "key": "linked-list",
-        "pool": 15,
+        "pool": 14,
         "steps": [
-          "intersection-of-two-linked-lists",
           "reverse-linked-list",
+          "palindrome-linked-list",
           "odd-even-linked-list"
         ]
       },
       {
         "key": "stack-queue",
-        "pool": 29,
+        "pool": 28,
         "steps": [
-          "palindrome-linked-list",
+          "binary-tree-inorder-traversal",
           "binary-tree-zigzag-level-order-traversal",
           "reorder-list"
         ]
       },
       {
         "key": "tree-traversal",
-        "pool": 34,
+        "pool": 33,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -356,12 +356,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 187,
-    "covered": 108,
+    "poolSize": 186,
+    "covered": 110,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 20,
+        "pool": 19,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -523,8 +523,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 227,
-    "covered": 88,
+    "poolSize": 225,
+    "covered": 91,
     "sections": [
       {
         "key": "two-pointers",
@@ -573,7 +573,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 23,
+        "pool": 22,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -582,11 +582,11 @@
       },
       {
         "key": "sorting",
-        "pool": 18,
+        "pool": 17,
         "steps": [
           "merge-sorted-array",
           "h-index",
-          "3sum-closest"
+          "determine-if-two-strings-are-close"
         ]
       },
       {

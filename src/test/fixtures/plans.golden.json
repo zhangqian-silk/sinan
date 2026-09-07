@@ -262,8 +262,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 191,
-    "covered": 101,
+    "poolSize": 190,
+    "covered": 97,
     "sections": [
       {
         "key": "hash-count",
@@ -339,11 +339,11 @@
       },
       {
         "key": "backtracking",
-        "pool": 8,
+        "pool": 7,
         "steps": [
           "binary-tree-paths",
-          "luogu:P1025",
-          "generate-parentheses"
+          "generate-parentheses",
+          "palindrome-partitioning"
         ]
       },
       {

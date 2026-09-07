@@ -37,6 +37,7 @@
           "palindromic-substrings",
           "palindrome-partitioning",
           "minimum-insertion-steps-to-make-a-string-palindrome",
+          "burst-balloons",
           "minimum-cost-to-merge-stones",
           "count-different-palindromic-subsequences"
         ]
@@ -473,7 +474,7 @@
   },
   "route:advanced": {
     "poolSize": 38,
-    "covered": 28,
+    "covered": 29,
     "sections": [
       {
         "key": "dp",

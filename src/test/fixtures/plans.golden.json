@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 185,
-    "covered": 99,
+    "poolSize": 186,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
@@ -319,7 +319,7 @@
       },
       {
         "key": "bs-array",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "luogu:P1024",
           "two-sum-ii-input-array-is-sorted",

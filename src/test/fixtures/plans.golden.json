@@ -263,7 +263,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 191,
+    "poolSize": 192,
     "covered": 102,
     "sections": [
       {
@@ -349,7 +349,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "is-subsequence",
           "luogu:P1002",

@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 187,
-    "covered": 100,
+    "poolSize": 185,
+    "covered": 99,
     "sections": [
       {
         "key": "hash-count",
@@ -283,11 +283,11 @@
       },
       {
         "key": "sliding-window",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "smallest-subarrays-with-maximum-bitwise-or"
+          "minimum-size-subarray-sum"
         ]
       },
       {
@@ -319,16 +319,16 @@
       },
       {
         "key": "bs-array",
-        "pool": 10,
+        "pool": 9,
         "steps": [
+          "luogu:P1024",
           "two-sum-ii-input-array-is-sorted",
-          "maximum-width-ramp",
-          "heaters"
+          "maximum-width-ramp"
         ]
       },
       {
         "key": "prefix-sum",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -337,7 +337,7 @@
       },
       {
         "key": "backtracking",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "binary-tree-paths",
           "luogu:P1025",

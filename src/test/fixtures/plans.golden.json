@@ -264,7 +264,7 @@
   },
   "route:starter": {
     "poolSize": 190,
-    "covered": 101,
+    "covered": 102,
     "sections": [
       {
         "key": "hash-count",
@@ -340,16 +340,16 @@
       },
       {
         "key": "backtracking",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "binary-tree-paths",
-          "luogu:P1025",
-          "generate-parentheses"
+          "bracket-lcci",
+          "luogu:P1025"
         ]
       },
       {
         "key": "dp-linear",
-        "pool": 22,
+        "pool": 21,
         "steps": [
           "is-subsequence",
           "luogu:P1002",

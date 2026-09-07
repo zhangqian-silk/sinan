@@ -1,11 +1,11 @@
 {
   "topic:monotonic": {
-    "poolSize": 29,
+    "poolSize": 28,
     "covered": 25,
     "sections": [
       {
         "key": "monotonic",
-        "pool": 29,
+        "pool": 28,
         "steps": [
           "next-greater-element-i",
           "final-prices-with-a-special-discount-in-a-shop",
@@ -14,10 +14,10 @@
           "online-stock-span",
           "longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit",
           "remove-k-digits",
+          "trapping-rain-water",
           "sliding-window-maximum",
           "maximal-rectangle",
           "largest-rectangle-in-histogram",
-          "create-maximum-number",
           "shortest-subarray-with-sum-at-least-k"
         ]
       }
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 178,
-    "covered": 101,
+    "poolSize": 171,
+    "covered": 99,
     "sections": [
       {
         "key": "hash-count",
@@ -274,7 +274,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 43,
+        "pool": 42,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -283,7 +283,7 @@
       },
       {
         "key": "sliding-window",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -301,16 +301,16 @@
       },
       {
         "key": "stack-queue",
-        "pool": 23,
+        "pool": 20,
         "steps": [
-          "binary-tree-inorder-traversal",
-          "remove-nth-node-from-end-of-list",
-          "binary-tree-zigzag-level-order-traversal"
+          "binary-tree-preorder-traversal",
+          "invert-binary-tree",
+          "binary-tree-inorder-traversal"
         ]
       },
       {
         "key": "tree-traversal",
-        "pool": 33,
+        "pool": 32,
         "steps": [
           "balanced-binary-tree",
           "symmetric-tree",
@@ -319,7 +319,7 @@
       },
       {
         "key": "bs-array",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "two-sum-ii-input-array-is-sorted",
           "maximum-width-ramp",
@@ -356,8 +356,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 183,
-    "covered": 109,
+    "poolSize": 180,
+    "covered": 110,
     "sections": [
       {
         "key": "hash-count",
@@ -371,7 +371,7 @@
       },
       {
         "key": "sliding-window",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -381,7 +381,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 39,
+        "pool": 38,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 29,
+        "pool": 28,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -523,12 +523,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 216,
-    "covered": 90,
+    "poolSize": 211,
+    "covered": 98,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 51,
+        "pool": 50,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -546,7 +546,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 29,
+        "pool": 28,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -563,21 +563,21 @@
         ]
       },
       {
-        "key": "stack-queue",
-        "pool": 23,
-        "steps": [
-          "palindrome-linked-list",
-          "remove-nth-node-from-end-of-list",
-          "binary-tree-zigzag-level-order-traversal"
-        ]
-      },
-      {
         "key": "hash-count",
         "pool": 22,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
           "3sum"
+        ]
+      },
+      {
+        "key": "stack-queue",
+        "pool": 20,
+        "steps": [
+          "binary-tree-preorder-traversal",
+          "invert-binary-tree",
+          "binary-tree-inorder-traversal"
         ]
       },
       {

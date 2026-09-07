@@ -472,8 +472,8 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 39,
-    "covered": 29,
+    "poolSize": 38,
+    "covered": 28,
     "sections": [
       {
         "key": "dp",
@@ -491,7 +491,7 @@
       },
       {
         "key": "graph",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "keys-and-rooms",
           "minimum-number-of-days-to-make-m-bouquets",
@@ -500,8 +500,7 @@
           "luogu:P1027",
           "path-with-minimum-effort",
           "last-day-where-you-can-still-cross",
-          "swim-in-rising-water",
-          "minimum-degree-of-a-connected-trio-in-a-graph"
+          "swim-in-rising-water"
         ]
       },
       {

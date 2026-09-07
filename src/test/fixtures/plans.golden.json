@@ -1,11 +1,11 @@
 {
   "topic:monotonic": {
-    "poolSize": 30,
+    "poolSize": 29,
     "covered": 25,
     "sections": [
       {
         "key": "monotonic",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "next-greater-element-i",
           "final-prices-with-a-special-discount-in-a-shop",
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 184,
-    "covered": 100,
+    "poolSize": 178,
+    "covered": 101,
     "sections": [
       {
         "key": "hash-count",
@@ -301,11 +301,11 @@
       },
       {
         "key": "stack-queue",
-        "pool": 28,
+        "pool": 23,
         "steps": [
           "binary-tree-inorder-traversal",
-          "binary-tree-zigzag-level-order-traversal",
-          "reorder-list"
+          "remove-nth-node-from-end-of-list",
+          "binary-tree-zigzag-level-order-traversal"
         ]
       },
       {
@@ -337,7 +337,7 @@
       },
       {
         "key": "backtracking",
-        "pool": 9,
+        "pool": 8,
         "steps": [
           "binary-tree-paths",
           "luogu:P1025",
@@ -356,7 +356,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 184,
+    "poolSize": 183,
     "covered": 109,
     "sections": [
       {
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -479,12 +479,12 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 41,
+    "poolSize": 40,
     "covered": 29,
     "sections": [
       {
         "key": "dp",
-        "pool": 27,
+        "pool": 26,
         "steps": [
           "generate-parentheses",
           "maximum-length-of-repeated-subarray",
@@ -523,8 +523,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 226,
-    "covered": 87,
+    "poolSize": 216,
+    "covered": 90,
     "sections": [
       {
         "key": "two-pointers",
@@ -546,20 +546,11 @@
       },
       {
         "key": "monotonic",
-        "pool": 30,
+        "pool": 29,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
           "remove-k-digits"
-        ]
-      },
-      {
-        "key": "stack-queue",
-        "pool": 30,
-        "steps": [
-          "palindrome-linked-list",
-          "binary-tree-zigzag-level-order-traversal",
-          "reorder-list"
         ]
       },
       {
@@ -569,6 +560,15 @@
           "sqrtx",
           "longest-common-prefix",
           "koko-eating-bananas"
+        ]
+      },
+      {
+        "key": "stack-queue",
+        "pool": 23,
+        "steps": [
+          "palindrome-linked-list",
+          "remove-nth-node-from-end-of-list",
+          "binary-tree-zigzag-level-order-traversal"
         ]
       },
       {
@@ -582,7 +582,7 @@
       },
       {
         "key": "sorting",
-        "pool": 17,
+        "pool": 16,
         "steps": [
           "merge-sorted-array",
           "h-index",
@@ -590,12 +590,12 @@
         ]
       },
       {
-        "key": "greedy-basic",
-        "pool": 16,
+        "key": "dp-interval",
+        "pool": 15,
         "steps": [
-          "can-place-flowers",
-          "dota2-senate",
-          "max-number-of-k-sum-pairs"
+          "generate-parentheses",
+          "longest-palindromic-subsequence",
+          "predict-the-winner"
         ]
       }
     ]

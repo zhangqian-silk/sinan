@@ -93,3 +93,23 @@ test("每条判定都对得上题库里的题", { skip: !existsSync(BASELINE) &&
     assert.equal(String(p.id), String(r.id), `${r.slug} 记的题号是 ${r.id}，题库里是 ${String(p.id)}`);
   }
 });
+
+// 力扣把不少题在「剑指 Offer / 面试题 / LCR」下重出了一遍。判定里用一句注记把副本
+// 指回主站：写「是同一道题」就是完全等价，两边解法集必须一模一样，否则同一道题会因为
+// 评审批次不同而留下两套标签；确有差异的写「基本相同，<差异>」，不受这条约束。
+test("注明「是同一道题」的副本，标签必须和主站完全一致", () => {
+  const byId = new Map(reviews.map((r) => [String(r.id), r]));
+  const only = (a: Set<string>, b: Set<string>): string[] => [...a].filter((x) => !b.has(x)).sort();
+  for (const r of reviews) {
+    const hit = /与主站 #([\w\s.]+?) 是同一道题/.exec(r.pitfall ?? "");
+    const main = hit ? byId.get(hit[1].trim()) : undefined;
+    if (!main) continue;
+    const mine = new Set(tagsOf(r));
+    const theirs = new Set(tagsOf(main));
+    assert.deepEqual(
+      [only(theirs, mine), only(mine, theirs)], [[], []],
+      `${r.id} 与主站 #${main.id} 号称同一道题，标签却不一致：主站独有 `
+      + `${JSON.stringify(only(theirs, mine))}，副本独有 ${JSON.stringify(only(mine, theirs))}`
+      + `。要么补齐解法，要么把注记改成「基本相同，<差异>」`);
+  }
+});

@@ -1,11 +1,11 @@
 {
   "topic:monotonic": {
-    "poolSize": 27,
+    "poolSize": 28,
     "covered": 25,
     "sections": [
       {
         "key": "monotonic",
-        "pool": 27,
+        "pool": 28,
         "steps": [
           "next-greater-element-i",
           "final-prices-with-a-special-discount-in-a-shop",
@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 188,
-    "covered": 99,
+    "poolSize": 189,
+    "covered": 98,
     "sections": [
       {
         "key": "hash-count",
@@ -328,7 +328,7 @@
       },
       {
         "key": "prefix-sum",
-        "pool": 10,
+        "pool": 11,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -356,7 +356,7 @@
     ]
   },
   "route:interview": {
-    "poolSize": 175,
+    "poolSize": 176,
     "covered": 105,
     "sections": [
       {
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 26,
+        "pool": 27,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -513,7 +513,7 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 209,
+    "poolSize": 213,
     "covered": 97,
     "sections": [
       {
@@ -536,7 +536,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 27,
+        "pool": 28,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -563,7 +563,7 @@
       },
       {
         "key": "greedy-basic",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "can-place-flowers",
           "dota2-senate",
@@ -572,7 +572,7 @@
       },
       {
         "key": "sorting",
-        "pool": 15,
+        "pool": 16,
         "steps": [
           "merge-sorted-array",
           "h-index",
@@ -581,7 +581,7 @@
       },
       {
         "key": "prefix-sum",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "find-pivot-index",
           "product-of-array-except-self",

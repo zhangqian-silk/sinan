@@ -262,7 +262,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 193,
+    "poolSize": 192,
     "covered": 101,
     "sections": [
       {
@@ -348,11 +348,11 @@
       },
       {
         "key": "dp-linear",
-        "pool": 26,
+        "pool": 25,
         "steps": [
           "is-subsequence",
-          "maximum-sum-circular-subarray",
-          "maximum-length-of-repeated-subarray"
+          "luogu:P1002",
+          "maximum-sum-circular-subarray"
         ]
       }
     ]

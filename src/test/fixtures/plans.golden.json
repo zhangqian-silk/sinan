@@ -262,7 +262,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 196,
+    "poolSize": 193,
     "covered": 101,
     "sections": [
       {
@@ -285,7 +285,7 @@
       },
       {
         "key": "sliding-window",
-        "pool": 10,
+        "pool": 9,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -348,7 +348,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 28,
+        "pool": 26,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",

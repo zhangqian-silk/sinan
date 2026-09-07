@@ -60,12 +60,12 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 24,
+    "poolSize": 26,
     "covered": 18,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 24,
+        "pool": 26,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -260,12 +260,12 @@
     ]
   },
   "route:starter": {
-    "poolSize": 193,
-    "covered": 98,
+    "poolSize": 195,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "two-sum",
           "linked-list-cycle",
@@ -283,11 +283,11 @@
       },
       {
         "key": "sliding-window",
-        "pool": 8,
+        "pool": 9,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "smallest-subarrays-with-maximum-bitwise-or"
+          "replace-the-substring-for-balanced-string"
         ]
       },
       {
@@ -356,22 +356,22 @@
     ]
   },
   "route:interview": {
-    "poolSize": 178,
-    "covered": 104,
+    "poolSize": 182,
+    "covered": 100,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 20,
+        "pool": 21,
         "steps": [
           "two-sum",
-          "intersection-of-two-linked-lists",
           "linked-list-cycle",
-          "longest-substring-without-repeating-characters"
+          "longest-substring-without-repeating-characters",
+          "3sum"
         ]
       },
       {
         "key": "sliding-window",
-        "pool": 8,
+        "pool": 9,
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
@@ -383,20 +383,20 @@
         "key": "two-pointers",
         "pool": 39,
         "steps": [
+          "merge-sorted-array",
           "move-zeroes",
           "compare-version-numbers",
-          "3sum",
           "reorder-list"
         ]
       },
       {
         "key": "linked-list",
-        "pool": 10,
+        "pool": 11,
         "steps": [
+          "intersection-of-two-linked-lists",
           "reverse-linked-list",
           "odd-even-linked-list",
-          "remove-nth-node-from-end-of-list",
-          "rotate-list"
+          "remove-nth-node-from-end-of-list"
         ]
       },
       {
@@ -441,12 +441,12 @@
       },
       {
         "key": "bs-answer",
-        "pool": 21,
+        "pool": 23,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
-          "divide-two-integers",
-          "koko-eating-bananas"
+          "koko-eating-bananas",
+          "find-the-duplicate-number"
         ]
       },
       {
@@ -459,7 +459,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 8,
+        "pool": 7,
         "steps": [
           "is-subsequence",
           "maximum-length-of-repeated-subarray",
@@ -513,8 +513,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 215,
-    "covered": 96,
+    "poolSize": 222,
+    "covered": 93,
     "sections": [
       {
         "key": "two-pointers",
@@ -545,7 +545,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 24,
+        "pool": 26,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -554,29 +554,29 @@
       },
       {
         "key": "hash-count",
-        "pool": 23,
+        "pool": 24,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
-          "3sum"
+          "construct-binary-tree-from-preorder-and-inorder-traversal"
         ]
       },
       {
         "key": "greedy-basic",
-        "pool": 18,
+        "pool": 19,
         "steps": [
           "can-place-flowers",
-          "dota2-senate",
-          "max-number-of-k-sum-pairs"
+          "increasing-triplet-subsequence",
+          "remove-duplicate-letters"
         ]
       },
       {
         "key": "sorting",
-        "pool": 16,
+        "pool": 19,
         "steps": [
           "merge-sorted-array",
           "h-index",
-          "determine-if-two-strings-are-close"
+          "3sum"
         ]
       },
       {

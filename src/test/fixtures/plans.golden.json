@@ -260,7 +260,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 187,
+    "poolSize": 188,
     "covered": 101,
     "sections": [
       {
@@ -301,7 +301,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 29,
+        "pool": 30,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",
@@ -524,7 +524,7 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 224,
+    "poolSize": 225,
     "covered": 93,
     "sections": [
       {
@@ -556,7 +556,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 30,
+        "pool": 31,
         "steps": [
           "palindrome-linked-list",
           "asteroid-collision",

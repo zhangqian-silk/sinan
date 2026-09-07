@@ -60,12 +60,12 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 23,
+    "poolSize": 24,
     "covered": 18,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 23,
+        "pool": 24,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -261,7 +261,7 @@
   },
   "route:starter": {
     "poolSize": 188,
-    "covered": 100,
+    "covered": 99,
     "sections": [
       {
         "key": "hash-count",
@@ -301,7 +301,7 @@
       },
       {
         "key": "stack-queue",
-        "pool": 18,
+        "pool": 17,
         "steps": [
           "binary-tree-preorder-traversal",
           "invert-binary-tree",
@@ -328,7 +328,7 @@
       },
       {
         "key": "prefix-sum",
-        "pool": 9,
+        "pool": 10,
         "steps": [
           "find-the-highest-altitude",
           "find-pivot-index",
@@ -356,8 +356,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 174,
-    "covered": 106,
+    "poolSize": 175,
+    "covered": 105,
     "sections": [
       {
         "key": "hash-count",
@@ -375,13 +375,13 @@
         "steps": [
           "maximum-average-subarray-i",
           "longest-subarray-of-1s-after-deleting-one-element",
-          "max-consecutive-ones-iii",
-          "minimum-size-subarray-sum"
+          "minimum-size-subarray-sum",
+          "longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 38,
+        "pool": 39,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -401,7 +401,7 @@
       },
       {
         "key": "monotonic",
-        "pool": 27,
+        "pool": 26,
         "steps": [
           "final-prices-with-a-special-discount-in-a-shop",
           "daily-temperatures",
@@ -441,7 +441,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 20,
+        "pool": 21,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -513,8 +513,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 208,
-    "covered": 98,
+    "poolSize": 209,
+    "covered": 97,
     "sections": [
       {
         "key": "two-pointers",
@@ -545,7 +545,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 23,
+        "pool": 24,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -562,8 +562,17 @@
         ]
       },
       {
+        "key": "greedy-basic",
+        "pool": 17,
+        "steps": [
+          "can-place-flowers",
+          "dota2-senate",
+          "max-number-of-k-sum-pairs"
+        ]
+      },
+      {
         "key": "sorting",
-        "pool": 16,
+        "pool": 15,
         "steps": [
           "merge-sorted-array",
           "h-index",
@@ -571,21 +580,12 @@
         ]
       },
       {
-        "key": "stack-queue",
-        "pool": 18,
+        "key": "prefix-sum",
+        "pool": 17,
         "steps": [
-          "binary-tree-preorder-traversal",
-          "invert-binary-tree",
-          "binary-tree-inorder-traversal"
-        ]
-      },
-      {
-        "key": "greedy-basic",
-        "pool": 15,
-        "steps": [
-          "can-place-flowers",
-          "dota2-senate",
-          "max-number-of-k-sum-pairs"
+          "find-pivot-index",
+          "product-of-array-except-self",
+          "maximum-sum-circular-subarray"
         ]
       }
     ]

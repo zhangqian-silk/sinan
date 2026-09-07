@@ -60,12 +60,12 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 22,
+    "poolSize": 23,
     "covered": 18,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -75,7 +75,6 @@
           "kth-smallest-element-in-a-sorted-matrix",
           "k-th-smallest-prime-fraction",
           "preimage-size-of-factorial-zeroes-function",
-          "longest-duplicate-substring",
           "split-array-largest-sum",
           "nth-magical-number",
           "swim-in-rising-water"
@@ -357,8 +356,8 @@
     ]
   },
   "route:interview": {
-    "poolSize": 186,
-    "covered": 109,
+    "poolSize": 187,
+    "covered": 108,
     "sections": [
       {
         "key": "hash-count",
@@ -442,7 +441,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 19,
+        "pool": 20,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -480,8 +479,8 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 42,
-    "covered": 30,
+    "poolSize": 41,
+    "covered": 29,
     "sections": [
       {
         "key": "dp",
@@ -499,14 +498,13 @@
       },
       {
         "key": "graph",
-        "pool": 11,
+        "pool": 10,
         "steps": [
           "keys-and-rooms",
           "minimum-number-of-days-to-make-m-bouquets",
           "luogu:P1006",
           "number-of-provinces",
           "luogu:P1027",
-          "minimize-the-maximum-edge-weight-of-graph",
           "course-schedule-iv",
           "path-with-minimum-effort",
           "swim-in-rising-water",
@@ -525,8 +523,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 226,
-    "covered": 89,
+    "poolSize": 227,
+    "covered": 88,
     "sections": [
       {
         "key": "two-pointers",
@@ -566,7 +564,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "sqrtx",
           "longest-common-prefix",

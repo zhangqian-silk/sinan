@@ -260,16 +260,16 @@
     ]
   },
   "route:starter": {
-    "poolSize": 188,
+    "poolSize": 185,
     "covered": 101,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 21,
         "steps": [
           "two-sum",
-          "linked-list-cycle",
-          "longest-substring-without-repeating-characters"
+          "intersection-of-two-linked-lists",
+          "linked-list-cycle"
         ]
       },
       {
@@ -278,7 +278,7 @@
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
-          "3sum"
+          "longest-substring-without-repeating-characters"
         ]
       },
       {
@@ -292,20 +292,20 @@
       },
       {
         "key": "linked-list",
-        "pool": 15,
+        "pool": 14,
         "steps": [
-          "intersection-of-two-linked-lists",
           "reverse-linked-list",
+          "palindrome-linked-list",
           "odd-even-linked-list"
         ]
       },
       {
         "key": "stack-queue",
-        "pool": 30,
+        "pool": 29,
         "steps": [
-          "palindrome-linked-list",
+          "binary-tree-inorder-traversal",
           "asteroid-collision",
-          "binary-tree-zigzag-level-order-traversal"
+          "reorder-list"
         ]
       },
       {
@@ -356,12 +356,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 186,
-    "covered": 109,
+    "poolSize": 185,
+    "covered": 111,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 20,
+        "pool": 19,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -524,8 +524,8 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 225,
-    "covered": 93,
+    "poolSize": 224,
+    "covered": 95,
     "sections": [
       {
         "key": "two-pointers",
@@ -574,7 +574,7 @@
       },
       {
         "key": "hash-count",
-        "pool": 23,
+        "pool": 22,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",

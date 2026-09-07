@@ -260,8 +260,8 @@
     ]
   },
   "route:starter": {
-    "poolSize": 194,
-    "covered": 100,
+    "poolSize": 195,
+    "covered": 101,
     "sections": [
       {
         "key": "hash-count",
@@ -346,7 +346,7 @@
       },
       {
         "key": "dp-linear",
-        "pool": 27,
+        "pool": 28,
         "steps": [
           "is-subsequence",
           "maximum-sum-circular-subarray",

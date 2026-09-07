@@ -260,7 +260,7 @@
     ]
   },
   "route:starter": {
-    "poolSize": 184,
+    "poolSize": 185,
     "covered": 100,
     "sections": [
       {
@@ -274,7 +274,7 @@
       },
       {
         "key": "two-pointers",
-        "pool": 43,
+        "pool": 44,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
@@ -523,12 +523,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 225,
+    "poolSize": 226,
     "covered": 91,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 51,
+        "pool": 52,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",

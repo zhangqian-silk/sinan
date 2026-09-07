@@ -60,20 +60,21 @@
     ]
   },
   "topic:bs-answer": {
-    "poolSize": 21,
-    "covered": 16,
+    "poolSize": 22,
+    "covered": 18,
     "sections": [
       {
         "key": "bs-answer",
-        "pool": 21,
+        "pool": 22,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
-          "divide-two-integers",
           "koko-eating-bananas",
           "find-the-duplicate-number",
           "maximum-length-of-repeated-subarray",
           "kth-smallest-element-in-a-sorted-matrix",
+          "k-th-smallest-prime-fraction",
+          "preimage-size-of-factorial-zeroes-function",
           "longest-duplicate-substring",
           "split-array-largest-sum",
           "nth-magical-number",
@@ -260,25 +261,25 @@
     ]
   },
   "route:starter": {
-    "poolSize": 185,
+    "poolSize": 189,
     "covered": 101,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 21,
+        "pool": 22,
         "steps": [
           "two-sum",
-          "intersection-of-two-linked-lists",
-          "linked-list-cycle"
+          "linked-list-cycle",
+          "longest-substring-without-repeating-characters"
         ]
       },
       {
         "key": "two-pointers",
-        "pool": 42,
+        "pool": 43,
         "steps": [
           "move-zeroes",
           "compare-version-numbers",
-          "longest-substring-without-repeating-characters"
+          "3sum"
         ]
       },
       {
@@ -292,20 +293,20 @@
       },
       {
         "key": "linked-list",
-        "pool": 14,
+        "pool": 15,
         "steps": [
+          "intersection-of-two-linked-lists",
           "reverse-linked-list",
-          "palindrome-linked-list",
           "odd-even-linked-list"
         ]
       },
       {
         "key": "stack-queue",
-        "pool": 29,
+        "pool": 30,
         "steps": [
-          "binary-tree-inorder-traversal",
+          "palindrome-linked-list",
           "asteroid-collision",
-          "reorder-list"
+          "binary-tree-zigzag-level-order-traversal"
         ]
       },
       {
@@ -356,12 +357,12 @@
     ]
   },
   "route:interview": {
-    "poolSize": 185,
-    "covered": 111,
+    "poolSize": 187,
+    "covered": 109,
     "sections": [
       {
         "key": "hash-count",
-        "pool": 19,
+        "pool": 20,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -441,7 +442,7 @@
       },
       {
         "key": "bs-answer",
-        "pool": 18,
+        "pool": 19,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
@@ -479,7 +480,7 @@
     ]
   },
   "route:advanced": {
-    "poolSize": 43,
+    "poolSize": 42,
     "covered": 30,
     "sections": [
       {
@@ -514,7 +515,7 @@
       },
       {
         "key": "advanced-ds",
-        "pool": 5,
+        "pool": 4,
         "steps": [
           "luogu:P1020",
           "largest-rectangle-in-histogram",
@@ -524,12 +525,12 @@
     ]
   },
   "route:weakness": {
-    "poolSize": 224,
-    "covered": 95,
+    "poolSize": 228,
+    "covered": 93,
     "sections": [
       {
         "key": "two-pointers",
-        "pool": 50,
+        "pool": 51,
         "steps": [
           "linked-list-cycle",
           "container-with-most-water",
@@ -565,16 +566,16 @@
       },
       {
         "key": "bs-answer",
-        "pool": 21,
+        "pool": 22,
         "steps": [
           "sqrtx",
           "longest-common-prefix",
-          "divide-two-integers"
+          "koko-eating-bananas"
         ]
       },
       {
         "key": "hash-count",
-        "pool": 22,
+        "pool": 23,
         "steps": [
           "two-sum",
           "intersection-of-two-linked-lists",
@@ -583,10 +584,10 @@
       },
       {
         "key": "sorting",
-        "pool": 17,
+        "pool": 18,
         "steps": [
           "merge-sorted-array",
-          "determine-if-two-strings-are-close",
+          "h-index",
           "3sum-closest"
         ]
       },

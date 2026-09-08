@@ -21,6 +21,7 @@ import {
 import { CHANNEL_CN } from "./rules/approach.data.js";
 import { LEAF_TAG_MAP, TAG_MAP } from "./rules/taxonomy.data.js";
 import type { ApproachRef, CuratedList, Meta, Problem, SimilarEntry, TagRef } from "../types.js";
+import { seriesMeta } from "../store.js";
 
 /**
  * 深层标签：思路命中了树上更细的那一层，就把它也挂成标签。
@@ -678,6 +679,7 @@ export function build(): void {
   const meta: Meta = {
     builtAt,
     sources: sourceRows,
+    series: seriesMeta(items),
     overlays: overlayRows,
     stats: {
       total: items.length,

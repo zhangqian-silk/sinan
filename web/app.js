@@ -86,7 +86,7 @@ const VIEWS = [
 const state = {
   view: 'overview',
   q: '',
-  filters: { cat: '', tag: '', approach: '', diff: new Set(), hot: false, todo: false, mine: false, source: '', paid: false, in: '', sort: 'id' },
+  filters: { cat: '', tag: '', approach: '', diff: new Set(), hot: false, todo: false, mine: false, source: '', series: '', paid: false, in: '', sort: 'id' },
   limit: 60,
   plan: { kind: 'route', route: 'starter', topic: 'lc:top-100-liked', mode: 'auto', pace: 'depth', all: false, paid: false },
   learn: { topic: null },
@@ -295,7 +295,7 @@ async function viewProblems(host) {
 
   const data = await api('/api/problems', {
     q: state.q, cat: f.cat, tag: f.tag, approach: f.approach, diff: [...f.diff],
-    hot: f.hot, todo: f.todo, mine: f.mine, source: f.source, paid: f.paid,
+    hot: f.hot, todo: f.todo, mine: f.mine, source: f.source, series: f.series, paid: f.paid,
     in: f.in, sort: f.sort, limit: state.limit,
   });
 
@@ -335,6 +335,12 @@ async function viewProblems(host) {
       (cache.meta.meta.sources || []).map((s) =>
         opt(s.id, s.name, pick(fc.sources, s.id), f.source === s.id))),
 
+    h('span.filters__label', {}, '题号系列'),
+    h('select', { onChange: (e) => { f.series = e.target.value; state.limit = 60; render(); } },
+      h('option', { value: '', selected: !f.series }, '全部系列'),
+      (cache.meta.meta.series || []).map((s) =>
+        opt(s.id, s.name, pick(fc.series, s.id), f.series === s.id))),
+
     h('span.filters__label', {}, '题单'),
     h('select', { onChange: (e) => { f.in = e.target.value; state.limit = 60; render(); } },
       h('option', { value: '', selected: !f.in }, '不限题单'),
@@ -353,10 +359,10 @@ async function viewProblems(host) {
       chip('未刷', f.todo, () => { f.todo = !f.todo; state.limit = 60; render(); }),
       chip('我写过', f.mine, () => { f.mine = !f.mine; state.limit = 60; render(); }),
       chip('含会员题', f.paid, () => { f.paid = !f.paid; state.limit = 60; render(); }),
-      (f.cat || f.tag || f.approach || f.source || f.in || f.diff.size || f.hot || f.todo || f.mine)
+      (f.cat || f.tag || f.approach || f.source || f.series || f.in || f.diff.size || f.hot || f.todo || f.mine)
         ? h('button.chip', {
             onClick: () => {
-              Object.assign(f, { cat: '', tag: '', approach: '', source: '', in: '' });
+              Object.assign(f, { cat: '', tag: '', approach: '', source: '', series: '', in: '' });
               f.diff = new Set(); f.hot = false; f.todo = false; f.mine = false;
               state.limit = 60; render();
             },

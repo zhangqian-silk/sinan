@@ -155,6 +155,8 @@ export interface Meta {
   /** 是不是随包分发的精简基线（没有题面 / 高频 / 题单） */
   baseline?: boolean;
   sources: SourceMeta[];
+  /** 题号系列：力扣主站 / LCP / LCR / LCS / 面试题、洛谷 P / B */
+  series?: SourceMeta[];
   overlays?: SourceMeta[];
   stats: {
     total: number;

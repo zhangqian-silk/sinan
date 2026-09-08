@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import { openStore } from "../host-node.js";
-import { DIFF_RANK, sortProblems } from "../store.js";
+import { DIFF_RANK, seriesIdOf, seriesMeta, sortProblems } from "../store.js";
 import { MINI_DIR, miniStore } from "./helpers.js";
 
 const store = miniStore();
@@ -117,6 +117,37 @@ test("按题号排序：力扣在前、洛谷在后，数字段按数值比", ()
   const byDiff = sortProblems(store.problems, "diff");
   const ranks = byDiff.map((p) => DIFF_RANK[p.difficulty]);
   assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b));
+});
+
+test("按题号排序：同一系列必须连成一段，不能和主站交替出现", () => {
+  const rows = sortProblems(store.problems, "id");
+  // 每个系列只允许出现一个连续区间；`LCR 014` 曾因为「抹掉非数字」而插进 #14 后面
+  const seen = new Set<string>();
+  let prev = "";
+  for (const p of rows) {
+    const key = `${p.source}:${seriesIdOf(p)}`;
+    if (key === prev) continue;
+    assert.ok(!seen.has(key), `系列 ${key} 被切成了不连续的多段`);
+    seen.add(key);
+    prev = key;
+  }
+
+  // 段内按题号数值递增，面试题的两段编号要逐段比（08.09 不能当成 809）
+  const lcci = rows.filter((p) => seriesIdOf(p) === "面试题").map((p) => p.id);
+  assert.deepEqual(lcci, [...lcci].sort(), "面试题内部没有按编号排");
+});
+
+test("按系列筛选：main 只给纯数字题号", () => {
+  const main = store.query({ series: "main", includePaid: true });
+  assert.ok(main.length > 0);
+  assert.ok(main.every((p) => /^\d+$/.test(p.id)), "main 里混进了带前缀的题号");
+  const lcr = store.query({ series: "LCR", includePaid: true });
+  assert.ok(lcr.every((p) => p.id.startsWith("LCR")));
+  assert.equal(main.length + lcr.length < store.problems.length, true);
+
+  const rows = seriesMeta(store.problems);
+  assert.equal(rows[0]?.id, "main", "系列选项表第一项应该是主站");
+  assert.equal(rows.reduce((s, r) => s + r.count, 0), store.problems.length);
 });
 
 test("打卡往返：写进去、读出来、再取消", () => {

@@ -21,6 +21,7 @@ import type {
   Problem,
   Progress,
   SimilarEntry,
+  SourceMeta,
   SubCategory,
   SubWithCat,
 } from "./types.js";
@@ -127,6 +128,7 @@ export interface QueryOptions {
   mine?: boolean;
   multi?: boolean;
   source?: string;
+  series?: string;
   includePaid?: boolean;
   inList?: string;
   approach?: string;
@@ -450,7 +452,7 @@ export class Store {
   query(options: QueryOptions = {}): Problem[] {
     const {
       text = "", cat = "", tag = "", diffs = null, hot = false, todo = false,
-      mine = false, multi = false, source = "", includePaid = false, inList = "",
+      mine = false, multi = false, source = "", series = "", includePaid = false, inList = "",
       approach = "", sort = "id",
     } = options;
     const low = text.toLowerCase().trim();
@@ -466,6 +468,7 @@ export class Store {
       // --tag 认树上任意一层：二级在 tagIds 里，更深的在 deepTagIds 里
       if (tag && !p.tagIds.includes(tag) && !(p.deepTagIds ?? []).includes(tag)) continue;
       if (source && p.source !== source) continue;
+      if (series && seriesIdOf(p) !== series) continue;
       if (apLow && !(p.approach ?? []).some((a) => approachMatches(apLow, a))) continue;
       if (diffs && diffs.size && !diffs.has(p.difficulty)) continue;
       if (hot && !p.freq) continue;
@@ -498,6 +501,7 @@ export class Store {
       ["subs", "tag"],
       ["approaches", "approach"],
       ["sources", "source"],
+      ["series", "series"],
       ["diffs", "diffs"],
       ["lists", "inList"],
     ];
@@ -515,6 +519,8 @@ export class Store {
         for (const p of rows) acc.update((p.approach ?? []).map((a) => a.name));
       } else if (name === "sources") {
         for (const p of rows) acc.add(p.source);
+      } else if (name === "series") {
+        for (const p of rows) acc.add(seriesIdOf(p));
       } else if (name === "diffs") {
         for (const p of rows) acc.add(p.difficulty);
       } else {
@@ -546,10 +552,66 @@ export class Store {
   }
 }
 
+/**
+ * 题号里的系列前缀，以及它在同一题源内部的排列次序。
+ *
+ * 力扣主站是纯数字，LCP / LCR / LCS / 面试题各自独立编号；洛谷分主题库 P 与入门 B。
+ * 不把系列单独拎出来当排序段，`LCR 014` 和 `#14` 会因为「抹掉非数字」而挤在一起。
+ */
+const SERIES_ORDER: Record<string, number> = {
+  "": 0, LCP: 1, LCR: 2, LCS: 3, 面试题: 4, // 力扣
+  P: 0, B: 1, // 洛谷
+};
+
+/** 筛选用的系列名：直接沿用题号里看得见的前缀，纯数字的力扣主站叫「主站」。 */
+const SERIES_LABEL: Record<string, string> = {
+  main: "主站", LCP: "LCP", LCR: "LCR", LCS: "LCS", 面试题: "面试题",
+  P: "洛谷 P", B: "洛谷 B",
+};
+
+export function seriesOf(id: string): string {
+  return (/^[^0-9]+/.exec(id)?.[0] ?? "").trim();
+}
+
+/** 系列的稳定标识；纯数字题号没有前缀，用 `main` 顶上，空串会被当成「不筛选」。 */
+export function seriesIdOf(p: Problem): string {
+  return seriesOf(String(p.id)) || "main";
+}
+
+/** 系列选项表，题号顺序排列 —— 建产物和读基线两条路都用这一份，口径才不会分叉。 */
+export function seriesMeta(problems: readonly Problem[]): SourceMeta[] {
+  const acc = new Map<string, { count: number; key: SortKey }>();
+  for (const p of problems) {
+    const id = seriesIdOf(p);
+    const cur = acc.get(id);
+    if (cur) cur.count += 1;
+    else {
+      const series = seriesOf(String(p.id));
+      acc.set(id, {
+        count: 1,
+        key: [p.source === "leetcode" ? 0 : 1, SERIES_ORDER[series] ?? 9, series],
+      });
+    }
+  }
+  return sortBy([...acc], ([, v]) => v.key)
+    .map(([id, v]) => ({ id, name: SERIES_LABEL[id] ?? id, count: v.count }));
+}
+
 function numericId(p: Problem): SortKey {
   const raw = String(p.id);
-  const digits = raw.replace(/\D/g, "");
-  return [p.source === "leetcode" ? 0 : 1, digits ? parseInt(digits, 10) : 10 ** 6, raw];
+  const series = seriesOf(raw);
+  // 面试题是 08.09 这种两段编号，逐段比才不会把 08.09 当成 809。
+  const [majorRaw, minorRaw] = raw.match(/\d+/g) ?? [];
+  const major = majorRaw === undefined ? 10 ** 6 : parseInt(majorRaw, 10);
+  const minor = minorRaw === undefined ? -1 : parseInt(minorRaw, 10);
+  return [
+    p.source === "leetcode" ? 0 : 1,
+    SERIES_ORDER[series] ?? 9,
+    series,
+    major,
+    minor,
+    raw,
+  ];
 }
 
 export function sortProblems(items: readonly Problem[], sort: string): Problem[] {

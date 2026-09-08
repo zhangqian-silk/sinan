@@ -13,6 +13,7 @@
 import type {
   Category, Difficulty, Meta, Problem, ProblemReview, SimilarEntry, SubCategory,
 } from "./types.js";
+import { seriesMeta } from "./store.js";
 
 /** 只有这两个题源，链接可以由 slug / 题号推出来，不必逐题存一遍。 */
 export const URL_TEMPLATE: Record<string, string> = {
@@ -186,6 +187,7 @@ export function expand(packed: Packed): Expanded {
       const row = pool.source.find((s) => s[0] === id);
       return { id, name: row ? row[1] : id, count: n, url: "" };
     }),
+    series: seriesMeta(problems),
     overlays: [],
     stats: {
       total: problems.length,

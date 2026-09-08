@@ -20,6 +20,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { openStore } from "../host-node.js";
+import { seriesMeta } from "../store.js";
 import type { CuratedList, Problem, SimilarEntry } from "../types.js";
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src", "test", "fixtures", "mini");
@@ -102,6 +103,7 @@ function main(): void {
       count: problems.filter((p) => p.source === src).length,
       url: "",
     })),
+    series: seriesMeta(problems),
     overlays: [],
     stats: {
       total: problems.length,

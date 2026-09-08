@@ -67,6 +67,7 @@ const COMMANDS: Entry[] = [
       { flag: "--approach", type: "string", help: "按题解思路筛，如 中序遍历 / 单调栈 / 埃氏筛" },
       { flag: "--by-approach", type: "flag", help: "标签列换成题解思路" },
       { flag: "--source", type: "string", help: "题源：leetcode / luogu" },
+      { flag: "--series", type: "string", help: "题号系列：main / LCP / LCR / LCS / 面试题 / P / B" },
       { flag: "--paid", type: "flag", help: "包含会员题" },
       { flag: "--with-lists", type: "flag", help: "显示题目收录于哪些题单" },
       { flag: "--links", type: "flag", help: "额外显示平台链接一列" },

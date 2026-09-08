@@ -85,6 +85,7 @@ export function cmdList(store: Store, args: Args): void {
     mine: Boolean(args["mine"]),
     multi: Boolean(args["multi"]),
     source: (args["source"] as string) || "",
+    series: (args["series"] as string) || "",
     includePaid: Boolean(args["paid"]),
     inList: (args["inList"] as string) || "",
     approach: (args["approach"] as string) || "",

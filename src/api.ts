@@ -131,6 +131,7 @@ function apiProblems(st: Store, q: Query): unknown {
     text: one(q, "q"), cat: one(q, "cat"), tag: one(q, "tag"), approach: one(q, "approach"),
     diffs: diffs.size ? diffs : null, hot: flag(q, "hot"), todo: flag(q, "todo"),
     mine: flag(q, "mine"), multi: flag(q, "multi"), source: one(q, "source"),
+    series: one(q, "series"),
     includePaid: flag(q, "paid"), inList: one(q, "in"), sort: one(q, "sort", "id"),
   };
   const items = st.query(conds);

@@ -9,6 +9,7 @@ import * as r from "../render.js";
 import type { Store, Topic } from "../store.js";
 import { fixed, splitLines } from "../util.js";
 import { MISSING, needSync } from "./hint.js";
+import { cmdTopics } from "./overview.js";
 import { resolveProblem } from "./query.js";
 
 export function cmdRoutes(store: Store, _args: Args): void {
@@ -354,45 +355,12 @@ function renderLearnProblems(store: Store, topic: Topic, limit: number): void {
   });
 }
 
-/** 讲解目录：整棵标签树，每个节点一句话核心思路；层级不齐，有的枝多一层。 */
+/**
+ * 讲解目录就是标签树本身，所以直接借用 `topics` 那张表 —— 它每行已经印着这个标签的
+ * 一句话核心思路。以前这里另印一棵一模一样的树，只是把进度换成题量，属于同一份目录看两遍。
+ */
 function learnIndex(store: Store): void {
-  const width = Math.max(r.termWidth() - 6, 50);
-  out("", r.heading("讲解总目录", `${store.cats.length} 个大类 / ${store.subById.size} 个子标签 · `
-    + "每条都有核心思想、识别信号、模板、常见坑、代表题与 OI-Wiki"));
-  out(r.paint("  {PROG} learn <id> 看某一条的完整讲解与代表题；{PROG} plan <id> 直接排计划", "gray"));
-
-  const ideaWidth = Math.max(24, width - 40);
-  for (const cat of store.cats) {
-    const color = r.CAT_COLOR[cat.id] ?? "steel";
-    const members = store.problems.filter((p) => p.cats.includes(cat.id));
-    out("");
-    out(`${r.paint("▌", color)}${r.paint(cat.name, "bold")}  `
-      + `${r.paint(cat.id, "gray")}  ${r.paint(`${members.length} 题`, "gray")}`);
-    const catIdea = notes.gist(cat.id, cat.desc);
-    for (const line of r.wrap(catIdea, width - 2)) out(`  ${r.paint(line, "gray")}`);
-    const rows: string[][] = [];
-    for (const sub of cat.subs) {
-      const count = store.problems.filter((p) => p.tagIds.includes(sub.id)).length;
-      rows.push([
-        `  ${r.paint(sub.name, color)}`,
-        r.paint(sub.id, "gray"),
-        `${count} 题`,
-        r.trunc(notes.gist(sub.id, sub.desc), ideaWidth),
-      ]);
-      for (const kid of sub.kids ?? []) {
-        const kn = store.problems.filter((p) => (p.deepTagIds ?? []).includes(kid.id)).length;
-        rows.push([
-          `    ${r.paint(`↳ ${kid.name}`, "gray")}`,
-          r.paint(kid.id, "gray"),
-          `${kn} 题`,
-          r.paint(r.trunc(notes.gist(kid.id, kid.desc), ideaWidth), "gray"),
-        ]);
-      }
-    }
-    out(r.table(["  子标签", "id", "题量", "核心思路"], rows,
-      ["left", "left", "right", "left"]));
-  }
-  out("");
+  cmdTopics(store, {});
   out(r.paint("  想按顺序练：{PROG} routes 看主线；想按知识点练：{PROG} plan <id>", "gray"), "");
 }
 

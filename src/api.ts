@@ -99,12 +99,23 @@ function apiMeta(st: Store): unknown {
   const cats = st.cats.map((c) => {
     const members = st.problems.filter((p) => p.cats.includes(c.id));
     const [done, total] = st.progressOf(members);
+    // 标签树只渲染一处，所以每个节点顺带把讲解的一句话核心思路带上 —— 卡片上写「怎么想」，
+    // 定义式的 desc 留给讲解详情页当副标题，不必在目录里再说一遍。
+    const withGist = <T extends { id: string; desc: string; kids?: T[] }>(s: T): T => ({
+      ...s,
+      gist: notes.gist(s.id, s.desc),
+      hasNote: notes.hasNote(s.id),
+      ...(s.kids?.length ? { kids: s.kids.map(withGist) } : {}),
+    });
     const subs = c.subs.map((s) => {
       const sm = st.problems.filter((p) => p.tagIds.includes(s.id));
       const [sdone, stotal] = st.progressOf(sm);
-      return { ...s, done: sdone, total: stotal };
+      return { ...withGist(s), done: sdone, total: stotal };
     });
-    return { id: c.id, name: c.name, desc: c.desc, order: c.order, done, total, subs };
+    return {
+      id: c.id, name: c.name, desc: c.desc, gist: notes.gist(c.id, c.desc),
+      hasNote: notes.hasNote(c.id), order: c.order, done, total, subs,
+    };
   });
 
   const free = st.problems.filter((p) => !p.paid);
@@ -187,36 +198,6 @@ function apiTopics(st: Store): unknown {
       cat: t.cat, url: t.url, hasNote: notes.hasNote(t.id),
     })),
   };
-}
-
-/**
- * 讲解总目录：整棵标签树，每个节点一句话核心思路。
- * 和 `sinan learn`（不带参数）是同一份内容，措辞取自 notes.gist。
- */
-function apiNotes(st: Store): unknown {
-  const cats = st.cats.map((c) => {
-    const members = st.problems.filter((p) => p.cats.includes(c.id));
-    const [done, total] = st.progressOf(members);
-    // 层级不固定，递归下去；深层节点的题在 deepTagIds 里
-    const node = (s: { id: string; name: string; desc: string; kids?: unknown[] }, depth: number): unknown => {
-      const sm = depth === 2
-        ? st.problems.filter((p) => p.tagIds.includes(s.id))
-        : st.problems.filter((p) => (p.deepTagIds ?? []).includes(s.id));
-      const [sdone, stotal] = st.progressOf(sm);
-      const kids = (s.kids ?? []) as typeof s[];
-      return {
-        id: s.id, name: s.name, desc: s.desc, gist: notes.gist(s.id, s.desc),
-        done: sdone, total: stotal, hasNote: notes.hasNote(s.id), depth,
-        ...(kids.length ? { kids: kids.map((k) => node(k, depth + 1)) } : {}),
-      };
-    };
-    return {
-      id: c.id, name: c.name, desc: c.desc, gist: notes.gist(c.id, c.desc),
-      done, total, hasNote: notes.hasNote(c.id),
-      subs: c.subs.map((s) => node(s, 2)),
-    };
-  });
-  return { cats };
 }
 
 function apiNote(st: Store, q: Query): unknown {
@@ -341,7 +322,6 @@ export const API: Record<string, (st: Store, q: Query) => unknown> = {
   "/api/problems": apiProblems,
   "/api/problem": apiProblem,
   "/api/topics": (st) => apiTopics(st),
-  "/api/notes": (st) => apiNotes(st),
   "/api/lists": (st) => apiLists(st),
   "/api/approaches": (st) => apiApproaches(st),
   "/api/plan": apiPlan,

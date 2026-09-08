@@ -11,7 +11,7 @@
 
 ```bash
 npm i -g sinan
-sinan learn             # 讲解总目录：整棵标签树，每个节点一句话核心思路
+sinan topics            # 标签树：13 个分区 / 65 个子标签，每行一句话核心思路
 sinan learn monotonic   # 展开一条：核心思想、模板、常见坑、代表题与链接
 sinan plan monotonic    # 该做哪些题，按什么顺序，每题带链接
 ```
@@ -98,7 +98,7 @@ sinan plan hot100 --day 5         # 热题 100，按每天 5 题切
 ## 每个专题都有讲解
 
 ```bash
-sinan learn             # 总目录：每个大类和子标签一句话核心思路
+sinan topics            # 标签树：每个大类和子标签一行，写着它的核心思路
 sinan learn monotonic   # 核心思想 / 什么时候想到它 / 模板骨架 / 常见坑 / 代表题 / OI-Wiki
 sinan topics tree       # 钻进一个大类：每个子标签的进度、说明和代表题
 ```
@@ -117,14 +117,14 @@ sinan topics tree       # 钻进一个大类：每个子标签的进度、说明
 
 ```
 sinan                       概览
-sinan topics [分区]         标签树：13 个分区 / 65 个子标签 / 52 个技巧节点
+sinan topics [分区]         标签树：13 个分区 / 65 个子标签 / 52 个技巧节点，兼讲解目录
 sinan lists                 特殊题单：热题 100、面试经典 150、CodeTop 公司榜…
 sinan routes                学习计划：4 条跨专题的主线
 sinan approaches [领域]     题解思路词表
 sinan list [关键词]         题库查询（按大类/子标签/思路/难度/题单/来源筛）
 sinan show <题>             题目详情
 sinan plan <主线|专题>      展开主线，或按专题即时生成计划
-sinan learn [专题]          专题讲解；不带参数是讲解总目录
+sinan learn <专题>          专题讲解（不带参数等同 topics）
 sinan next                  下一步该做什么
 sinan done <题>...          打卡 / 取消打卡
 sinan stats                 题库统计

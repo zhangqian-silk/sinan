@@ -77,7 +77,6 @@ const VIEWS = [
   ['overview', '总览', '◉'],
   ['problems', '题库', '▤'],
   ['topics', '标签体系', '⌗'],
-  ['learn', '讲解', '❖'],
   ['approaches', '题解思路', '✳'],
   ['lists', '特殊题单', '★'],
   ['plan', '学习计划', '✦'],
@@ -92,7 +91,7 @@ const state = {
   learn: { topic: null },
   openSlug: null,
 };
-const cache = { meta: null, topics: null, notes: null, approaches: null, lists: null, routes: null };
+const cache = { meta: null, topics: null, approaches: null, lists: null, routes: null };
 
 // --- 公共零件 ----------------------------------------------------------------
 
@@ -203,8 +202,7 @@ async function viewOverview(host) {
   ));
 
   host.append(sectionHead('知识地图', `13 个大类 · 一题多解会计入多个大类（平均 ${st.avgTags} 个标签/题）`,
-    h('button.btn.btn--ghost.btn--sm', { onClick: () => go('learn') }, '看讲解 →'),
-    h('button.btn.btn--ghost.btn--sm', { onClick: () => go('topics') }, '看子标签 →')));
+    h('button.btn.btn--ghost.btn--sm', { onClick: () => go('topics') }, '看子标签与讲解 →')));
   host.append(h('div.mapGrid', {}, cats.map((c) => h('button.mapCard', {
     style: { '--catColor': CAT_COLOR[c.id] || '#8fa3b8' },
     onClick: () => { state.filters.cat = c.id; state.filters.tag = ''; go('problems'); },
@@ -254,7 +252,7 @@ async function viewOverview(host) {
           '分类体系、每一类的核心解题思路、题目与平台链接都在包里，装完就能看。'),
         syncHint('题面原文、面试高频（CodeTop 频次与排名）、28 份官方 / 公司题单'),
         h('div', { style: { display: 'flex', gap: '8px', marginTop: '10px' } },
-          h('button.btn.btn--primary.btn--sm', { onClick: () => go('learn') }, '看讲解与代表题 →'),
+          h('button.btn.btn--primary.btn--sm', { onClick: () => go('topics') }, '看标签体系与讲解 →'),
           h('button.btn.btn--sm', { onClick: () => { state.plan.kind = 'route'; state.plan.route = 'starter'; go('plan'); } }, '入门主线'))));
   } else api('/api/lists').then(({ lists }) => {
     clear(listCard).append(
@@ -388,29 +386,36 @@ async function viewProblems(host) {
   );
 }
 
-// --- 视图：标签体系 ----------------------------------------------------------
+// --- 视图：标签体系（兼讲解目录）----------------------------------------------
+//
+// 标签树只在这里渲染一次。以前「标签体系」和「讲解总目录」是两个平级页面，列的是同一棵
+// 13 × 65 的树，只是一边配进度条与 desc、一边配题量与 gist —— 同一份目录看两遍。
+// 现在合成一页：卡片上写讲解的一句话核心思路（怎么想），定义式的 desc 挪到讲解详情页当
+// 副标题，进度、去练、排计划、讲解四个入口都挂在同一张卡上。
 
 async function viewTopics(host) {
   const cats = cache.meta.cats;
   host.append(sectionHead('标签体系',
-    `${cats.length} 个大类 / ${cache.meta.progress.tagCount} 个子标签 · 一题多解会打多个标签`));
+    `${cats.length} 个大类 / ${cache.meta.progress.tagCount} 个子标签 · 一题多解会打多个标签`
+    + ' · 每一条都有讲解：核心思想 / 识别信号 / 模板 / 常见坑 / 代表题 / OI-Wiki'));
   for (const c of cats) {
     const color = CAT_COLOR[c.id] || '#8fa3b8';
     const subs = h('div.topicSubs', {}, c.subs.map((s) => h('div.subCard', {},
       h('div.subCard__top', {}, h('span.subCard__name', {}, s.name),
         h('span.subCard__n', {}, `${s.done}/${s.total}`)),
-      h('p.subCard__desc', {}, s.desc),
+      h('p.subCard__desc', {}, s.gist || s.desc),
       h('div.subCard__meter', {}, h('i', { style: { width: `${s.total ? (s.done / s.total) * 100 : 0}%`, background: color } })),
       // 有再往下分的就列出来；层级不齐是常态，没有就不显示这一行
       s.kids?.length ? h('div.kidRow', {}, s.kids.map((k) => h('button.kidChip', {
-        title: `${k.name}：${k.desc}`,
-        onClick: () => { state.filters.cat = ''; state.filters.tag = k.id; state.filters.approach = ''; go('problems'); },
+        title: `${k.name}：${k.gist || k.desc}`,
+        // 三级标签点进讲解，那一页里再给「看全部题目」和「排计划」
+        onClick: () => openLearn(k.id),
       }, k.name, h('em', {}, ` ${k.count ?? 0}`))) ) : null,
       h('div.subCard__acts', {},
+        h('button.btn.btn--sm.btn--primary', { onClick: () => openLearn(s.id) }, '讲解'),
         h('button.btn.btn--sm', {
           onClick: () => { state.filters.cat = c.id; state.filters.tag = s.id; state.filters.approach = ''; go('problems'); },
         }, `去练 ${s.count} 题`),
-        h('button.btn.btn--sm.btn--ghost', { onClick: () => openLearn(s.id) }, '讲解'),
         h('button.btn.btn--sm.btn--ghost', {
           onClick: () => { state.plan.topic = s.id; go('plan'); },
         }, '学习计划'),
@@ -420,8 +425,12 @@ async function viewTopics(host) {
     host.append(h('div.card.topicCat', { style: { '--catColor': color } },
       h('button.topicCat__head', { onClick: () => { body.hidden = !body.hidden; } },
         h('span.topicCat__bar'),
-        h('span', {}, h('div.topicCat__title', {}, c.name), h('div.topicCat__desc', {}, c.desc)),
-        h('span.topicCat__meta', {}, `${c.done}/${c.total} 题`, h('br'), `${c.subs.length} 个标签`)),
+        h('span', {}, h('div.topicCat__title', {}, c.name),
+          h('div.topicCat__desc', {}, c.gist || c.desc)),
+        h('span.topicCat__meta', {}, `${c.done}/${c.total} 题`, h('br'), `${c.subs.length} 个标签`),
+        h('button.btn.btn--sm', {
+          onClick: (e) => { e.stopPropagation(); openLearn(c.id); },
+        }, '这一类怎么想 →')),
       body));
   }
 }
@@ -429,48 +438,23 @@ async function viewTopics(host) {
 // --- 视图：讲解 --------------------------------------------------------------
 
 function openLearn(topic) {
+  // 不带专题的 `#learn` 已经并进标签体系，直接落到那一页
+  if (!topic) { go('topics'); return; }
   state.learn.topic = topic || null;
   state.view = 'learn';
   location.hash = topic ? `learn/${encodeURIComponent(topic)}` : 'learn';
   render();
 }
 
-/** 讲解总目录 + 单条讲解。和 `sinan learn` 是同一份内容。 */
+/** 单条讲解。目录并进了标签体系，这里只负责详情。 */
 async function viewLearn(host) {
-  if (state.learn.topic) { await learnDetail(host, state.learn.topic); return; }
-  const { cats } = cache.notes || (cache.notes = await api('/api/notes'));
-  const subCount = cats.reduce((a, c) => a + c.subs.length, 0);
-  host.append(sectionHead('讲解总目录',
-    `${cats.length} 个大类 / ${subCount} 个子标签 · 每条都有核心思想、识别信号、模板、常见坑、代表题与 OI-Wiki`));
-
-  for (const c of cats) {
-    const color = CAT_COLOR[c.id] || '#8fa3b8';
-    host.append(h('div.card.topicCat', { style: { '--catColor': color } },
-      h('div.topicCat__head.topicCat__head--learn', {},
-        h('span.topicCat__bar'),
-        h('span', {},
-          h('div.topicCat__title', {}, c.name),
-          h('div.topicCat__desc', {}, c.gist || c.desc)),
-        h('span.topicCat__meta', {}, `${c.total} 题`, h('br'), `${c.subs.length} 个标签`),
-        h('button.btn.btn--sm', { onClick: () => openLearn(c.id) }, '这一类怎么想 →')),
-      h('div.topicSubs', {}, c.subs.map((s) => h('button.subCard.subCard--btn', {
-        onClick: () => openLearn(s.id),
-      },
-        h('div.subCard__top', {},
-          h('span.subCard__name', {}, s.name),
-          h('span.subCard__n', {}, `${s.total} 题`)),
-        h('p.subCard__desc', {}, s.gist || s.desc),
-        // 再往下一层，点了直接进那一层的讲解
-        s.kids?.length ? h('div.kidRow', {}, s.kids.map((k) => h('span.kidChip', {
-          title: k.gist || k.desc,
-          onClick: (e) => { e.stopPropagation(); openLearn(k.id); },
-        }, k.name, h('em', {}, ` ${k.total}`)))) : null)))));
-  }
+  if (!state.learn.topic) { await viewTopics(host); return; }
+  await learnDetail(host, state.learn.topic);
 }
 
 async function learnDetail(host, topic) {
   host.append(h('div.sectionHead', {},
-    h('button.btn.btn--sm.btn--ghost', { onClick: () => openLearn(null) }, '← 全部讲解'),
+    h('button.btn.btn--sm.btn--ghost', { onClick: () => openLearn(null) }, '← 标签体系'),
     h('span.spacer')));
   const box = h('div', {}, h('div.empty', {}, '加载讲解…'));
   host.append(box);
@@ -591,7 +575,7 @@ async function viewLists(host) {
       syncHint('题单是平台自己挑选与编排的内容，不随包分发。28 份官方 / 公司题单'),
       h('p.syncHint', {}, '抓下来之后，这里会列出全部题单，并能按官方知识点分组排计划。'),
       h('div', { style: { marginTop: '10px' } },
-        h('button.btn.btn--primary.btn--sm', { onClick: () => go('learn') }, '先看讲解与代表题 →'))));
+        h('button.btn.btn--primary.btn--sm', { onClick: () => go('topics') }, '先看标签体系与讲解 →'))));
     return;
   }
   host.append(sectionHead('特殊题单', `${lists.length} 份 · 点进去直接生成按知识点递进的计划`));
@@ -1000,7 +984,6 @@ async function toggleCheckin(slug, keepDrawer) {
   cache.lists = null;
   cache.approaches = null;
   cache.routes = null;
-  cache.notes = null;
   await render();
   if (keepDrawer && state.openSlug) renderDrawer(state.openSlug);
 }
@@ -1018,20 +1001,26 @@ const RENDERERS = {
   learn: viewLearn, approaches: viewApproaches, lists: viewLists, plan: viewPlan,
 };
 
-/** 地址栏形如 #learn/monotonic：前一段是视图，后一段是它的参数。 */
+/**
+ * 地址栏形如 #learn/monotonic：前一段是视图，后一段是它的参数。
+ * 不带专题的 `#learn` 是旧的讲解总目录，现在并进了标签体系，直接改写过去。
+ */
 function parseHash() {
   const raw = location.hash.replace('#', '');
   const cut = raw.indexOf('/');
-  return cut < 0
+  const parsed = cut < 0
     ? { view: raw, arg: '' }
     : { view: raw.slice(0, cut), arg: decodeURIComponent(raw.slice(cut + 1)) };
+  return parsed.view === 'learn' && !parsed.arg ? { view: 'topics', arg: '' } : parsed;
 }
 
 async function render() {
   const nav = clear($('#viewNav'));
+  // 讲解详情是标签体系的下一层，导航上仍高亮标签体系
+  const navActive = state.view === 'learn' ? 'topics' : state.view;
   for (const [id, label, icon] of VIEWS) {
     nav.append(h('button.navItem', {
-      'aria-current': String(state.view === id),
+      'aria-current': String(navActive === id),
       onClick: () => go(id),
     }, h('span', {}, icon), h('span', {}, label)));
   }

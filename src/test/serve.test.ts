@@ -40,7 +40,9 @@ interface Brief {
 interface StepRes {
   problem: Brief; stage: string; approaches: string[]; reasons: string[]; section?: string;
 }
-interface SubRes { id: string; name: string; gist: string; total: number; hasNote: boolean }
+interface SubRes {
+  id: string; name: string; gist: string; total: number; hasNote: boolean; kids?: SubRes[];
+}
 interface CatRes extends SubRes { subs: SubRes[] }
 interface NoteRes {
   topic: string; name?: string; idea: string; signals: string[];
@@ -50,7 +52,7 @@ interface NoteRes {
 interface RouteRes { id: string; steps: number; needsSync: boolean }
 interface PlanRes { sections: { steps: StepRes[] }[]; error?: string }
 interface MetaRes {
-  cats: { id: string; subs: unknown[] }[];
+  cats: CatRes[];
   meta: { baseline: boolean; stats: { total: number } };
 }
 
@@ -69,24 +71,23 @@ test("首页与静态资源发得出去", async () => {
   assert.equal((await fetch(`${base}/nope.js`)).status, 404);
 });
 
-test("/api/meta 给出完整的标签体系", async () => {
+// 标签树只有这一个来源：目录和讲解合成了一页，卡片上的一句话就取自这里的 gist
+test("/api/meta 给出完整的标签体系，每个节点都带一句话核心思路", async () => {
   const meta = await get<MetaRes>("/api/meta");
   assert.equal(meta.cats.length, 13);
   assert.equal(meta.cats.reduce((a, c) => a + c.subs.length, 0), 65);
   assert.ok(meta.meta.stats.total > 0);
   assert.equal(typeof meta.meta.baseline, "boolean", "前端要靠它判断是不是随包题库");
-});
-
-test("/api/notes 是讲解总目录：每一类都有一句话核心思路", async () => {
-  const { cats } = await get<{ cats: CatRes[] }>("/api/notes");
-  assert.equal(cats.length, 13);
-  assert.equal(cats.reduce((a, c) => a + c.subs.length, 0), 65);
-  for (const cat of cats) {
+  for (const cat of meta.cats) {
     assert.ok(cat.gist.length >= 12, `${cat.id} 的核心思路太短：${cat.gist}`);
     assert.ok(cat.total > 0, `${cat.id} 没有题`);
     for (const sub of cat.subs) {
       assert.ok(sub.gist.length >= 12, `${sub.id} 的核心思路太短：${sub.gist}`);
       assert.ok(sub.hasNote, `${sub.id} 没有讲解`);
+      for (const kid of sub.kids ?? []) {
+        // 三级标签不一定有自己的讲解卡（模板与坑跟父节点共用），这时回落到 desc
+        assert.ok(kid.gist.length > 0, `${kid.id} 目录里没有一句话可显示`);
+      }
     }
   }
 });

@@ -3,6 +3,7 @@
 import type { Args } from "../args.js";
 import { CliError } from "../errors.js";
 import { out, pct, PROG } from "../out.js";
+import * as notes from "../notes/index.js";
 import * as planner from "../planner.js";
 import * as r from "../render.js";
 import type { Store } from "../store.js";
@@ -90,7 +91,10 @@ export function cmdTopics(store: Store, args: Args): void {
 
   out("", r.heading("标签体系", `${store.cats.length} 个大类 / ${store.subById.size} 个子标签 · `
     + "一题多解会打多个标签，各标签题量之和大于题库总数"));
-  out(r.paint("  每个大类和子标签都有讲解：{PROG} learn <id>（核心思想 / 模板 / 常见坑 / OI-Wiki）", "gray"));
+  for (const line of r.wrap("每行的一句话就是这个标签的核心思路；完整讲解（识别信号 / 模板 / "
+    + `常见坑 / 代表题 / OI-Wiki）看 ${PROG} learn <id>`, Math.max(r.termWidth() - 4, 50))) {
+    out(r.paint(`  ${line}`, "gray"));
+  }
   for (const cat of cats) {
     const members = store.problems.filter((p) => p.cats.includes(cat.id));
     const [cdone, ctotal] = store.progressOf(members);
@@ -98,11 +102,25 @@ export function cmdTopics(store: Store, args: Args): void {
     out("");
     out(`${r.paint("▌", color)}${r.paint(cat.name, "bold")}  `
       + `${r.paint(`${cdone}/${ctotal}`, "gray")}  ${r.paint(cat.id, "gray")}`);
-    out(`  ${r.paint(cat.desc, "gray")}`);
+    for (const line of r.wrap(notes.gist(cat.id, cat.desc), Math.max(r.termWidth() - 6, 50))) {
+      out(`  ${r.paint(line, "gray")}`);
+    }
     if (drill) {
       renderSubBlocks(store, cat, color);
       continue;
     }
+    // 核心思路那一列吃掉剩下的宽度。前面四列的宽度是算出来的，不用拍脑袋预留 ——
+    // 这一列现在是目录里唯一的说明文字，留窄了大半行都会被截掉。
+    const names = cat.subs.flatMap((s) => [
+      r.width(s.name) + 2,
+      ...(s.kids ?? []).map((k) => r.width(k.name) + 6),
+    ]);
+    const ids = cat.subs.flatMap((s) => [
+      r.width(s.id), ...(s.kids ?? []).map((k) => r.width(k.id)),
+    ]);
+    const prefix = Math.max(...names) + Math.max(Math.max(...ids), r.width(`${PROG} learn`))
+      + 8 + 10 + 2 * 4;
+    const ideaWidth = Math.max(20, r.termWidth() - prefix);
     const rows: string[][] = [];
     for (const sub of cat.subs) {
       const subMembers = store.problems.filter((p) => p.tagIds.includes(sub.id));
@@ -112,7 +130,7 @@ export function cmdTopics(store: Store, args: Args): void {
         r.paint(sub.id, "gray"),
         `${sdone}/${stotal}`,
         r.bar(sdone, stotal, 10, color),
-        r.paint(r.trunc(sub.desc, Math.max(20, r.termWidth() - 76)), "gray"),
+        r.paint(r.trunc(notes.gist(sub.id, sub.desc), ideaWidth), "gray"),
       ]);
       // 有再分化的就把下一层也列出来，没有的就到此为止 —— 层级本来就不齐
       for (const kid of sub.kids ?? []) {
@@ -123,11 +141,11 @@ export function cmdTopics(store: Store, args: Args): void {
           r.paint(kid.id, "gray"),
           `${kdone}/${ktotal}`,
           r.bar(kdone, ktotal, 10, "gray"),
-          r.paint(r.trunc(kid.desc, Math.max(20, r.termWidth() - 76)), "gray"),
+          r.paint(r.trunc(notes.gist(kid.id, kid.desc), ideaWidth), "gray"),
         ]);
       }
     }
-    out(r.table(["  子标签", `${PROG} learn`, "进度", "", "说明"], rows,
+    out(r.table(["  子标签", `${PROG} learn`, "进度", "", "核心思路"], rows,
       ["left", "left", "right", "left", "left"]));
   }
   out("");

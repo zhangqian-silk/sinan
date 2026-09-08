@@ -310,17 +310,17 @@ async function viewProblems(host) {
 
   clear(controls).append(
     h('span.filters__label', {}, '大类'),
-    h('select', { onChange: (e) => { f.cat = e.target.value; f.tag = ''; state.limit = 60; render(); } },
+    h('select', { onChange: (e) => { f.cat = e.target.value; f.tag = ''; state.limit = 60; reload(); } },
       h('option', { value: '', selected: !f.cat }, '全部大类'),
       cats.map((c) => opt(c.id, c.name, pick(fc.cats, c.id), f.cat === c.id))),
 
     h('span.filters__label', {}, '子标签'),
-    h('select', { disabled: !cat, onChange: (e) => { f.tag = e.target.value; state.limit = 60; render(); } },
+    h('select', { disabled: !cat, onChange: (e) => { f.tag = e.target.value; state.limit = 60; reload(); } },
       h('option', { value: '', selected: !f.tag }, cat ? '全部子标签' : '先选大类'),
       (cat ? cat.subs : []).map((s) => opt(s.id, s.name, pick(fc.subs, s.id), f.tag === s.id))),
 
     h('span.filters__label', {}, '解法思路'),
-    h('select', { onChange: (e) => { f.approach = e.target.value; state.limit = 60; render(); } },
+    h('select', { onChange: (e) => { f.approach = e.target.value; state.limit = 60; reload(); } },
       h('option', { value: '', selected: !f.approach }, '全部思路'),
       cache.approaches.approaches
         .map((a) => [a, pick(fc.approaches, a.name)])
@@ -328,19 +328,19 @@ async function viewProblems(host) {
         .map(([a, n]) => opt(a.name, a.name, n, f.approach === a.name))),
 
     h('span.filters__label', {}, '题目来源'),
-    h('select', { onChange: (e) => { f.source = e.target.value; state.limit = 60; render(); } },
+    h('select', { onChange: (e) => { f.source = e.target.value; state.limit = 60; reload(); } },
       h('option', { value: '', selected: !f.source }, '全部来源'),
       (cache.meta.meta.sources || []).map((s) =>
         opt(s.id, s.name, pick(fc.sources, s.id), f.source === s.id))),
 
     h('span.filters__label', {}, '题号系列'),
-    h('select', { onChange: (e) => { f.series = e.target.value; state.limit = 60; render(); } },
+    h('select', { onChange: (e) => { f.series = e.target.value; state.limit = 60; reload(); } },
       h('option', { value: '', selected: !f.series }, '全部系列'),
       (cache.meta.meta.series || []).map((s) =>
         opt(s.id, s.name, pick(fc.series, s.id), f.series === s.id))),
 
     h('span.filters__label', {}, '题单'),
-    h('select', { onChange: (e) => { f.in = e.target.value; state.limit = 60; render(); } },
+    h('select', { onChange: (e) => { f.in = e.target.value; state.limit = 60; reload(); } },
       h('option', { value: '', selected: !f.in }, '不限题单'),
       (cache.lists.lists || [])
         .map((l) => [l, pick(fc.lists, l.id)])
@@ -350,25 +350,25 @@ async function viewProblems(host) {
     h('div.filters__group', {}, DIFFS.map(([k, label]) => chip(
       `${label}${fc.diffs ? ` ${pick(fc.diffs, k)}` : ''}`,
       f.diff.has(k),
-      () => { f.diff.has(k) ? f.diff.delete(k) : f.diff.add(k); state.limit = 60; render(); },
+      () => { f.diff.has(k) ? f.diff.delete(k) : f.diff.add(k); state.limit = 60; reload(); },
     ))),
     h('div.filters__group', {},
-      chip('面试高频', f.hot, () => { f.hot = !f.hot; state.limit = 60; render(); }, 'CodeTop 榜内'),
-      chip('未刷', f.todo, () => { f.todo = !f.todo; state.limit = 60; render(); }),
-      chip('我写过', f.mine, () => { f.mine = !f.mine; state.limit = 60; render(); }),
-      chip('含会员题', f.paid, () => { f.paid = !f.paid; state.limit = 60; render(); }),
+      chip('面试高频', f.hot, () => { f.hot = !f.hot; state.limit = 60; reload(); }, 'CodeTop 榜内'),
+      chip('未刷', f.todo, () => { f.todo = !f.todo; state.limit = 60; reload(); }),
+      chip('我写过', f.mine, () => { f.mine = !f.mine; state.limit = 60; reload(); }),
+      chip('含会员题', f.paid, () => { f.paid = !f.paid; state.limit = 60; reload(); }),
       (f.cat || f.tag || f.approach || f.source || f.series || f.in || f.diff.size || f.hot || f.todo || f.mine)
         ? h('button.chip', {
             onClick: () => {
               Object.assign(f, { cat: '', tag: '', approach: '', source: '', series: '', in: '' });
               f.diff = new Set(); f.hot = false; f.todo = false; f.mine = false;
-              state.limit = 60; render();
+              state.limit = 60; reload();
             },
           }, '清空筛选')
         : null,
     ),
     h('span.spacer', { style: { marginLeft: 'auto' } }),
-    h('select', { onChange: (e) => { f.sort = e.target.value; render(); } },
+    h('select', { onChange: (e) => { f.sort = e.target.value; reload(); } },
       SORTS.map(([k, label]) => h('option', { value: k, selected: f.sort === k }, label))),
   );
 
@@ -438,12 +438,13 @@ async function viewTopics(host) {
 // --- 视图：讲解 --------------------------------------------------------------
 
 function openLearn(topic) {
-  // 不带专题的 `#learn` 已经并进标签体系，直接落到那一页
-  if (!topic) { go('topics'); return; }
-  state.learn.topic = topic || null;
-  state.view = 'learn';
-  location.hash = topic ? `learn/${encodeURIComponent(topic)}` : 'learn';
-  render();
+  // 不带专题就是「退出讲解」：并进标签体系那一页，并且回到进来之前停的位置
+  if (!topic) { go('topics', { restore: true }); return; }
+  navigate(() => {
+    state.learn.topic = topic;
+    state.view = 'learn';
+    location.hash = `learn/${encodeURIComponent(topic)}`;
+  });
 }
 
 /** 单条讲解。目录并进了标签体系，这里只负责详情。 */
@@ -682,7 +683,7 @@ async function viewPlan(host) {
   host.append(h('div.mapGrid', {}, cache.routes.routes.map((rt) => h('button.mapCard', {
     style: { '--catColor': (opts.kind === 'route' && opts.route === rt.id) ? 'var(--accent)' : 'var(--border-strong)' },
     dataset: { muted: String(Boolean(rt.needsSync)) },
-    onClick: () => { opts.kind = 'route'; opts.route = rt.id; render(); },
+    onClick: () => { opts.kind = 'route'; opts.route = rt.id; reload(); },
   },
     h('div.mapCard__top', {},
       h('span.mapCard__name', {}, rt.name),
@@ -713,21 +714,21 @@ async function viewPlan(host) {
     h('p', {}, '或者挑一个知识点/题单即时生成：13 个大类 · 65 个子标签 · 28 份题单')));
   host.append(h('div.controls', {},
     h('span.controls__label', {}, '专题'),
-    h('select', { onChange: (e) => { opts.kind = 'topic'; opts.topic = e.target.value; render(); } },
+    h('select', { onChange: (e) => { opts.kind = 'topic'; opts.topic = e.target.value; reload(); } },
       Object.entries(grouped).map(([kind, list]) => h('optgroup', { label: groupLabel[kind] },
         list.map((t) => h('option', { value: t.id, selected: opts.topic === t.id }, t.name))))),
     h('button.chip', {
       dataset: { on: String(opts.kind === 'topic') },
-      onClick: () => { opts.kind = 'topic'; render(); },
+      onClick: () => { opts.kind = 'topic'; reload(); },
     }, '用这个专题'),
     h('span.controls__label', {}, '模式'),
     seg(opts.mode, [['auto', '默认'], ['minimal', '最小覆盖'], ['full', '完整']],
-      (k) => { opts.mode = k; opts.kind = 'topic'; render(); }),
+      (k) => { opts.mode = k; opts.kind = 'topic'; reload(); }),
     h('span.controls__label', {}, '难度节奏'),
     seg(opts.pace, [['depth', '重攻坚'], ['balanced', '均衡'], ['coverage', '重覆盖']],
-      (k) => { opts.pace = k; opts.kind = 'topic'; render(); }),
-    h('button.chip', { dataset: { on: String(opts.all) }, onClick: () => { opts.all = !opts.all; opts.kind = 'topic'; render(); } }, '用全部题池'),
-    h('button.chip', { dataset: { on: String(opts.paid) }, onClick: () => { opts.paid = !opts.paid; render(); } }, '含会员题'),
+      (k) => { opts.pace = k; opts.kind = 'topic'; reload(); }),
+    h('button.chip', { dataset: { on: String(opts.all) }, onClick: () => { opts.all = !opts.all; opts.kind = 'topic'; reload(); } }, '用全部题池'),
+    h('button.chip', { dataset: { on: String(opts.paid) }, onClick: () => { opts.paid = !opts.paid; reload(); } }, '含会员题'),
   ));
 
   const body = h('div', {}, h('div.empty', {}, '正在生成计划…'));
@@ -988,12 +989,45 @@ async function toggleCheckin(slug, keepDrawer) {
   if (keepDrawer && state.openSlug) renderDrawer(state.openSlug);
 }
 
-function go(view) {
-  state.view = view;
-  state.limit = 60;
-  if (view === 'learn') state.learn.topic = null;
-  location.hash = view;
-  render();
+// --- 滚动定位 ----------------------------------------------------------------
+//
+// 滚动条挂在 .view 这个容器上，不是 window。换视图时只换内容、不动滚动条，于是从列表
+// 深处点进讲解会落在讲解页的中段，退回来又变成讲解页留下的那个位置。所以按「视图 + 参数」
+// 记一份位置：没去过的地方从顶部开始，回到来过的地方就放回原处。
+
+const scrollMemo = new Map();
+
+function locKey() {
+  return state.view === 'learn' && state.learn.topic ? `learn/${state.learn.topic}` : state.view;
+}
+
+/**
+ * 换地方：记住旧位置 → 改状态 → 渲染 → 落到新位置。
+ *
+ * 跟浏览器一个语义 —— 往前走（点导航、点卡片进讲解）一律从顶部开始，往回走
+ * （「← 标签体系」、浏览器后退）才把上次的位置放回去。前进式跳转多半还顺带改了筛选
+ * 条件，结果集本来就不是原来那份，停在半路上没有意义。
+ */
+function navigate(mutate, { restore = false } = {}) {
+  const v = $('#view');
+  if (v) scrollMemo.set(locKey(), v.scrollTop);
+  mutate();
+  // mutate 之后 locKey 已经是新地方了，得等渲染完再查它的记录
+  return render({ scroll: () => (restore ? scrollMemo.get(locKey()) ?? 0 : 0) });
+}
+
+/** 原地重渲染，但结果集换了（改筛选、改排序、改计划参数）—— 回到顶部。 */
+function reload() {
+  return render({ scroll: 0 });
+}
+
+function go(view, opts) {
+  return navigate(() => {
+    state.view = view;
+    state.limit = 60;
+    if (view === 'learn') state.learn.topic = null;
+    location.hash = view;
+  }, opts);
 }
 
 const RENDERERS = {
@@ -1014,7 +1048,15 @@ function parseHash() {
   return parsed.view === 'learn' && !parsed.arg ? { view: 'topics', arg: '' } : parsed;
 }
 
-async function render() {
+/**
+ * 重新渲染当前视图。
+ *
+ * 清空 #view 会让容器高度塌掉、滚动条被浏览器夹到 0，所以每次渲染都得自己把位置放回去。
+ * 默认留在原处 —— 打卡、「再加载 60 题」这类原地更新不该把人甩回列表顶部；
+ * 换视图或换筛选条件时由调用方用 scroll 指定落点（数字，或渲染完再算的函数）。
+ */
+async function render(opts = {}) {
+  const before = $('#view')?.scrollTop ?? 0;
   const nav = clear($('#viewNav'));
   // 讲解详情是标签体系的下一层，导航上仍高亮标签体系
   const navActive = state.view === 'learn' ? 'topics' : state.view;
@@ -1061,6 +1103,12 @@ async function render() {
   } catch (e) {
     view.append(h('div.empty', {}, `出错了：${e.message}`));
   }
+
+  const want = typeof opts.scroll === 'function' ? opts.scroll() : opts.scroll;
+  const top = want === undefined ? before : want;
+  // 必须瞬时：动画会和刚落地的新布局打架，落点漂几十像素
+  view.scrollTo({ top, behavior: 'instant' });
+  scrollMemo.set(locKey(), top);
 }
 
 function wire() {
@@ -1088,10 +1136,15 @@ function wire() {
     const { view, arg } = parseHash();
     if (!RENDERERS[view]) return;
     const topic = view === 'learn' ? (arg || null) : state.learn.topic;
-    if (view === state.view && topic === state.learn.topic) return;
-    state.view = view;
-    if (view === 'learn') state.learn.topic = arg || null;
-    render();
+    if (view === state.view && topic === state.learn.topic) {
+      // parseHash 把旧的 `#learn` 归一成了 topics，地址栏也跟着改过来
+      if (!location.hash.startsWith(`#${view}`)) location.hash = view;
+      return;
+    }
+    navigate(() => {
+      state.view = view;
+      if (view === 'learn') state.learn.topic = arg || null;
+    }, { restore: true }); // 浏览器前进后退，按历史里的位置还原
   });
 }
 

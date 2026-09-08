@@ -427,7 +427,9 @@ async function viewTopics(host) {
         h('span.topicCat__bar'),
         h('span', {}, h('div.topicCat__title', {}, c.name),
           h('div.topicCat__desc', {}, c.gist || c.desc)),
-        h('span.topicCat__meta', {}, `${c.done}/${c.total} 题`, h('br'), `${c.subs.length} 个标签`),
+        h('span.topicCat__meta', {},
+          h('span', {}, `${c.done}/${c.total} 题`),
+          h('span', {}, `${c.subs.length} 个标签`)),
         h('button.btn.btn--sm', {
           onClick: (e) => { e.stopPropagation(); openLearn(c.id); },
         }, '这一类怎么想 →')),
@@ -1060,11 +1062,18 @@ async function render(opts = {}) {
   const nav = clear($('#viewNav'));
   // 讲解详情是标签体系的下一层，导航上仍高亮标签体系
   const navActive = state.view === 'learn' ? 'topics' : state.view;
+  let activeItem = null;
   for (const [id, label, icon] of VIEWS) {
-    nav.append(h('button.navItem', {
+    const item = h('button.navItem', {
       'aria-current': String(navActive === id),
       onClick: () => go(id),
-    }, h('span', {}, icon), h('span', {}, label)));
+    }, h('span', {}, icon), h('span', {}, label));
+    if (navActive === id) activeItem = item;
+    nav.append(item);
+  }
+  // 窄屏上导航条是横向滚动的，选中项可能在屏幕外，得把它拉进来
+  if (activeItem) {
+    requestAnimationFrame(() => activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
   }
 
   const scale = clear($('#scale'));

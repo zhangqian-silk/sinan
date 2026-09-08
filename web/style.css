@@ -387,7 +387,10 @@ select, .selectish {
 .topicCat__bar { height: 30px; border-radius: 2px; background: var(--catColor); }
 .topicCat__title { font-weight: 600; }
 .topicCat__desc { color: var(--muted); font-size: 12px; }
-.topicCat__meta { font-family: var(--mono); font-size: 11.5px; color: var(--faint); text-align: right; }
+.topicCat__meta {
+  display: flex; flex-direction: column; align-items: flex-end;
+  font-family: var(--mono); font-size: 11.5px; color: var(--faint);
+}
 .topicSubs { display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 10px; padding: 0 14px 14px; }
 .subCard { padding: 11px 13px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); }
 .subCard__top { display: flex; align-items: baseline; gap: 8px; }
@@ -515,13 +518,45 @@ select, .selectish {
 /* --- 窄屏 ----------------------------------------------------------------- */
 @media (max-width: 860px) {
   .shell { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
-  .rail { flex-direction: row; align-items: center; gap: 12px; overflow-x: auto; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--border); }
-  .rail__scale, .rail__foot { display: none; }
-  .rail__brand { padding: 0; }
-  .rail__views { flex-direction: row; padding: 0; }
+  /*
+   * 侧栏横过来当导航条。这里每一项都必须 flex-shrink: 0 + nowrap ——
+   * 否则 flex 会把它们压到内容宽度以下，中文逐字换行，「刷题训练台」变成三行竖排，
+   * 一条 44px 的导航条能撑到 122px。宽度不够就横向滚，别去挤。
+   */
+  .rail {
+    flex-direction: row; align-items: center; gap: 10px; overflow-x: auto;
+    padding: 7px 12px; border-right: 0; border-bottom: 1px solid var(--border);
+  }
+  .rail::-webkit-scrollbar { height: 0; }
+  .rail__scale, .rail__foot, .rail__name { display: none; }
+  .rail__brand { padding: 0; flex: 0 0 auto; }
+  .rail__views { flex-direction: row; padding: 0; flex: 0 0 auto; gap: 2px; }
+  .navItem { width: auto; flex: 0 0 auto; white-space: nowrap; padding: 6px 9px; }
   .navItem em { display: none; }
-  .topbar { flex-wrap: wrap; }
+
+  .topbar { padding: 8px 12px; gap: 10px; }
+  .search { max-width: none; }
   .view { padding: 14px; }
+
+  /* 标题和说明是两件事：标题占一行不折行，说明另起一行铺满 */
+  .sectionHead { flex-wrap: wrap; gap: 4px 10px; }
+  .sectionHead h2 { flex: 0 0 auto; }
+  .sectionHead p { flex: 1 1 100%; }
+
+  /* 大类头：窄屏放不下四列，题量与「怎么想」挪到下一行 */
+  .topicCat__head { grid-template-columns: 3px 1fr; gap: 10px; padding: 11px 13px; }
+  /* 窄屏摊成一行，省一行高度 */
+  .topicCat__meta { grid-column: 2; flex-direction: row; gap: 10px; align-items: baseline; }
+  .topicCat__head > .btn { grid-column: 2; justify-self: start; }
+
+  /* 没有物理键盘，「/ 聚焦」的提示只是在占地方 */
+  .search__kbd { display: none; }
+  .search input { padding-right: 12px; }
+}
+
+/* 搜索框和统计数字并排放不下就把统计收起来 —— 同样的数字总览页里有 */
+@media (max-width: 640px) {
+  .topbar__stats { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

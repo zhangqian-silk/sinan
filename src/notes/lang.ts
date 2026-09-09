@@ -90,9 +90,9 @@ MOD = 10 ** 9 + 7   # 常用模数；整数无上限，不会溢出`,
           title: "常用数学",
           code: `import math
 math.gcd(12, 18)    # 6
-math.isqrt(10)      # 3   整数平方根，不会有浮点误差
+math.isqrt(10)      # 3   整数平方根，不会有浮点误差（3.8+）
 math.inf            # 正无穷，初始化最值用
-math.comb(5, 2)     # 组合数 C(5,2)=10`,
+math.comb(5, 2)     # 组合数 C(5,2)=10（3.8+）`,
         },
       ],
     },
@@ -283,9 +283,9 @@ bisect.insort(a, x)         # 插入并保持有序`,
         },
         {
           title: "记忆化 / 迭代器工具",
-          code: `from functools import lru_cache, cache
+          code: `from functools import lru_cache
 
-@cache                      # 自顶向下 DP,一行加缓存
+@lru_cache(maxsize=None)    # 自顶向下 DP,一行加缓存（3.9+ 可简写 @cache）
 def dfs(i, j):
     ...
 

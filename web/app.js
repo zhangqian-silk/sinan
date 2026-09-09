@@ -80,6 +80,7 @@ const VIEWS = [
   ['approaches', '题解思路', '✳'],
   ['lists', '特殊题单', '★'],
   ['plan', '学习计划', '✦'],
+  ['lang', '语言基础', 'λ'],
 ];
 
 const state = {
@@ -91,7 +92,7 @@ const state = {
   learn: { topic: null },
   openSlug: null,
 };
-const cache = { meta: null, topics: null, approaches: null, lists: null, routes: null };
+const cache = { meta: null, topics: null, approaches: null, lists: null, routes: null, lang: null };
 
 // --- 公共零件 ----------------------------------------------------------------
 
@@ -568,6 +569,40 @@ async function viewApproaches(host) {
   }
 }
 
+// --- 视图：语言基础 ----------------------------------------------------------
+//
+// 一份速查表,不挂题、不进计划。所有小节堆在一页,顶部一排锚点 chip 快速跳。
+
+async function viewLang(host) {
+  const data = cache.lang || (cache.lang = await api('/api/lang'));
+  const guide = data.guide;
+  if (!guide) { host.append(h('div.empty', {}, '暂无内容')); return; }
+
+  host.append(sectionHead(`语言基础 · ${guide.name}`,
+    `${guide.sections.length} 节 · 写算法题够用的最小代码示例`));
+  host.append(h('p.langTagline', {}, guide.tagline));
+
+  // 锚点跳转:点一下把对应小节滚进视野(容器是 .view,不是 window)
+  host.append(h('div.langJump', {}, guide.sections.map((s) =>
+    h('button.chip', {
+      onClick: () => {
+        const el = document.getElementById(`lang-${s.id}`);
+        if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      },
+    }, s.name))));
+
+  for (const sec of guide.sections) {
+    host.append(h('section.card.langSec', { id: `lang-${sec.id}` },
+      h('div.langSec__head', {},
+        h('h3', {}, sec.name),
+        h('span.langSec__id', {}, sec.id),
+        h('p', {}, sec.blurb)),
+      h('div.langSec__snips', {}, sec.snippets.map((sn) => h('div.langSnip', {},
+        h('div.langSnip__title', {}, sn.title),
+        h('pre.noteCode', {}, h('code', {}, sn.code)))))));
+  }
+}
+
 // --- 视图：题单 --------------------------------------------------------------
 
 async function viewLists(host) {
@@ -1035,6 +1070,7 @@ function go(view, opts) {
 const RENDERERS = {
   overview: viewOverview, problems: viewProblems, topics: viewTopics,
   learn: viewLearn, approaches: viewApproaches, lists: viewLists, plan: viewPlan,
+  lang: viewLang,
 };
 
 /**

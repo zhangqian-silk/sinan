@@ -117,6 +117,41 @@ test("大类的代表题会让每个子标签轮流露面", async () => {
   assert.ok(sections.size >= 2, `代表题全挤在 ${[...sections].join("/")} 一个知识点上`);
 });
 
+test("/api/lang 是语言基础速查:小节里每段代码都非空", async () => {
+  const data = await get<{
+    guides: { id: string; name: string }[];
+    guide: {
+      id: string; name: string; tagline: string;
+      sections: { id: string; name: string; blurb: string;
+        snippets: { title: string; code: string }[] }[];
+    };
+  }>("/api/lang");
+  assert.ok(data.guides.length >= 1, "一门语言都没有");
+  assert.equal(data.guide.id, "python", "默认应给 Python");
+  assert.ok(data.guide.tagline.length > 10);
+  assert.ok(data.guide.sections.length >= 6, "小节太少");
+  // 用户点名要的四类都在
+  const ids = new Set(data.guide.sections.map((s) => s.id));
+  for (const need of ["arithmetic", "variables", "control", "containers"]) {
+    assert.ok(ids.has(need), `缺少小节 ${need}`);
+  }
+  for (const sec of data.guide.sections) {
+    assert.ok(sec.name && sec.blurb, `${sec.id} 缺标题或说明`);
+    assert.ok(sec.snippets.length > 0, `${sec.id} 一段代码都没有`);
+    for (const sn of sec.snippets) {
+      assert.ok(sn.title, `${sec.id} 有段代码没标题`);
+      assert.ok(sn.code.trim().length > 0, `${sec.id}/${sn.title} 代码是空的`);
+    }
+  }
+});
+
+test("/api/lang?id=python 指名取到那门语言", async () => {
+  const data = await get<{ guide: { id: string } | null }>("/api/lang?id=python");
+  assert.equal(data.guide?.id, "python");
+  const miss = await get<{ guide: { id: string } | null }>("/api/lang?id=nope");
+  assert.equal(miss.guide, null, "不存在的语言应返回 null 而不是兜底");
+});
+
 test("网页和终端的代表题是同一批", async () => {
   for (const id of ["monotonic", "tree", "dp-knapsack"]) {
     const note = await get<NoteRes>(`/api/note?topic=${id}`);

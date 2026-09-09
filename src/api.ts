@@ -7,6 +7,7 @@
  */
 
 import * as notes from "./notes/index.js";
+import { GUIDES, langGuide } from "./notes/lang.js";
 import * as planner from "./planner.js";
 import { DIFF_CN, type Store } from "./store.js";
 import type { Problem } from "./types.js";
@@ -317,6 +318,19 @@ function apiRoutes(st: Store): unknown {
   return { routes: out };
 }
 
+/**
+ * 语言基础速查。跟 store 无关（纯静态内容），但仍走同一套 API 表，
+ * 这样静态站和本地服务端一份代码,不用给它单开一条取数路径。
+ */
+function apiLang(_st: Store, q: Query): unknown {
+  const id = q["id"]?.[0];
+  const guide = langGuide(id);
+  return {
+    guides: GUIDES.map((g) => ({ id: g.id, name: g.name })),
+    guide,
+  };
+}
+
 export const API: Record<string, (st: Store, q: Query) => unknown> = {
   "/api/meta": (st) => apiMeta(st),
   "/api/problems": apiProblems,
@@ -328,4 +342,5 @@ export const API: Record<string, (st: Store, q: Query) => unknown> = {
   "/api/note": apiNote,
   "/api/next": apiNext,
   "/api/routes": (st) => apiRoutes(st),
+  "/api/lang": apiLang,
 };

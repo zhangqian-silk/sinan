@@ -336,6 +336,19 @@ select, .selectish {
 .apStrip { display: flex; gap: 8px; align-items: center; min-width: 0; overflow: hidden; }
 .apGuess { color: var(--faint); font-family: var(--mono); font-size: 10.5px; }
 
+/* --- 语言基础速查 ----------------------------------------------------------- */
+.langTagline { margin: -6px 0 14px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.langJump { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+.langJump .chip { cursor: pointer; }
+.langSec { padding: 16px 18px; margin-bottom: 14px; scroll-margin-top: 8px; }
+.langSec__head { margin-bottom: 12px; }
+.langSec__head h3 { display: inline; margin: 0; font-size: 15px; }
+.langSec__id { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.langSec__head p { margin: 5px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+.langSec__snips { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.langSnip__title { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+@media (max-width: 860px) { .langSec__snips { grid-template-columns: 1fr; } }
+
 /* --- 控件条 ----------------------------------------------------------------- */
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
 .controls__label { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.07em; }

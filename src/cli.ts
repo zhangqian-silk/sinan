@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 
 import { parse, renderHelp, type Args, type CommandSpec, type OptSpec } from "./args.js";
 import { cmdDone, cmdLearn, cmdNext, cmdPlan, cmdRoutes } from "./commands/plan.js";
+import { cmdLang } from "./commands/lang.js";
 import {
   cmdApproaches, cmdHome, cmdLists, cmdStats, cmdTopics,
 } from "./commands/overview.js";
@@ -129,6 +130,14 @@ const COMMANDS: Entry[] = [
     }],
     opts: [{ flag: "--n", short: "-n", dest: "n", type: "int", default: 6, help: "代表题给几道" }],
     run: cmdLearn,
+  },
+
+  {
+    name: "lang",
+    help: "语言基础速查:写算法题够用的最小代码示例(算术 / 声明 / 流程控制 / 容器…)",
+    pos: [{ dest: "section", nargs: "?", help: "小节 id,如 arithmetic、containers、stdlib;不给就列全部" }],
+    opts: [{ flag: "--guide", type: "string", help: "语言(默认 python)" }],
+    standalone: cmdLang,
   },
 
   {

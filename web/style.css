@@ -337,6 +337,12 @@ select, .selectish {
 .apGuess { color: var(--faint); font-family: var(--mono); font-size: 10.5px; }
 
 /* --- 语言基础速查 ----------------------------------------------------------- */
+.langTabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.langTab { padding: 5px 14px; border-radius: var(--r-md); border: 1px solid var(--border-strong);
+  background: var(--surface-2); color: var(--muted); cursor: pointer; font-size: 12.5px; }
+.langTab:hover { color: var(--text); border-color: var(--accent); }
+.langTab[data-on="true"] { background: var(--accent-soft); color: var(--accent);
+  border-color: var(--accent); font-weight: 600; }
 .langTagline { margin: -6px 0 14px; color: var(--muted); font-size: 13px; line-height: 1.7; }
 .langJump { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
 .langJump .chip { cursor: pointer; }

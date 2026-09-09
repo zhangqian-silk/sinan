@@ -90,9 +90,10 @@ const state = {
   limit: 60,
   plan: { kind: 'route', route: 'starter', topic: 'lc:top-100-liked', mode: 'auto', pace: 'depth', all: false, paid: false },
   learn: { topic: null },
+  lang: { guide: null },
   openSlug: null,
 };
-const cache = { meta: null, topics: null, approaches: null, lists: null, routes: null, lang: null };
+const cache = { meta: null, topics: null, approaches: null, lists: null, routes: null, lang: {} };
 
 // --- 公共零件 ----------------------------------------------------------------
 
@@ -573,13 +574,33 @@ async function viewApproaches(host) {
 //
 // 一份速查表,不挂题、不进计划。所有小节堆在一页,顶部一排锚点 chip 快速跳。
 
-async function viewLang(host) {
-  const data = cache.lang || (cache.lang = await api('/api/lang'));
-  const guide = data.guide;
-  if (!guide) { host.append(h('div.empty', {}, '暂无内容')); return; }
+// 切语言:走 navigate,统一交给滚动定位(回顶部)
+function selectLang(id) {
+  navigate(() => {
+    state.lang.guide = id || null;
+    state.view = 'lang';
+    location.hash = id ? `lang/${encodeURIComponent(id)}` : 'lang';
+  });
+}
 
-  host.append(sectionHead(`语言基础 · ${guide.name}`,
+async function viewLang(host) {
+  const key = state.lang.guide || '';
+  const data = cache.lang[key] || (cache.lang[key] =
+    await api('/api/lang', state.lang.guide ? { id: state.lang.guide } : {}));
+  const guide = data.guide;
+  if (!guide) { host.append(h('div.empty', {}, '暂无这门语言')); return; }
+
+  host.append(sectionHead('语言基础',
     `${guide.sections.length} 节 · 写算法题够用的最小代码示例`));
+
+  // 多语言时给一排切换 tab
+  if ((data.guides || []).length > 1) {
+    host.append(h('div.langTabs', {}, data.guides.map((g) =>
+      h('button.langTab', {
+        dataset: { on: String(g.id === guide.id) },
+        onClick: () => selectLang(g.id),
+      }, g.name))));
+  }
   host.append(h('p.langTagline', {}, guide.tagline));
 
   // 锚点跳转:点一下把对应小节滚进视野(容器是 .view,不是 window)
@@ -1035,7 +1056,9 @@ async function toggleCheckin(slug, keepDrawer) {
 const scrollMemo = new Map();
 
 function locKey() {
-  return state.view === 'learn' && state.learn.topic ? `learn/${state.learn.topic}` : state.view;
+  if (state.view === 'learn' && state.learn.topic) return `learn/${state.learn.topic}`;
+  if (state.view === 'lang' && state.lang.guide) return `lang/${state.lang.guide}`;
+  return state.view;
 }
 
 /**
@@ -1063,6 +1086,7 @@ function go(view, opts) {
     state.view = view;
     state.limit = 60;
     if (view === 'learn') state.learn.topic = null;
+    if (view === 'lang') state.lang.guide = null;   // 从导航进,回到默认语言
     location.hash = view;
   }, opts);
 }
@@ -1180,8 +1204,12 @@ function wire() {
   window.addEventListener('hashchange', () => {
     const { view, arg } = parseHash();
     if (!RENDERERS[view]) return;
-    const topic = view === 'learn' ? (arg || null) : state.learn.topic;
-    if (view === state.view && topic === state.learn.topic) {
+    // 讲解和语言都把第二段当参数(topic / guide),其余视图没有参数
+    const nextTopic = view === 'learn' ? (arg || null) : state.learn.topic;
+    const nextGuide = view === 'lang' ? (arg || null) : state.lang.guide;
+    const samePlace = view === state.view
+      && nextTopic === state.learn.topic && nextGuide === state.lang.guide;
+    if (samePlace) {
       // parseHash 把旧的 `#learn` 归一成了 topics，地址栏也跟着改过来
       if (!location.hash.startsWith(`#${view}`)) location.hash = view;
       return;
@@ -1189,6 +1217,7 @@ function wire() {
     navigate(() => {
       state.view = view;
       if (view === 'learn') state.learn.topic = arg || null;
+      if (view === 'lang') state.lang.guide = arg || null;
     }, { restore: true }); // 浏览器前进后退，按历史里的位置还原
   });
 }
@@ -1211,6 +1240,7 @@ function wire() {
   if (RENDERERS[hashView]) {
     state.view = hashView;
     if (hashView === 'learn' && hashArg) state.learn.topic = hashArg;
+    if (hashView === 'lang' && hashArg) state.lang.guide = hashArg;
   }
   state.plan.pace = cache.meta.defaultPace || 'depth';
 

@@ -326,7 +326,354 @@ sys.setrecursionlimit(10 ** 6)   # 深递归先抬上限,否则 RecursionError`,
   ],
 };
 
-export const GUIDES: LangGuide[] = [PYTHON];
+const GO: LangGuide = {
+  id: "go",
+  name: "Go",
+  tagline: "静态类型、编译快、常数小,卡常题稳;代价是啰嗦 —— 堆要自己实现接口,集合得用 map 模拟。",
+  sections: [
+    {
+      id: "io",
+      name: "读入与输出",
+      blurb: "力扣是补全函数、不用读入;ACM / 洛谷要自己读。用带缓冲的读写,别用裸 fmt.Scan。",
+      snippets: [
+        {
+          title: "标准输入骨架",
+          code: `package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	in := bufio.NewReader(os.Stdin)
+	out := bufio.NewWriter(os.Stdout)
+	defer out.Flush()          // 忘了 flush 就没有输出
+
+	var n int
+	fmt.Fscan(in, &n)          // 读一个整数,空白和换行都算分隔
+	a := make([]int, n)
+	for i := range a {
+		fmt.Fscan(in, &a[i])   // 循环读一整行 / 一个矩阵
+	}
+	fmt.Fprintln(out, n)       // 走缓冲输出,比 fmt.Println 快得多
+}`,
+        },
+        {
+          title: "输出",
+          code: `fmt.Fprintln(out, ans)        // 一个值 + 换行
+fmt.Fprintln(out, x, y)       // 多个值用空格隔开
+
+// 输出整段数组:用 Builder 拼,别在循环里一个个 Fprint(慢)
+sb := &strings.Builder{}
+for i, x := range a {
+	if i > 0 {
+		sb.WriteByte(' ')
+	}
+	sb.WriteString(strconv.Itoa(x))
+}
+fmt.Fprintln(out, sb.String())`,
+        },
+      ],
+    },
+    {
+      id: "arithmetic",
+      name: "算术与数值",
+      blurb: "整除朝零截断(和 Python 相反)、取余符号跟被除数、int 是 64 位、溢出与 gcd 要自己管。",
+      snippets: [
+        {
+          title: "四则与整除取余",
+          code: `7 / 2        // 3    整数除法直接截断
+-7 / 2       // -3   朝零截断(Python 是向下取整 -4)
+7 % 2        // 1
+-7 % 2       // -1   余数符号跟着被除数走
+q, r := 7/2, 7%2    // 商和余数
+1 << 20             // 位移拿 2 的幂`,
+        },
+        {
+          title: "幂、绝对值、最值",
+          code: `import "math"
+math.Pow(2, 10)     // 1024,但返回 float64 有精度损失
+math.Abs(-3.0)      // 3,只吃 float64
+min(a, b); max(a, b)    // 内置,Go 1.21+;更早得自己写
+
+func abs(x int) int { if x < 0 { return -x }; return x }   // 整数 abs 自己写
+const MOD = 1_000_000_007   // int 在 64 位平台是 64 位,1e9 级不溢出`,
+        },
+        {
+          title: "常用数学",
+          code: `import "math"
+math.MaxInt, math.MinInt    // int 上下界(1.17+),初始化最值用
+math.MaxInt64
+math.Inf(1)                 // 正无穷(float64)
+math.Sqrt(10)               // float64
+
+func gcd(a, b int) int { for b != 0 { a, b = b, a%b }; return a }   // 标准库没有整数 gcd`,
+        },
+      ],
+    },
+    {
+      id: "variables",
+      name: "变量与对象声明",
+      blurb: "var 与 :=、零值、批量声明、常量、指针,以及结构体的定义。",
+      snippets: [
+        {
+          title: "声明、交换、零值",
+          code: `var x int          // 零值:int 0、string ""、bool false、slice/map/指针 nil
+y := 42            // 短声明,自动推类型
+a, b := 1, 2
+a, b = b, a        // 交换,不需要临时变量
+var (              // 批量声明
+	n, m int
+	s    string
+)
+const K = 100
+p := &x            // 取地址;*p 解引用`,
+        },
+        {
+          title: "类型转换",
+          code: `n, _ := strconv.Atoi("42")   // string -> int(返回值 + error)
+strconv.Itoa(42)             // int -> string
+float64(n); int(f)           // 数值互转必须显式,不会隐式提升
+strconv.ParseInt("1010", 2, 64)   // 二进制字符串转十进制
+int(c - '0')                 // 数字字符转数值
+string(rune(97))             // "a";别写 string(97)(vet 会警告)`,
+        },
+        {
+          title: "结构体",
+          code: `type Item struct {
+	Cost int
+	Name string
+}
+it := Item{Cost: 5, Name: "x"}
+it2 := Item{5, "x"}          // 按字段顺序
+// 排序 / 进堆见「容器」「标准库」:sort.Slice + 自定义 Less`,
+        },
+      ],
+    },
+    {
+      id: "control",
+      name: "流程控制",
+      blurb: "if(可带初始化)、只有 for 一种循环、switch 不穿透、带标签的 break。",
+      snippets: [
+        {
+          title: "分支",
+          code: `if x > 0 {
+	sign = 1
+} else if x == 0 {
+	sign = 0
+} else {
+	sign = -1
+}
+
+if v, ok := m[k]; ok {   // if 里带初始化,作用域只在这个 if
+	use(v)
+}
+// Go 没有三元表达式,老实写 if`,
+        },
+        {
+          title: "for 的几种形态",
+          code: `for i := 0; i < n; i++ { }        // 经典
+for i := n - 1; i >= 0; i-- { }   // 倒序
+for cond { }                      // 相当于 while
+for { }                           // 死循环,配 break
+
+for i, x := range a { }           // 下标 + 值
+for _, x := range a { }           // 只要值
+for k, v := range m { }           // map:顺序随机!
+for i, c := range s { }           // 字符串:i 是字节位,c 是 rune`,
+        },
+        {
+          title: "switch 与标签",
+          code: `switch x {
+case 1, 2:          // 逗号并列多个值
+	...
+default:
+	...
+}
+switch {            // 不带表达式 = if-else 链
+case x > 0:
+	...
+}
+// case 默认不穿透,要穿透用 fallthrough
+
+outer:
+for ... {
+	for ... {
+		break outer   // 一次跳出外层循环
+	}
+}`,
+        },
+      ],
+    },
+    {
+      id: "strings",
+      name: "字符串",
+      blurb: "字符串是只读字节序列:索引拿到 byte、遍历拿到 rune,改动要转 []byte / []rune。",
+      snippets: [
+        {
+          title: "索引与切片",
+          code: `s := "abcde"
+s[0]          // 97,是 byte 不是字符
+len(s)        // 字节数(不是字符数)
+s[1:3]        // "bc",子串是 O(1) 视图,不复制
+
+r := []rune(s)          // 要按字符处理 / 含中文时转 rune
+for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {
+	r[i], r[j] = r[j], r[i]     // 反转
+}
+string(r)`,
+        },
+        {
+          title: "strings / 拼接",
+          code: `import "strings"
+strings.Split(s, ",")       // 切成 []string
+strings.Fields(s)           // 按空白切
+strings.Join(parts, "")     // 拼接
+strings.ToLower(s); strings.TrimSpace(s)
+strings.Count(s, "a"); strings.Index(s, "b"); strings.Contains(s, "ab")
+
+var sb strings.Builder      // 拼大字符串用它,别用 +=(每次都复制,O(n^2))
+sb.WriteByte('x'); sb.WriteString("yz")
+sb.String()`,
+        },
+        {
+          title: "字符与数字",
+          code: `c := s[i]                   // byte
+idx := int(c - 'a')         // 小写字母映射到 0..25
+c >= '0' && c <= '9'        // 判数字
+int(c - '0')                // 数字字符转数值
+string(rune(97))            // "a"
+fmt.Sprintf("%d+%d=%d", x, y, x+y)   // 格式化成字符串`,
+        },
+      ],
+    },
+    {
+      id: "containers",
+      name: "容器操作",
+      blurb: "slice / map / 结构体,以及用 map 模拟 set;二维 slice 必须逐行 make。",
+      snippets: [
+        {
+          title: "slice —— 动态数组 / 栈",
+          code: `a := make([]int, n)         // 长度 n,全 0
+a := make([]int, 0, n)      // 长度 0,预留容量 n(已知规模时更快)
+a = append(a, x)            // 追加,可能触发扩容
+a = a[:len(a)-1]            // 弹尾,当栈用
+a[len(a)-1]                 // 栈顶
+
+g := make([][]int, n)       // 二维:先建外层
+for i := range g {
+	g[i] = make([]int, m)   // 再逐行建,不能一步到位
+}`,
+        },
+        {
+          title: "map —— 哈希表",
+          code: `m := map[string]int{}
+m[k]++                      // 计数:不存在按零值 0 起算
+v, ok := m[k]              // 判存在用两返回值
+delete(m, k)
+for k, v := range m { }     // 遍历,顺序随机`,
+        },
+        {
+          title: "set(用 map 模拟)",
+          code: `set := map[int]struct{}{}   // struct{} 不占空间
+set[x] = struct{}{}         // 加入
+_, ok := set[x]             // 判存在
+delete(set, x)
+// 图省事也可以用 map[int]bool,写起来更短`,
+        },
+        {
+          title: "排序",
+          code: `import "sort"
+sort.Ints(a)                // 升序
+sort.Sort(sort.Reverse(sort.IntSlice(a)))   // 降序
+sort.Slice(a, func(i, j int) bool { return a[i] < a[j] })
+sort.Slice(items, func(i, j int) bool {     // 多关键字
+	if items[i].x != items[j].x {
+		return items[i].x < items[j].x
+	}
+	return items[i].y > items[j].y
+})`,
+        },
+      ],
+    },
+    {
+      id: "stdlib",
+      name: "常用标准库",
+      blurb: "二分查、堆、字符串数字互转;堆要自己实现接口,是 Go 写题最啰嗦的一块。",
+      snippets: [
+        {
+          title: "二分查找",
+          code: `import "sort"
+sort.SearchInts(a, x)       // 第一个 >= x 的下标,没有则返回 len(a)
+sort.Search(n, func(i int) bool { return a[i] >= x })   // 通用二分
+// 二分答案:在 [lo, hi) 上找第一个满足 check 的
+sort.Search(hi-lo, func(i int) bool { return check(lo + i) }) + lo`,
+        },
+        {
+          title: "堆(container/heap)",
+          code: `import "container/heap"
+// Go 的堆要自己定义类型实现 heap.Interface:
+type Hp []int
+func (h Hp) Len() int            { return len(h) }
+func (h Hp) Less(i, j int) bool  { return h[i] < h[j] }   // 小顶堆
+func (h Hp) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
+func (h *Hp) Push(x any)         { *h = append(*h, x.(int)) }
+func (h *Hp) Pop() any           { o := *h; n := len(o); x := o[n-1]; *h = o[:n-1]; return x }
+
+h := &Hp{}
+heap.Init(h)
+heap.Push(h, 3)     // 入堆
+top := heap.Pop(h)  // 弹最小;any 即 interface{}(1.18+)`,
+        },
+        {
+          title: "slices / maps 包(1.21+)",
+          code: `import "slices"
+slices.Sort(a)              // 比 sort.Ints 更省事
+slices.Max(a); slices.Min(a)
+slices.Contains(a, x)
+slices.Reverse(a)
+slices.Index(a, x)         // 找不到返回 -1
+// 老版本(< 1.21)没有这个包,回退用 sort + 手写`,
+        },
+      ],
+    },
+    {
+      id: "pitfalls",
+      name: "易错点",
+      blurb: "Go 写算法题最常踩的几个坑,单独拎出来。",
+      snippets: [
+        {
+          title: "二维 slice 不能一行建",
+          code: `g := make([][]int, n)       // 只建了外层,里面全是 nil
+for i := range g {
+	g[i] = make([]int, m)   // 必须逐行 make
+}`,
+        },
+        {
+          title: "整除与取余和 Python 不同",
+          code: `-7 / 2    // -3  朝零截断(Python 是 -4)
+-7 % 2    // -1  符号跟被除数(Python 是 1)
+// 想要向下取整,自己修正:
+func floorDiv(a, b int) int { q := a / b; if (a%b != 0) && ((a < 0) != (b < 0)) { q-- }; return q }`,
+        },
+        {
+          title: "range 是副本 / map 未初始化",
+          code: `for _, x := range a { x *= 2 }   // 白改,x 是副本;要用 a[i] *= 2
+
+var m map[int]int
+m[1] = 1          // panic:nil map 不能写,要先 m = map[int]int{}
+
+b := a[:2]
+b = append(b, 99) // 可能复用底层数组,悄悄改到 a[2]`,
+        },
+      ],
+    },
+  ],
+};
+
+export const GUIDES: LangGuide[] = [PYTHON, GO];
 
 export function langGuide(id?: string): LangGuide | null {
   if (!id) return GUIDES[0] ?? null;

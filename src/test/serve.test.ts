@@ -152,6 +152,33 @@ test("/api/lang?id=python 指名取到那门语言", async () => {
   assert.equal(miss.guide, null, "不存在的语言应返回 null 而不是兜底");
 });
 
+test("/api/lang 支持多语言:Go 与 Python 小节口径一致、每段代码非空", async () => {
+  const { guides } = await get<{ guides: { id: string; name: string }[] }>("/api/lang");
+  const ids = guides.map((g) => g.id);
+  assert.ok(ids.includes("python") && ids.includes("go"), `缺语言:${ids.join(",")}`);
+
+  const py = await get<{ guide: { sections: { id: string }[] } }>("/api/lang?id=python");
+  const go = await get<{
+    guide: {
+      id: string; tagline: string;
+      sections: { id: string; name: string; blurb: string;
+        snippets: { title: string; code: string }[] }[];
+    };
+  }>("/api/lang?id=go");
+  assert.equal(go.guide.id, "go");
+  assert.ok(go.guide.tagline.length > 10);
+  // 两门语言的小节 id 对齐,前端一套渲染逻辑通吃
+  assert.deepEqual(go.guide.sections.map((s) => s.id), py.guide.sections.map((s) => s.id),
+    "Go 与 Python 的小节 id 不一致");
+  for (const sec of go.guide.sections) {
+    assert.ok(sec.name && sec.blurb, `${sec.id} 缺标题或说明`);
+    assert.ok(sec.snippets.length > 0, `${sec.id} 一段代码都没有`);
+    for (const sn of sec.snippets) {
+      assert.ok(sn.title && sn.code.trim().length > 0, `${sec.id}/${sn.title} 内容为空`);
+    }
+  }
+});
+
 test("网页和终端的代表题是同一批", async () => {
   for (const id of ["monotonic", "tree", "dp-knapsack"]) {
     const note = await get<NoteRes>(`/api/note?topic=${id}`);

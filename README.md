@@ -125,7 +125,7 @@ sinan list [关键词]         题库查询（按大类/子标签/思路/难度/
 sinan show <题>             题目详情
 sinan plan <主线|专题>      展开主线，或按专题即时生成计划
 sinan learn <专题>          专题讲解（不带参数等同 topics）
-sinan lang [小节]           语言基础速查：写算法题够用的最小代码示例
+sinan lang [小节]           语言基础速查：写算法题够用的最小代码示例（--guide python/go）
 sinan next                  下一步该做什么
 sinan done <题>...          打卡 / 取消打卡
 sinan stats                 题库统计
